@@ -4,21 +4,80 @@
     "tagline": "Built for the arena. Not the stands.",
     "loading": "Caricamento…",
     "signIn": "Accedi",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "subscribe": "Abbonati",
+    "watchLive": "Guarda il live",
+    "viewPricing": "Vedi i piani"
   },
   "Nav": {
     "home": "Home",
-    "pricing": "Abbonamenti",
     "live": "Live",
-    "vod": "Replay",
-    "interviews": "Interviste",
-    "dashboard": "Dashboard",
-    "broadcast": "Regia"
+    "replay": "Replay",
+    "sports": "Sport",
+    "pricing": "Abbonamenti"
   },
-  "Landing": {
-    "title": "Live on SANDR",
-    "subtitle": "Beach volley e sand sports in streaming premium.",
-    "cta": "Guarda ora"
+  "Footer": {
+    "exploreTitle": "Esplora",
+    "companyTitle": "Azienda",
+    "legalTitle": "Legale",
+    "about": "Chi siamo",
+    "press": "Press",
+    "contact": "Contatti",
+    "terms": "Termini",
+    "privacy": "Privacy",
+    "ageGate": "18+",
+    "rights": "Tutti i diritti riservati."
+  },
+  "Home": {
+    "hero": {
+      "eyebrow": "Sand sports network",
+      "title": "Live on SANDR",
+      "subtitle": "Beach volley e sand sports in streaming premium. Ogni punto, ogni torneo, ogni circuito.",
+      "ctaPrimary": "Guarda il live",
+      "ctaSecondary": "Scopri i piani"
+    },
+    "liveNow": {
+      "title": "Live ora",
+      "subtitle": "Match in diretta in questo momento.",
+      "watching": "spettatori"
+    },
+    "replays": {
+      "title": "SANDR Replay",
+      "subtitle": "Rivivi i match più recenti.",
+      "viewAll": "Vedi tutti i replay"
+    },
+    "sports": {
+      "title": "I circuiti",
+      "subtitle": "Tutti i tour che trasmettiamo."
+    },
+    "features": {
+      "title": "Costruito per l'arena",
+      "subtitle": "Tecnologia premium pensata per lo sport, non per la spiaggia.",
+      "items": {
+        "streaming": {
+          "title": "Streaming HLS",
+          "desc": "Diretta in alta qualità, dal campo al tuo schermo."
+        },
+        "stats": {
+          "title": "Statistiche live",
+          "desc": "Punteggio e dati in tempo reale per ogni match."
+        },
+        "multilang": {
+          "title": "Italiano e inglese",
+          "desc": "Esperienza completamente bilingue."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Scegli come seguire SANDR",
+      "subtitle": "Free, Premium o singolo evento in PPV.",
+      "cta": "Vedi i piani"
+    },
+    "join": {
+      "title": "Entra nell'arena",
+      "subtitle": "Crea il tuo account e non perdere nessun match.",
+      "cta": "Inizia ora"
+    }
   },
   "Pricing": {
     "title": "Abbonamenti",

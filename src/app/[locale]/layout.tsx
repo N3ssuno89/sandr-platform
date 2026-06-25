@@ -5,8 +5,8 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Archivo_Black, Barlow_Condensed, DM_Sans } from 'next/font/google';
 import { routing, type Locale } from '@/i18n/routing';
 import { siteConfig } from '@/config/site';
-import { SiteHeader } from '@/components/layout/site-header';
-import { SiteFooter } from '@/components/layout/site-footer';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 import '../globals.css';
 
 // Font SANDR (vedi CLAUDE.md): Archivo Black / Barlow Condensed per le headline,
@@ -59,9 +59,10 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
+            <Navbar />
+            {/* pt-16 compensa l'altezza della navbar fissa (h-16) */}
+            <main className="flex-1 pt-16">{children}</main>
+            <Footer />
           </div>
         </NextIntlClientProvider>
       </body>
