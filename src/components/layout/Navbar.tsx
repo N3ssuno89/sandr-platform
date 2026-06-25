@@ -26,7 +26,13 @@ export function Navbar() {
           {/* Logo — file caricato manualmente in /public/logo.png */}
           <Link href="/" onClick={() => setOpen(false)} className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="SANDR" className="h-9 w-auto" />
+            <img
+              src="/logo.png"
+              alt="SANDR"
+              width={56}
+              height={56}
+              style={{ height: '56px', width: '56px', objectFit: 'contain' }}
+            />
           </Link>
 
           {/* Link desktop, centrati */}
