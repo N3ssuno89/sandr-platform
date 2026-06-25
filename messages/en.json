@@ -1,0 +1,109 @@
+{
+  "Common": {
+    "appName": "SANDR",
+    "tagline": "Built for the arena. Not the stands.",
+    "loading": "Loading…",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "subscribe": "Subscribe",
+    "watchLive": "Watch live",
+    "viewPricing": "View pricing"
+  },
+  "Nav": {
+    "home": "Home",
+    "live": "Live",
+    "replay": "Replay",
+    "sports": "Sports",
+    "pricing": "Pricing"
+  },
+  "Footer": {
+    "exploreTitle": "Explore",
+    "companyTitle": "Company",
+    "legalTitle": "Legal",
+    "about": "About",
+    "press": "Press",
+    "contact": "Contact",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "ageGate": "18+",
+    "rights": "All rights reserved."
+  },
+  "Home": {
+    "hero": {
+      "eyebrow": "Sand sports network",
+      "title": "Live on SANDR",
+      "subtitle": "Beach volleyball and sand sports in premium streaming. Every point, every tournament, every circuit.",
+      "ctaPrimary": "Watch live",
+      "ctaSecondary": "View pricing"
+    },
+    "liveNow": {
+      "title": "Live now",
+      "subtitle": "Matches streaming right now.",
+      "watching": "watching"
+    },
+    "replays": {
+      "title": "SANDR Replay",
+      "subtitle": "Relive the latest matches.",
+      "viewAll": "View all replays"
+    },
+    "sports": {
+      "title": "The circuits",
+      "subtitle": "Every tour we broadcast."
+    },
+    "features": {
+      "title": "Built for the arena",
+      "subtitle": "Premium technology made for the sport, not the beach.",
+      "items": {
+        "streaming": {
+          "title": "HLS streaming",
+          "desc": "High-quality live delivery, from the court to your screen."
+        },
+        "stats": {
+          "title": "Live stats",
+          "desc": "Real-time scoring and data for every match."
+        },
+        "multilang": {
+          "title": "Italian and English",
+          "desc": "A fully bilingual experience."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Choose how you follow SANDR",
+      "subtitle": "Free, Premium or a single pay-per-view event.",
+      "cta": "View pricing"
+    },
+    "join": {
+      "title": "Enter the arena",
+      "subtitle": "Create your account and never miss a match.",
+      "cta": "Get started"
+    }
+  },
+  "Pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose how you follow SANDR.",
+    "free": "Free",
+    "premium": "Premium",
+    "ppv": "Single event (PPV)"
+  },
+  "Live": {
+    "title": "Live on SANDR",
+    "empty": "No live events right now."
+  },
+  "Vod": {
+    "title": "SANDR Replay",
+    "empty": "Library not available."
+  },
+  "Interviews": {
+    "title": "Interviews",
+    "empty": "No interviews available."
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Admin panel."
+  },
+  "Broadcast": {
+    "title": "Broadcast",
+    "subtitle": "Broadcaster panel."
+  }
+}
