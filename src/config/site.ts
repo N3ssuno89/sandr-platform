@@ -9,13 +9,9 @@ export const siteConfig = {
 } as const;
 
 // Rotte che richiedono autenticazione (vedi src/middleware.ts).
-export const protectedRoutes = [
-  '/live',
-  '/vod',
-  '/interviews',
-  '/dashboard',
-  '/broadcast',
-] as const;
+// Per ora /live, /vod e /interviews sono pubbliche: solo i pannelli
+// admin/broadcaster restano protetti.
+export const protectedRoutes = ['/dashboard', '/broadcast'] as const;
 
 // Rotte riservate per ruolo (controllo applicato anche via RLS lato DB).
 export const roleRestrictedRoutes = {

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 
@@ -32,13 +31,8 @@ export function Footer() {
           {/* Logo + tagline + handle */}
           <div>
             <Link href="/" className="inline-flex items-center">
-              <Image
-                src="/logo.png"
-                alt="SANDR"
-                width={112}
-                height={28}
-                className="h-7 w-auto"
-              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="SANDR" className="h-7 w-auto" />
             </Link>
             <p className="mt-3 font-condensed uppercase tracking-wide text-sandr-muted">
               {tc('tagline')}
