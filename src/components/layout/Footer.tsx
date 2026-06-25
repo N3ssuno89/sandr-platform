@@ -1,10 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 
-// Footer: wordmark, griglia link, handle @sandr.tv, switcher lingua IT/EN,
-// copyright 2026. L'age gate 18+ NON va mai rimosso (CLAUDE.md).
+// Footer: logo, griglia link, handle @sandr.tv, switcher lingua IT/EN,
+// copyright 2026. Le colonne si impilano in verticale su mobile.
+// L'age gate 18+ NON va mai rimosso (CLAUDE.md).
 export function Footer() {
   const t = useTranslations('Footer');
   const tNav = useTranslations('Nav');
@@ -26,11 +28,17 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-sandr-black">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-10 md:grid-cols-4">
-          {/* Wordmark + tagline + handle */}
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
+          {/* Logo + tagline + handle */}
           <div>
-            <Link href="/" className="font-display text-2xl text-sandr-text">
-              SANDR
+            <Link href="/" className="inline-flex items-center">
+              <Image
+                src="/logo.png"
+                alt="SANDR"
+                width={112}
+                height={28}
+                className="h-7 w-auto"
+              />
             </Link>
             <p className="mt-3 font-condensed uppercase tracking-wide text-sandr-muted">
               {tc('tagline')}
