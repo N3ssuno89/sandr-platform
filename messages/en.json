@@ -6,6 +6,7 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "subscribe": "Subscribe",
+    "watch": "Watch",
     "watchLive": "Watch live",
     "viewPricing": "View pricing"
   },
@@ -84,15 +85,99 @@
     "subtitle": "Choose how you follow SANDR.",
     "free": "Free",
     "premium": "Premium",
-    "ppv": "Single event (PPV)"
+    "ppv": "Single event (PPV)",
+    "page": {
+      "heroTitle": "Choose your plan",
+      "heroSubtitle": "Watch the best of beach volleyball and sand sports, your way.",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "annualBadge": "2 months free",
+      "perMonth": "/mo",
+      "perYear": "/yr",
+      "perEvent": "/event",
+      "mostChosen": "Most popular",
+      "save": "Save 17%",
+      "ctaFree": "Start free",
+      "ctaPremium": "Subscribe",
+      "ctaPpv": "Buy event",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "price": "0",
+          "features": [
+            "Match highlights",
+            "1 free match per week",
+            "SD quality",
+            "No registration required"
+          ]
+        },
+        "premium": {
+          "name": "Premium",
+          "priceMonthly": "9.99",
+          "priceAnnual": "99.99",
+          "features": [
+            "All live",
+            "All replays",
+            "HD quality",
+            "Multi-device",
+            "Offline download",
+            "Priority support"
+          ]
+        },
+        "ppv": {
+          "name": "PPV",
+          "price": "2.99",
+          "features": [
+            "Single event access",
+            "HD quality",
+            "No subscription",
+            "Valid for 48h"
+          ]
+        }
+      },
+      "faqTitle": "Frequently asked questions",
+      "faq": [
+        {
+          "q": "Can I cancel anytime?",
+          "a": "Yes. Premium has no lock-in — cancel anytime from your account settings."
+        },
+        {
+          "q": "How many devices can I watch on?",
+          "a": "With Premium you can follow SANDR across multiple devices: smart TV, computer, tablet and smartphone."
+        },
+        {
+          "q": "What does pay-per-view include?",
+          "a": "PPV gives you access to a single event in HD, with no subscription. Access stays valid for 48 hours."
+        },
+        {
+          "q": "What's the difference between Free and Premium?",
+          "a": "Free offers highlights and one free match per week in SD. Premium unlocks all live and replays in HD, with offline download and priority support."
+        }
+      ]
+    }
   },
   "Live": {
-    "title": "Live on SANDR",
-    "empty": "No live events right now."
+    "title": "Live now",
+    "watching": "watching",
+    "empty": "No live events right now.",
+    "filters": {
+      "all": "All",
+      "beach-volley": "Beach Volley",
+      "beach-tennis": "Beach Tennis",
+      "padel": "Padel"
+    }
   },
   "Vod": {
     "title": "SANDR Replay",
-    "empty": "Library not available."
+    "empty": "No replays available.",
+    "featured": "Featured",
+    "filters": {
+      "all": "All",
+      "recent": "Recent",
+      "beach-volley": "Beach Volley",
+      "beach-tennis": "Beach Tennis",
+      "by-circuit": "By circuit"
+    }
   },
   "Interviews": {
     "title": "Interviews",

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
@@ -12,8 +13,8 @@ const navLinks = [
   { href: '/pricing', key: 'pricing' },
 ] as const;
 
-// Navbar fissa con backdrop-blur. Wordmark a sinistra, link al centro,
-// CTA a destra, menu hamburger su mobile.
+// Navbar fissa con backdrop-blur. Logo a sinistra, link al centro, CTA a
+// destra. Su mobile: hamburger che apre un overlay full-screen.
 export function Navbar() {
   const t = useTranslations('Nav');
   const tc = useTranslations('Common');
@@ -22,16 +23,19 @@ export function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-sandr-black/70 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        {/* Wordmark */}
-        <Link
-          href="/"
-          onClick={() => setOpen(false)}
-          className="font-display text-xl tracking-tight text-sandr-text"
-        >
-          SANDR
+        {/* Logo (file caricato manualmente in /public/logo.png) */}
+        <Link href="/" onClick={() => setOpen(false)} className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="SANDR"
+            width={128}
+            height={32}
+            priority
+            className="h-8 w-auto"
+          />
         </Link>
 
-        {/* Link (desktop, centrati) */}
+        {/* Link desktop, centrati */}
         <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 font-condensed uppercase tracking-wide text-sandr-muted md:flex">
           {navLinks.map((l) => (
             <Link key={l.key} href={l.href} className="transition-colors hover:text-sandr-text">
@@ -40,7 +44,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* CTA (desktop) + hamburger (mobile) */}
+        {/* CTA desktop + hamburger mobile */}
         <div className="flex items-center gap-3">
           <Link
             href="/pricing"
@@ -54,7 +58,7 @@ export function Navbar() {
             aria-label="Menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded text-sandr-text md:hidden"
+            className="relative z-50 inline-flex h-10 w-10 items-center justify-center rounded text-sandr-text md:hidden"
           >
             {/* Icona hamburger/chiudi in CSS (niente emoji) */}
             <span className="relative block h-4 w-6">
@@ -78,32 +82,29 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Menu mobile */}
+      {/* Overlay menu mobile full-screen: si chiude al click su un link */}
       {open ? (
-        <nav className="border-t border-white/10 bg-sandr-black/95 px-4 py-4 md:hidden">
-          <ul className="flex flex-col gap-1 font-condensed uppercase tracking-wide text-sandr-muted">
+        <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col bg-sandr-black md:hidden">
+          <nav className="flex flex-1 flex-col items-center justify-center gap-8 px-6">
             {navLinks.map((l) => (
-              <li key={l.key}>
-                <Link
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="block py-2 hover:text-sandr-text"
-                >
-                  {t(l.key)}
-                </Link>
-              </li>
-            ))}
-            <li className="pt-2">
               <Link
-                href="/pricing"
+                key={l.key}
+                href={l.href}
                 onClick={() => setOpen(false)}
-                className="block rounded bg-sandr-orange px-4 py-2 text-center font-semibold text-sandr-text"
+                className="font-display text-3xl uppercase text-sandr-text"
               >
-                {tc('subscribe')}
+                {t(l.key)}
               </Link>
-            </li>
-          </ul>
-        </nav>
+            ))}
+            <Link
+              href="/pricing"
+              onClick={() => setOpen(false)}
+              className="mt-4 rounded bg-sandr-orange px-8 py-3 font-condensed text-lg font-semibold uppercase tracking-wide text-sandr-text"
+            >
+              {tc('subscribe')}
+            </Link>
+          </nav>
+        </div>
       ) : null}
     </header>
   );

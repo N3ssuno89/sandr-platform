@@ -66,24 +66,24 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-sandr-surface to-sandr-black" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(232,80,10,0.18),transparent_55%)]" />
-        <div className="relative mx-auto max-w-6xl px-4 py-28 md:py-36">
-          <p className="font-condensed uppercase tracking-[0.3em] text-sandr-orange">
+        <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-36">
+          <p className="font-condensed text-sm uppercase tracking-[0.3em] text-sandr-orange">
             {t('hero.eyebrow')}
           </p>
-          <h1 className="mt-4 max-w-3xl text-5xl uppercase leading-none text-sandr-text md:text-7xl">
+          <h1 className="mt-4 max-w-3xl text-4xl uppercase leading-tight text-sandr-text sm:text-5xl md:text-7xl md:leading-none">
             {t('hero.title')}
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-sandr-muted">{t('hero.subtitle')}</p>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <p className="mt-6 max-w-xl text-base text-sandr-muted sm:text-lg">{t('hero.subtitle')}</p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/live"
-              className="rounded bg-sandr-orange px-6 py-3 font-condensed font-semibold uppercase tracking-wide text-sandr-text"
+              className="rounded bg-sandr-orange px-6 py-3 text-center font-condensed font-semibold uppercase tracking-wide text-sandr-text"
             >
               {t('hero.ctaPrimary')}
             </Link>
             <Link
               href="/pricing"
-              className="rounded border border-white/20 px-6 py-3 font-condensed font-semibold uppercase tracking-wide text-sandr-text hover:border-white/40"
+              className="rounded border border-white/20 px-6 py-3 text-center font-condensed font-semibold uppercase tracking-wide text-sandr-text hover:border-white/40"
             >
               {t('hero.ctaSecondary')}
             </Link>
@@ -102,9 +102,17 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             {tc('watchLive')}
           </Link>
         </div>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Scroll orizzontale su mobile, griglia su desktop */}
+        <div className="mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
           {liveEvents.map((e) => (
-            <LiveEventCard key={e.id} {...e} viewersLabel={t('liveNow.watching')} />
+            <div key={e.id} className="min-w-[85%] shrink-0 snap-start sm:min-w-0 sm:shrink">
+              <LiveEventCard
+                {...e}
+                viewersLabel={t('liveNow.watching')}
+                href={`/live/${e.id}`}
+                ctaLabel={tc('watch')}
+              />
+            </div>
           ))}
         </div>
       </section>
@@ -121,9 +129,12 @@ export default function HomePage({ params }: { params: { locale: string } }) {
               {t('replays.viewAll')}
             </Link>
           </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Scroll orizzontale su mobile, griglia su desktop */}
+          <div className="mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
             {replays.map((v) => (
-              <VodCard key={v.id} {...v} />
+              <div key={v.id} className="min-w-[70%] shrink-0 snap-start sm:min-w-0 sm:shrink">
+                <VodCard {...v} />
+              </div>
             ))}
           </div>
         </div>
