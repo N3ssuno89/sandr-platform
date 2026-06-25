@@ -1,0 +1,24 @@
+# Configurazione deploy Netlify per SANDR.
+# Staging: preview automatico su branch. Produzione: deploy MANUALE (vedi CLAUDE.md).
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Plugin ufficiale Next.js per Netlify (App Router, middleware, SSR)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# I deploy in produzione richiedono approvazione del founder:
+# il deploy automatico su "production" è disabilitato di proposito.
+[context.production]
+  # Configurare manualmente da dashboard Netlify al momento del rilascio.
+
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"

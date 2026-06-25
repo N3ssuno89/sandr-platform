@@ -1,0 +1,50 @@
+{
+  "Common": {
+    "appName": "SANDR",
+    "tagline": "Built for the arena. Not the stands.",
+    "loading": "Loading…",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "Nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "live": "Live",
+    "vod": "Replay",
+    "interviews": "Interviews",
+    "dashboard": "Dashboard",
+    "broadcast": "Broadcast"
+  },
+  "Landing": {
+    "title": "Live on SANDR",
+    "subtitle": "Beach volleyball and sand sports in premium streaming.",
+    "cta": "Watch now"
+  },
+  "Pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose how you follow SANDR.",
+    "free": "Free",
+    "premium": "Premium",
+    "ppv": "Single event (PPV)"
+  },
+  "Live": {
+    "title": "Live on SANDR",
+    "empty": "No live events right now."
+  },
+  "Vod": {
+    "title": "SANDR Replay",
+    "empty": "Library not available."
+  },
+  "Interviews": {
+    "title": "Interviews",
+    "empty": "No interviews available."
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Admin panel."
+  },
+  "Broadcast": {
+    "title": "Broadcast",
+    "subtitle": "Broadcaster panel."
+  }
+}
