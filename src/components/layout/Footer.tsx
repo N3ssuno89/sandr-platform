@@ -32,7 +32,13 @@ export function Footer() {
           <div>
             <Link href="/" className="inline-flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="SANDR" className="h-7 w-auto" />
+              <img
+                src="/logo.png"
+                alt="SANDR"
+                width={44}
+                height={44}
+                style={{ height: '44px', width: '44px', objectFit: 'contain' }}
+              />
             </Link>
             <p className="mt-3 font-condensed uppercase tracking-wide text-sandr-muted">
               {tc('tagline')}
