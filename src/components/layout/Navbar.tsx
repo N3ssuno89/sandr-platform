@@ -29,9 +29,9 @@ export function Navbar() {
             <img
               src="/logo.png"
               alt="SANDR"
-              width={56}
-              height={56}
-              style={{ height: '56px', width: '56px', objectFit: 'contain' }}
+              width={112}
+              height={112}
+              style={{ height: '112px', width: '112px', objectFit: 'contain' }}
             />
           </Link>
 

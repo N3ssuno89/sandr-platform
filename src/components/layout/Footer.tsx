@@ -35,9 +35,9 @@ export function Footer() {
               <img
                 src="/logo.png"
                 alt="SANDR"
-                width={44}
-                height={44}
-                style={{ height: '44px', width: '44px', objectFit: 'contain' }}
+                width={88}
+                height={88}
+                style={{ height: '88px', width: '88px', objectFit: 'contain' }}
               />
             </Link>
             <p className="mt-3 font-condensed uppercase tracking-wide text-sandr-muted">

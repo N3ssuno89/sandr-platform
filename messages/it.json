@@ -31,6 +31,7 @@
   },
   "Landing": {
     "circuitsAll": "Tutti",
+    "interviews": "Interviste esclusive",
     "hero": {
       "eyebrow": "Sand sports network",
       "headline1": "Ogni match.",
@@ -144,7 +145,11 @@
     "replayRecent": "SANDR Replay — Recenti",
     "yourSports": "I tuoi sport",
     "upcoming": "Prossimi eventi",
-    "viewAll": "Vedi tutti"
+    "viewAll": "Vedi tutti",
+    "all": "Tutti",
+    "interviews": "Interviste esclusive",
+    "behindScenes": "Dietro le quinte",
+    "highlights": "Highlights"
   },
   "Login": {
     "headline": "Bentornato.",
@@ -154,7 +159,8 @@
     "or": "oppure",
     "email": "Email",
     "password": "Password",
-    "noAccount": "Non hai un account?"
+    "noAccount": "Non hai un account?",
+    "demoNote": "Demo mode — autenticazione reale disponibile nella prossima versione"
   },
   "Home": {
     "hero": {
