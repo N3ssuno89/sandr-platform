@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from '@/i18n/routing';
+import { mockAthletes } from '@/lib/mock-athletes';
 
 // Tool interno staff-facing: etichette in italiano (no i18n, scelta deliberata).
 
@@ -25,6 +26,9 @@ export type VideoMeta = {
   access?: string;
   description?: string;
   tags?: string;
+  thumbnailCard?: string;
+  thumbnailFeatured?: string;
+  featured?: string;
 };
 
 const labelCls = 'mb-2 block font-condensed text-[11px] font-bold uppercase tracking-wide text-[#888888]';
@@ -52,6 +56,9 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
     access: initial?.access ?? 'free',
     description: initial?.description ?? '',
     tags: initial?.tags ?? '',
+    thumbnailCard: initial?.thumbnailCard ?? '',
+    thumbnailFeatured: initial?.thumbnailFeatured ?? '',
+    featured: initial?.featured ?? '',
   });
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(false);
@@ -77,6 +84,8 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
     }
   }
 
+  const isFeatured = meta.featured === 'true';
+
   return (
     <form onSubmit={handleSubmit}>
       <div className={sectionCls}>
@@ -89,6 +98,30 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
             onChange={(e) => set('name', e.target.value)}
             placeholder="Es. Finale BPT Elite — Roma 2026"
             className={inputCls}
+          />
+        </div>
+
+        {/* Copertine (card 16:9 + in evidenza 21:9) */}
+        <div className="mb-4 flex flex-wrap gap-6">
+          <ThumbnailUpload
+            label="Copertina card"
+            hint="usata nelle righe a scorrimento orizzontale"
+            width={160}
+            height={90}
+            uid={uid}
+            type="card"
+            value={meta.thumbnailCard}
+            onUploaded={(url) => set('thumbnailCard', url)}
+          />
+          <ThumbnailUpload
+            label="Copertina in evidenza"
+            hint="usata quando il video è in evidenza nell'hero"
+            width={320}
+            height={137}
+            uid={uid}
+            type="featured"
+            value={meta.thumbnailFeatured}
+            onUploaded={(url) => set('thumbnailFeatured', url)}
           />
         </div>
 
@@ -128,16 +161,10 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
           </div>
         </div>
 
-        {/* Row 4 — Atleti coinvolti */}
+        {/* Row 4 — Atleti coinvolti (autocomplete) */}
         <div className="mb-4">
-          <label className={labelCls} htmlFor="athletes">Atleti coinvolti</label>
-          <input
-            id="athletes"
-            value={meta.athletes}
-            onChange={(e) => set('athletes', e.target.value)}
-            placeholder="Nomi separati da virgola"
-            className={inputCls}
-          />
+          <label className={labelCls}>Atleti coinvolti</label>
+          <AthleteAutocomplete value={meta.athletes ?? ''} onChange={(v) => set('athletes', v)} />
         </div>
 
         {/* Row 5 — Nazione + Data evento */}
@@ -183,6 +210,22 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
           </div>
         </div>
 
+        {/* Metti in evidenza */}
+        <div className="mb-4">
+          <label className={labelCls}>In evidenza</label>
+          <button
+            type="button"
+            onClick={() => set('featured', isFeatured ? '' : 'true')}
+            className={`rounded-full border px-5 py-2 font-condensed text-xs font-bold uppercase tracking-wide transition ${
+              isFeatured
+                ? 'border-[#F04E00]/40 bg-[#F04E00]/15 text-[#F04E00]'
+                : 'border-white/[0.08] bg-[#1C1C1C] text-[#888888]'
+            }`}
+          >
+            {isFeatured ? 'In evidenza' : 'Metti in evidenza'}
+          </button>
+        </div>
+
         {/* Row 7 — Descrizione */}
         <div className="mb-4">
           <label className={labelCls} htmlFor="description">Descrizione</label>
@@ -223,5 +266,163 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
         </div>
       )}
     </form>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Upload copertina (drag-drop + preview). L'upload va alla route server-side
+// /api/stream/upload-thumbnail (token mai esposto al client).
+function ThumbnailUpload({
+  label,
+  hint,
+  width,
+  height,
+  uid,
+  type,
+  value,
+  onUploaded,
+}: {
+  label: string;
+  hint: string;
+  width: number;
+  height: number;
+  uid: string;
+  type: 'card' | 'featured';
+  value?: string;
+  onUploaded: (url: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string | null>(value || null);
+  const [busy, setBusy] = useState(false);
+
+  async function handleFile(file: File) {
+    // Anteprima locale immediata (anche in demo senza creds Cloudflare).
+    setPreview(URL.createObjectURL(file));
+    setBusy(true);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      body.append('videoUid', uid);
+      body.append('type', type);
+      const res = await fetch('/api/stream/upload-thumbnail', { method: 'POST', body });
+      const data = await res.json();
+      if (data.url) {
+        setPreview(data.url);
+        onUploaded(data.url);
+      }
+    } catch {
+      // Demo: l'anteprima locale resta visibile.
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div>
+      <p className={labelCls}>{label}</p>
+      <div
+        onClick={() => inputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const f = e.dataTransfer.files?.[0];
+          if (f) handleFile(f);
+        }}
+        style={{ width, height }}
+        className="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#F04E00]/30 bg-[#F04E00]/[0.04] text-center"
+      >
+        {preview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={preview} alt={label} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <span className="px-2 text-[11px] text-[#888888]">{busy ? 'Caricamento…' : 'Trascina o clicca'}</span>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleFile(f);
+          }}
+        />
+      </div>
+      <p className="mt-1 max-w-[320px] text-[10px] text-[#555555]">{hint}</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Autocomplete atleti: filtra mockAthletes per nome, selezione come pill.
+// Valore salvato come stringa di nomi separati da virgola in meta.athletes.
+function AthleteAutocomplete({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [query, setQuery] = useState('');
+  const selected = value ? value.split(',').map((s) => s.trim()).filter(Boolean) : [];
+
+  const matches = query
+    ? mockAthletes
+        .filter(
+          (a) => a.name.toLowerCase().includes(query.toLowerCase()) && !selected.includes(a.name),
+        )
+        .slice(0, 5)
+    : [];
+
+  const add = (name: string) => {
+    onChange([...selected, name].join(', '));
+    setQuery('');
+  };
+  const remove = (name: string) => onChange(selected.filter((n) => n !== name).join(', '));
+
+  return (
+    <div>
+      <div className="relative">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Cerca atleta per nome…"
+          className={inputCls}
+        />
+        {matches.length > 0 && (
+          <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-white/[0.08] bg-[#1C1C1C] shadow-lg">
+            {matches.map((a) => (
+              <li key={a.id}>
+                <button
+                  type="button"
+                  onClick={() => add(a.name)}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-2 text-left text-sm text-white hover:bg-white/[0.06]"
+                >
+                  <span>{a.name}</span>
+                  <span className="text-[11px] uppercase tracking-wide text-[#888888]">
+                    {a.sport} · {a.circuit}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {selected.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {selected.map((name) => (
+            <span
+              key={name}
+              className="inline-flex items-center gap-2 rounded-full bg-[#F04E00]/15 px-3 py-1 text-xs font-semibold text-[#F04E00]"
+            >
+              {name}
+              <button
+                type="button"
+                onClick={() => remove(name)}
+                className="text-[#F04E00] hover:text-white"
+                aria-label={`Rimuovi ${name}`}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

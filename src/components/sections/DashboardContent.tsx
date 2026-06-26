@@ -27,11 +27,12 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   const tA = useTranslations('Athlete');
   const tFed = useTranslations('Federation');
 
-  // Sorgente contenuti: video reali da Cloudflare Stream se presenti, altrimenti
-  // i dati mock di fallback.
+  // Sorgente contenuti: SOLO video reali da Cloudflare Stream se presenti
+  // (mai mescolati col mock), altrimenti i dati mock di fallback (demo / no creds).
   const source = realVideos ?? mockContent;
 
-  // Nessun filtro circuito: tutte le righe sono sempre visibili.
+  // Le righe per circuito filtrano dalla sorgente; una riga senza contenuti
+  // viene nascosta (vedi `if (row.items.length === 0) return null` sotto).
   const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
   const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
 
