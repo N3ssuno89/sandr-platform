@@ -102,7 +102,16 @@
     "share": "Share",
     "liveNow": "Live now",
     "upcoming": "Upcoming",
-    "cast": "Available on Smart TV and Chromecast"
+    "cast": "Available on Smart TV and Chromecast",
+    "statsTitle": "Live stats",
+    "quoteLive": "Live odds",
+    "oddsGate": "Sign in to see the odds",
+    "bettingDisclaimer": "Gambling is prohibited for minors. Play responsibly. 18+",
+    "adLabel": "Advertisement",
+    "adSpace": "Your advertising space",
+    "bettingTime": "In progress — Set 2",
+    "set1": "Set 1: 21-18",
+    "set2": "Set 2: in progress"
   },
   "Landing": {
     "circuitsAll": "All",

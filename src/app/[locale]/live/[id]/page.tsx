@@ -31,8 +31,24 @@ const STATS = [
   { a: '2', label: 'MURI', b: '3' },
 ];
 
+// Stats della sidebar (etichette estese).
+const SIDEBAR_STATS = [
+  { a: '3', label: 'Ace', b: '1' },
+  { a: '5', label: 'Errori', b: '7' },
+  { a: '62%', label: 'Attacco%', b: '58%' },
+  { a: '2', label: 'Muri', b: '3' },
+];
+
+// Quote mock (non reali). Gioco riservato ai maggiorenni — vedi disclaimer.
+const ODDS = [
+  { k: '1', v: '1.85' },
+  { k: 'X', v: '12.00' },
+  { k: '2', v: '2.10' },
+];
+
 export default function LivePlayerPage({ params }: { params: { locale: string; id: string } }) {
   const t = useTranslations('Player');
+  const tc = useTranslations('Common');
 
   // Dati live: da mock-content (type live) o fallback.
   const event = mockContent.find((c) => c.type === 'live' && c.id === params.id);
@@ -125,8 +141,8 @@ export default function LivePlayerPage({ params }: { params: { locale: string; i
                   [ ]
                 </button>
                 <div className="relative">
-                  <button type="button" onClick={showCastTooltip} className={ctrlPill} aria-label="Cast">
-                    CAST
+                  <button type="button" onClick={showCastTooltip} className={ctrlPill} aria-label="TV">
+                    TV
                   </button>
                   {cast ? (
                     <span className="absolute bottom-9 right-0 whitespace-nowrap rounded bg-black/90 px-2 py-1 text-[10px] text-white">
@@ -250,6 +266,78 @@ export default function LivePlayerPage({ params }: { params: { locale: string; i
 
         {/* ===== RIGHT COLUMN ===== */}
         <aside className="hidden w-[320px] shrink-0 lg:block">
+          {/* SEZIONE 1 — Statistiche live */}
+          <h2 className="font-condensed text-[11px] font-bold uppercase text-[#888888]" style={{ letterSpacing: '2px' }}>
+            {t('statsTitle')}
+          </h2>
+          <div className="mt-3 flex items-center">
+            <span className="flex-1 text-right font-condensed text-[13px] font-bold text-white">Lupo / Nicolai</span>
+            <span className="px-4 text-center font-condensed text-[28px] font-black text-sandr-orange">1 — 0</span>
+            <span className="flex-1 text-left font-condensed text-[13px] font-bold text-white">Ranghieri / Carambula</span>
+          </div>
+          <p className="mt-2 text-center text-[11px] text-[#888888]">{t('set1')}</p>
+          <p className="text-center text-[11px] text-[#888888]">{t('set2')}</p>
+
+          <div className="mt-3 rounded-lg bg-[#1C1C1C] p-3">
+            {SIDEBAR_STATS.map((s) => (
+              <div key={s.label} className="grid grid-cols-3 items-center py-0.5 font-condensed text-[12px] font-bold">
+                <span className="text-left text-sandr-orange">{s.a}</span>
+                <span className="text-center text-[#888888]">{s.label}</span>
+                <span className="text-right text-white">{s.b}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="my-4 h-px bg-white/10" />
+
+          {/* SEZIONE 2 — Widget betting bet365 (AREA CRITICA, vedi CLAUDE.md:
+              compliance, link affiliati e disclaimer richiedono review umana) */}
+          <div className="mb-3 rounded-[10px] border border-[#1a3a1a] bg-[#0d1f0d] p-3">
+            <div className="flex items-center justify-between">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/partners/bet365-logo.png" alt="bet365" style={{ height: 20 }} />
+              <span className="text-[11px] text-[#888888]">{t('quoteLive')}</span>
+            </div>
+            <p className="mt-3 font-condensed text-[12px] font-bold text-white">Lupo/Nicolai vs Ranghieri/Carambula</p>
+            <p className="text-[10px] text-[#888888]">{t('bettingTime')}</p>
+
+            {/* Quote offuscate dietro gate di accesso (nessuna quota reale mostrata) */}
+            <div className="relative mt-2">
+              <div className="flex gap-2">
+                {ODDS.map((o) => (
+                  <div
+                    key={o.k}
+                    className="flex-1 rounded-md border border-[#2a3a2a] bg-[#1a2a1a] p-2 text-center transition-colors hover:border-[#4CAF50] hover:bg-[#4CAF50]/10"
+                  >
+                    <p className="text-[10px] text-[#888888]">{o.k}</p>
+                    <p className="font-condensed text-base font-extrabold text-white">{o.v}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-md bg-[#0d1f0d]/30 backdrop-blur-[6px]">
+                <p className="font-condensed text-[13px] font-bold text-white">{t('oddsGate')}</p>
+                <Link href="/login" className="mt-2 rounded bg-sandr-orange px-3 py-1 text-[11px] font-bold uppercase text-black">
+                  {tc('signIn')}
+                </Link>
+              </div>
+            </div>
+
+            <p className="mt-2 text-center text-[9px] text-[#555555]">{t('bettingDisclaimer')}</p>
+          </div>
+
+          {/* SEZIONE 3 — Banner pubblicitario */}
+          <p className="mb-1 text-center text-[9px] uppercase text-[#444444]" style={{ letterSpacing: '1px' }}>
+            {t('adLabel')}
+          </p>
+          <div
+            className="mb-5 flex h-[120px] flex-col items-center justify-center rounded-lg border border-white/[0.06]"
+            style={{ background: 'linear-gradient(135deg, #1C1C1C, #242424)' }}
+          >
+            <p className="font-condensed text-[14px] font-bold text-[#555555]">{t('adSpace')}</p>
+            <p className="text-[11px] text-sandr-orange">advertising@sandr.tv</p>
+          </div>
+
+          {/* SEZIONE 4 — Altri live + prossimi eventi */}
           <h2 className="font-condensed text-sm font-bold uppercase text-[#888888]" style={{ letterSpacing: '2px' }}>
             {t('liveNow')}
           </h2>
