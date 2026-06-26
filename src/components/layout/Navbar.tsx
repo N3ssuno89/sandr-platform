@@ -47,6 +47,12 @@ export function Navbar() {
           {/* CTA desktop + hamburger mobile */}
           <div className="flex items-center gap-3">
             <Link
+              href="/login"
+              className="hidden rounded border border-white/[0.15] px-4 py-2 font-condensed font-semibold uppercase tracking-wide text-white md:inline-block"
+            >
+              {tc('signIn')}
+            </Link>
+            <Link
               href="/pricing"
               className="hidden rounded bg-sandr-orange px-4 py-2 font-condensed font-semibold uppercase tracking-wide text-sandr-text md:inline-block"
             >
@@ -102,8 +108,15 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA arancione in fondo */}
-          <div className="px-6 pb-10">
+          {/* CTA in fondo: Accedi (ghost) + Abbonati (arancione) */}
+          <div className="flex flex-col gap-3 px-6 pb-10">
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="block rounded border border-white/[0.15] px-8 py-3 text-center font-condensed text-lg font-bold uppercase tracking-wide text-white"
+            >
+              {tc('signIn')}
+            </Link>
             <Link
               href="/pricing"
               onClick={() => setOpen(false)}

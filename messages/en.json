@@ -29,6 +29,41 @@
     "ageGate": "18+",
     "rights": "All rights reserved."
   },
+  "Landing": {
+    "eyebrow": "Sand sports network",
+    "headline1": "Every match.",
+    "headline2": "Live.",
+    "subline": "Beach volleyball. Sand sports. All in one place.",
+    "ctaPrimary": "Watch live",
+    "ctaSecondary": "View pricing",
+    "liveNow": "Live now",
+    "replay": "SANDR Replay",
+    "circuits": "The circuits",
+    "upcoming": "Upcoming",
+    "viewAll": "View all",
+    "watching": "watching",
+    "matches": "matches"
+  },
+  "AuthHome": {
+    "watchNow": "Watch now",
+    "watching": "watching",
+    "liveNow": "Live now",
+    "continueWatching": "Continue watching",
+    "replayRecent": "SANDR Replay — Recent",
+    "yourSports": "Your sports",
+    "upcoming": "Upcoming",
+    "viewAll": "View all"
+  },
+  "Login": {
+    "headline": "Welcome back.",
+    "subline": "Sign in to watch all beach volleyball live.",
+    "google": "Continue with Google",
+    "apple": "Continue with Apple",
+    "or": "or",
+    "email": "Email",
+    "password": "Password",
+    "noAccount": "Don't have an account?"
+  },
   "Home": {
     "hero": {
       "eyebrow": "Sand sports network",
