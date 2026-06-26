@@ -38,6 +38,38 @@
     "logout": "Sign out",
     "comingSoon": "Available in the next version"
   },
+  "Athlete": {
+    "featuredLabel": "The protagonists",
+    "featuredHeading": "The athletes who make sand sports history.",
+    "featuredRow": "Featured athletes",
+    "upcoming": "Upcoming events",
+    "recent": "Recent matches",
+    "others": "Other athletes",
+    "reminder": "Reminder",
+    "reminderSet": "Reminder set",
+    "watchReplay": "Watch replay",
+    "ranking": "Ranking",
+    "notFound": "Athlete not found",
+    "stats": {
+      "matches": "Matches",
+      "wins": "Wins",
+      "winRate": "Win Rate",
+      "seasonPoints": "Season Points"
+    }
+  },
+  "Betting": {
+    "label": "SANDR × Partner",
+    "heading": "Live odds, while you watch the match.",
+    "subline": "Soon on SANDR you'll follow live-updated odds, built into the streaming experience. All in one place.",
+    "badgeLive": "Live odds",
+    "badgeInplay": "In-play",
+    "badgeSoon": "Coming soon",
+    "disclaimer": "The service will be available in authorized jurisdictions. 18+",
+    "widgetTitle": "Live odds",
+    "draw": "Draw",
+    "setStatus": "Set 1: 21-18 — In progress",
+    "comingSoon": "Coming soon"
+  },
   "Landing": {
     "circuitsAll": "All",
     "interviews": "Exclusive interviews",

@@ -6,7 +6,9 @@ import { CircuitFilter, type CircuitSelection } from '@/components/sections/Circ
 import { RowHeader, ScrollRow } from '@/components/ui/section-row';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
+import { AthleteCard } from '@/components/cards/AthleteCard';
 import { mockContent } from '@/lib/mock-content';
+import { mockAthletes } from '@/lib/mock-athletes';
 import type { CircuitTag, ContentItem } from '@/types/tags';
 
 type Row = {
@@ -22,6 +24,7 @@ export function DashboardContent() {
   const t = useTranslations('AuthHome');
   const tc = useTranslations('Common');
   const tLive = useTranslations('Live');
+  const tA = useTranslations('Athlete');
   const [selected, setSelected] = useState<CircuitSelection>('all');
 
   // Righe per circuito: filtrate dalla selezione (se non combacia -> vuote).
@@ -94,6 +97,20 @@ export function DashboardContent() {
             </section>
           );
         })}
+
+        {/* Atleti in evidenza */}
+        <section className="mx-auto max-w-6xl px-4">
+          <h2 className="mb-5 font-condensed text-2xl font-bold uppercase tracking-wide text-sandr-text">
+            {tA('featuredRow')}
+          </h2>
+          <ScrollRow>
+            {mockAthletes.map((a) => (
+              <div key={a.id} className="shrink-0 snap-start">
+                <AthleteCard athlete={a} cardWidth={200} />
+              </div>
+            ))}
+          </ScrollRow>
+        </section>
       </div>
     </>
   );

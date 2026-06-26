@@ -38,6 +38,38 @@
     "logout": "Esci",
     "comingSoon": "Disponibile nella prossima versione"
   },
+  "Athlete": {
+    "featuredLabel": "I protagonisti",
+    "featuredHeading": "Gli atleti che fanno la storia del sand sports.",
+    "featuredRow": "Atleti in evidenza",
+    "upcoming": "Prossimi eventi",
+    "recent": "Match recenti",
+    "others": "Altri atleti",
+    "reminder": "Reminder",
+    "reminderSet": "Reminder impostato",
+    "watchReplay": "Guarda Replay",
+    "ranking": "Ranking",
+    "notFound": "Atleta non trovato",
+    "stats": {
+      "matches": "Partite",
+      "wins": "Vittorie",
+      "winRate": "Win Rate",
+      "seasonPoints": "Punti Stagione"
+    }
+  },
+  "Betting": {
+    "label": "SANDR × Partner",
+    "heading": "Le quote in tempo reale, mentre guardi la partita.",
+    "subline": "Presto su SANDR potrai seguire le quote aggiornate in diretta, integrate nell'esperienza di streaming. Tutto in un posto.",
+    "badgeLive": "Quote Live",
+    "badgeInplay": "In-play",
+    "badgeSoon": "Prossimamente",
+    "disclaimer": "Il servizio sarà disponibile nelle giurisdizioni autorizzate. 18+",
+    "widgetTitle": "Quote Live",
+    "draw": "Pareggio",
+    "setStatus": "Set 1: 21-18 — In corso",
+    "comingSoon": "Disponibile prossimamente"
+  },
   "Landing": {
     "circuitsAll": "Tutti",
     "interviews": "Interviste esclusive",

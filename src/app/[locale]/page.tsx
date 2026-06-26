@@ -4,6 +4,10 @@ import { Link } from '@/i18n/routing';
 import { LivePreviewSection } from '@/components/sections/LivePreviewSection';
 import { LandingPricing } from '@/components/sections/LandingPricing';
 import { FeatureTabs } from '@/components/sections/FeatureTabs';
+import { BettingPartnerSection } from '@/components/sections/BettingPartnerSection';
+import { ScrollRow } from '@/components/ui/section-row';
+import { AthleteCard } from '@/components/cards/AthleteCard';
+import { mockAthletes } from '@/lib/mock-athletes';
 
 // Nomi propri dei circuiti (non tradotti). "Tutti" arriva da i18n.
 const circuitNames = [
@@ -27,6 +31,7 @@ type WhyFeature = { title: string; desc: string };
 export default function HomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   const t = useTranslations('Landing');
+  const tA = useTranslations('Athlete');
   const coverageCards = t.raw('coverage.cards') as CoverageCard[];
   const features = t.raw('why.features') as WhyFeature[];
 
@@ -136,6 +141,25 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       {/* ===== SECTION 4 — Live preview + Interviste (client, click -> /login) ===== */}
       <LivePreviewSection />
 
+      {/* ===== SECTION 4b — Atleti in evidenza (profili pubblici) ===== */}
+      <section className="bg-[#141414] px-4 py-20">
+        <div className="mx-auto max-w-6xl">
+          <SectionLabel>{tA('featuredLabel')}</SectionLabel>
+          <h2 className="mt-3 max-w-2xl font-condensed text-3xl font-extrabold text-white sm:text-4xl">
+            {tA('featuredHeading')}
+          </h2>
+          <div className="mt-8">
+            <ScrollRow>
+              {mockAthletes.map((a) => (
+                <div key={a.id} className="shrink-0 snap-start">
+                  <AthleteCard athlete={a} cardWidth={220} />
+                </div>
+              ))}
+            </ScrollRow>
+          </div>
+        </div>
+      </section>
+
       {/* ===== SECTION 5 — Perché SANDR ===== */}
       <section className="bg-[#1C1C1C] px-4 py-20">
         <div className="mx-auto max-w-6xl">
@@ -160,6 +184,9 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
       {/* ===== SECTION 6 — Pricing (client) ===== */}
       <LandingPricing />
+
+      {/* ===== SECTION 6b — Anteprima partnership scommesse (statico) ===== */}
+      <BettingPartnerSection />
 
       {/* ===== SECTION 7 — Showcase tabs (client) ===== */}
       <FeatureTabs />

@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, type MouseEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
 // Card evento live (presentazionale). Nessun fetch dati: riceve tutto via props.
@@ -27,6 +31,21 @@ export function LiveEventCard({
   ctaLabel,
   cardWidth,
 }: LiveEventCardProps) {
+  const t = useTranslations('Athlete');
+  const [reminderOn, setReminderOn] = useState(false);
+  const [tooltip, setTooltip] = useState(false);
+
+  const toggleReminder = (e: MouseEvent) => {
+    // Evita che il click attivi la navigazione della card.
+    e.stopPropagation();
+    e.preventDefault();
+    setReminderOn((v) => !v);
+    if (!reminderOn) {
+      setTooltip(true);
+      setTimeout(() => setTooltip(false), 2000);
+    }
+  };
+
   return (
     <article
       className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-sandr-surface transition-colors hover:border-sandr-orange/50"
@@ -42,16 +61,33 @@ export function LiveEventCard({
           </span>
           Live
         </span>
+
+        {/* Pulsante reminder (in alto a destra) */}
+        <button
+          type="button"
+          aria-label="Reminder"
+          aria-pressed={reminderOn}
+          onClick={toggleReminder}
+          className={`absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 font-condensed text-[11px] font-bold ${
+            reminderOn ? 'border border-sandr-orange text-sandr-orange' : 'border border-white/[0.15] text-white'
+          }`}
+        >
+          R
+        </button>
+        {/* Tooltip di conferma (2s, poi fade) */}
+        <span
+          className={`pointer-events-none absolute right-3 top-11 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[10px] text-white transition-opacity duration-500 ${
+            tooltip ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {t('reminderSet')}
+        </span>
       </div>
 
       <div className="flex flex-1 flex-col p-4">
         {/* Tipo di sport */}
-        <span className="text-xs font-semibold uppercase tracking-wide text-sandr-orange">
-          {sport}
-        </span>
-        <h3 className="mt-1 font-condensed text-lg uppercase tracking-wide text-sandr-text">
-          {title}
-        </h3>
+        <span className="text-xs font-semibold uppercase tracking-wide text-sandr-orange">{sport}</span>
+        <h3 className="mt-1 font-condensed text-lg uppercase tracking-wide text-sandr-text">{title}</h3>
         <p className="mt-1 text-sm text-sandr-muted">
           <span className="text-sandr-text">{teamA}</span> vs{' '}
           <span className="text-sandr-text">{teamB}</span>
