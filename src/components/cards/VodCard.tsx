@@ -5,9 +5,11 @@ export interface VodCardProps {
   duration: string;
   // Accesso al contenuto: determina il badge PREMIUM / FREE.
   access: 'free' | 'premium';
+  // Avanzamento di visione 0..1: se presente mostra la barra "continua a guardare".
+  progress?: number;
 }
 
-export function VodCard({ title, date, duration, access }: VodCardProps) {
+export function VodCard({ title, date, duration, access, progress }: VodCardProps) {
   const isPremium = access === 'premium';
 
   return (
@@ -26,6 +28,15 @@ export function VodCard({ title, date, duration, access }: VodCardProps) {
         <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs text-sandr-text">
           {duration}
         </span>
+        {/* Barra di avanzamento (continua a guardare) */}
+        {typeof progress === 'number' ? (
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-white/15">
+            <div
+              className="h-full bg-[#F04E00]"
+              style={{ width: `${Math.round(Math.min(Math.max(progress, 0), 1) * 100)}%` }}
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="p-4">
