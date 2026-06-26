@@ -1,31 +1,43 @@
 import { Link } from '@/i18n/routing';
 import type { Athlete } from '@/types/athlete';
 
-// Card atleta (presentazionale). Click -> profilo /athletes/[id].
+// Card atleta verticale stile "stories". Click -> profilo /athletes/[id].
+// Con cardWidth: larghezza fissa (px). Senza: riempie la cella (grid).
 export function AthleteCard({ athlete, cardWidth }: { athlete: Athlete; cardWidth?: number }) {
   return (
     <Link
       href={`/athletes/${athlete.id}`}
-      style={{ width: cardWidth ?? 200 }}
-      className="group block overflow-hidden rounded-xl border border-white/[0.08] bg-[#1C1C1C] transition-transform hover:scale-[1.02] hover:border-sandr-orange/60"
+      style={{ width: cardWidth, aspectRatio: '2 / 3' }}
+      className={`group relative block overflow-hidden rounded-xl border border-white/[0.08] transition-transform hover:scale-[1.03] hover:border-sandr-orange ${
+        cardWidth ? '' : 'w-full'
+      }`}
     >
-      {/* Foto quadrata 1:1 */}
-      <div className="relative w-full" style={{ paddingBottom: '100%' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={athlete.photo} alt={athlete.name} className="absolute inset-0 h-full w-full object-cover" />
+      {/* Foto full-bleed */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={athlete.photo} alt={athlete.name} className="absolute inset-0 h-full w-full object-cover" />
 
-        {/* Overlay informazioni */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-3">
-          <span className="inline-block rounded-full bg-sandr-orange px-2 py-0.5 text-[10px] font-bold uppercase text-black">
-            {athlete.circuit}
-          </span>
-          <p className="mt-1 font-condensed text-base font-bold uppercase leading-tight text-white">
-            {athlete.name}
-          </p>
-          <p className="text-[12px] text-[#888888]">
-            {athlete.nationFlag} · {athlete.nation}
-          </p>
-        </div>
+      {/* Overlay gradiente scuro (parte bassa) */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%)' }}
+      />
+
+      {/* Tag sport in alto a destra */}
+      <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-sandr-text">
+        {athlete.sport}
+      </span>
+
+      {/* Contenuto in basso */}
+      <div className="absolute inset-x-0 bottom-0 p-3">
+        <p className="font-condensed font-bold uppercase text-sandr-orange" style={{ fontSize: '10px', letterSpacing: '2px' }}>
+          {athlete.nationFlag}
+        </p>
+        <p className="font-condensed text-base font-extrabold uppercase leading-[1.1] text-white">
+          {athlete.name}
+        </p>
+        <span className="mt-1 inline-block rounded-full bg-sandr-orange px-1.5 py-0.5 text-[9px] font-bold uppercase text-black">
+          {athlete.circuit}
+        </span>
       </div>
     </Link>
   );
