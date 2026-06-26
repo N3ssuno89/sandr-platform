@@ -60,8 +60,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            {/* pt-16 compensa l'altezza della navbar fissa (h-16) */}
-            <main className="flex-1 pt-16">{children}</main>
+            {/* pt-20 compensa l'altezza della navbar fissa (h-20) */}
+            <main className="flex-1 pt-20">{children}</main>
             <Footer />
           </div>
         </NextIntlClientProvider>

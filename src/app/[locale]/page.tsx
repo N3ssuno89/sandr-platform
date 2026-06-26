@@ -33,7 +33,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   return (
     <>
       {/* ===== SECTION 1 — Hero ===== */}
-      <section className="relative -mt-16 flex min-h-screen items-center overflow-hidden bg-[#141414]">
+      <section className="relative -mt-20 flex min-h-screen items-center overflow-hidden bg-[#141414]">
         {/* Atleti ritagliati, ancorati in basso a destra (nascosti su mobile) */}
         <div className="pointer-events-none absolute inset-0 hidden md:block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -82,7 +82,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       </section>
 
       {/* ===== SECTION 2 — Barra circuiti (sticky) ===== */}
-      <div className="sticky top-16 z-40 border-b border-white/[0.08] bg-[#1C1C1C]">
+      <div className="sticky top-20 z-40 border-b border-white/[0.08] bg-[#1C1C1C]">
         <div className="no-scrollbar mx-auto max-w-6xl overflow-x-auto px-4">
           <div className="flex gap-2 whitespace-nowrap py-3">
             <span className="shrink-0 rounded-[20px] bg-sandr-orange px-4 py-2 font-condensed text-[13px] font-bold uppercase text-black">
