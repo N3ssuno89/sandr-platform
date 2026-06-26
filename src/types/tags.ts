@@ -37,6 +37,8 @@ export interface ContentItem {
   nations: NationTag[];
   event?: EventTag;
   thumbnail?: string;
+  // Copertina dedicata "in evidenza" (21:9), usata nell'hero carousel.
+  thumbnailFeatured?: string;
   duration?: string;
   viewerCount?: number;
   isLive?: boolean;
