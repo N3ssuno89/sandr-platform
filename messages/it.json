@@ -92,6 +92,18 @@
       "highlights": "Highlights"
     }
   },
+  "Player": {
+    "tabs": { "chat": "Chat", "stats": "Stats", "upcoming": "Prossimi eventi" },
+    "send": "Invia",
+    "chatPlaceholder": "Scrivi un messaggio...",
+    "startedAt": "Iniziata alle 15:00",
+    "reminder": "Imposta Reminder",
+    "reminderSet": "Reminder impostato",
+    "share": "Condividi",
+    "liveNow": "In diretta ora",
+    "upcoming": "Prossimi eventi",
+    "cast": "Disponibile su Smart TV e Chromecast"
+  },
   "Landing": {
     "circuitsAll": "Tutti",
     "interviews": "Interviste esclusive",

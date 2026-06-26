@@ -16,7 +16,6 @@ const interviewItems = mockContent.filter((c) => c.type === 'interview').slice(0
 export function LivePreviewSection() {
   const t = useTranslations('Landing');
   const tc = useTranslations('Common');
-  const tLive = useTranslations('Live');
   const router = useRouter();
 
   const goLogin = () => router.push('/login');
@@ -42,18 +41,15 @@ export function LivePreviewSection() {
             {liveItems.map((item) => {
               const [teamA, teamB] = (item.teams ?? '').split(' vs ');
               return (
-                <div
-                  key={item.id}
-                  {...clickable}
-                  className="shrink-0 cursor-pointer snap-start"
-                >
+                <div key={item.id} className="shrink-0 snap-start">
+                  {/* Live è pubblico in demo: la card porta al player */}
                   <LiveEventCard
                     title={item.title}
                     teamA={teamA ?? ''}
                     teamB={teamB ?? ''}
                     sport={item.sport}
-                    viewers={item.viewerCount ?? 0}
-                    viewersLabel={tLive('watching')}
+                    href={`/live/${item.id}`}
+                    ctaLabel={tc('watch')}
                     cardWidth={320}
                   />
                 </div>
