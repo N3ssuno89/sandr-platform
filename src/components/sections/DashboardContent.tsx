@@ -7,8 +7,10 @@ import { RowHeader, ScrollRow } from '@/components/ui/section-row';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
 import { AthleteCard } from '@/components/cards/AthleteCard';
+import { FederationCard } from '@/components/cards/FederationCard';
 import { mockContent } from '@/lib/mock-content';
 import { mockAthletes } from '@/lib/mock-athletes';
+import { mockFederations } from '@/lib/mock-federations';
 import type { CircuitTag, ContentItem } from '@/types/tags';
 
 type Row = {
@@ -16,7 +18,7 @@ type Row = {
   title: string;
   kind: 'live' | 'vod';
   live?: boolean;
-  cardWidth: number; // larghezza uniforme di tutte le card della riga
+  cardWidth: number;
   items: ContentItem[];
 };
 
@@ -25,17 +27,17 @@ export function DashboardContent() {
   const tc = useTranslations('Common');
   const tLive = useTranslations('Live');
   const tA = useTranslations('Athlete');
+  const tFed = useTranslations('Federation');
   const [selected, setSelected] = useState<CircuitSelection>('all');
 
-  // Righe per circuito: filtrate dalla selezione (se non combacia -> vuote).
   const circuitRow = (circuit: CircuitTag) =>
     mockContent.filter((c) => c.circuit === circuit && (selected === 'all' || selected === circuit));
-  // Righe per tipo: NON filtrate dal circuito.
   const typeRow = (type: ContentItem['type']) => mockContent.filter((c) => c.type === type);
 
-  // Larghezza card fissa per riga (uniforme dentro la riga, diversa tra righe).
-  const rows: Row[] = [
-    { id: 'live', title: t('liveNow'), kind: 'live', live: true, cardWidth: 320, items: typeRow('live') },
+  const liveItems = typeRow('live');
+
+  // Righe per circuito + tipo (dopo atleti e federazioni).
+  const contentRows: Row[] = [
     { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, items: circuitRow('FIPAV') },
     { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, items: circuitRow('AIBVC') },
     { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, items: circuitRow('AVP') },
@@ -75,15 +77,50 @@ export function DashboardContent() {
 
   return (
     <>
-      {/* Sezione B — filtro circuiti */}
       <CircuitFilter selected={selected} onSelect={setSelected} />
 
-      {/* Sezioni C–J */}
       <div className="space-y-12 py-12">
-        {rows.map((row) => {
-          // Righe vuote dopo il filtro: nascoste.
-          if (row.items.length === 0) return null;
+        {/* 1 — In diretta ora */}
+        {liveItems.length > 0 ? (
+          <section className="mx-auto max-w-6xl px-4">
+            <RowHeader title={t('liveNow')} href="/live" viewAll={t('viewAll')} live />
+            <ScrollRow>
+              {liveItems.map((item) => (
+                <div key={item.id} className="shrink-0 snap-start">
+                  {renderCard(item, 'live', 320)}
+                </div>
+              ))}
+            </ScrollRow>
+          </section>
+        ) : null}
 
+        {/* 2 — Atleti in evidenza */}
+        <section className="mx-auto max-w-6xl px-4">
+          <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
+          <ScrollRow>
+            {mockAthletes.map((a) => (
+              <div key={a.id} className="shrink-0 snap-start">
+                <AthleteCard athlete={a} cardWidth={160} />
+              </div>
+            ))}
+          </ScrollRow>
+        </section>
+
+        {/* 3 — I circuiti */}
+        <section className="mx-auto max-w-6xl px-4">
+          <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
+          <ScrollRow>
+            {mockFederations.map((f) => (
+              <div key={f.id} className="shrink-0 snap-start">
+                <FederationCard federation={f} />
+              </div>
+            ))}
+          </ScrollRow>
+        </section>
+
+        {/* 4 — Righe contenuti */}
+        {contentRows.map((row) => {
+          if (row.items.length === 0) return null;
           return (
             <section key={row.id} className="mx-auto max-w-6xl px-4">
               <RowHeader title={row.title} href="/live" viewAll={t('viewAll')} live={row.live} />
@@ -97,20 +134,6 @@ export function DashboardContent() {
             </section>
           );
         })}
-
-        {/* Atleti in evidenza */}
-        <section className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-5 font-condensed text-2xl font-bold uppercase tracking-wide text-sandr-text">
-            {tA('featuredRow')}
-          </h2>
-          <ScrollRow>
-            {mockAthletes.map((a) => (
-              <div key={a.id} className="shrink-0 snap-start">
-                <AthleteCard athlete={a} cardWidth={200} />
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
       </div>
     </>
   );

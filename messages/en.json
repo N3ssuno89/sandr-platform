@@ -50,6 +50,7 @@
     "watchReplay": "Watch replay",
     "ranking": "Ranking",
     "notFound": "Athlete not found",
+    "filterAll": "All",
     "stats": {
       "matches": "Matches",
       "wins": "Wins",
@@ -69,6 +70,27 @@
     "draw": "Draw",
     "setStatus": "Set 1: 21-18 — In progress",
     "comingSoon": "Coming soon"
+  },
+  "Federation": {
+    "indexTitle": "The circuits",
+    "explore": "Explore",
+    "follow": "Follow",
+    "notFound": "Federation not found",
+    "empty": "No content available.",
+    "counts": {
+      "live": "Live",
+      "replay": "Replay",
+      "interviews": "Interviews",
+      "highlights": "Highlights"
+    },
+    "tabs": {
+      "home": "Home",
+      "live": "Live",
+      "replay": "Replay",
+      "interviews": "Interviews",
+      "athletes": "Athletes",
+      "highlights": "Highlights"
+    }
   },
   "Landing": {
     "circuitsAll": "All",
