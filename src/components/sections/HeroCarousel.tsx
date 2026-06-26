@@ -15,9 +15,13 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const t = useTranslations('AuthHome');
   const [index, setIndex] = useState(0);
 
-  // Video reali in evidenza se presenti, altrimenti slide mock.
-  const usingFeatured = !!(featuredVideos && featuredVideos.length > 0);
-  const slides = usingFeatured ? (featuredVideos as ContentItem[]) : mockSlides;
+  // Debug: verifica che la prop featuredVideos arrivi al client.
+  console.log('[hero] featuredVideos:', featuredVideos?.length ?? 0);
+
+  // Video reali in evidenza se presenti (length > 0), altrimenti slide mock.
+  // NON deve mai cadere sul mock quando ci sono video in evidenza.
+  const slides = featuredVideos && featuredVideos.length > 0 ? featuredVideos : mockSlides;
+  const usingFeatured = slides !== mockSlides;
 
   const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [slides.length]);
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
