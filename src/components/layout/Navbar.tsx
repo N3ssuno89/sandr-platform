@@ -25,7 +25,10 @@ function Logo({ href = '/' }: { href?: string }) {
 // con possibilità di override esplicito via prop. Niente link di navigazione.
 export function Navbar({ variant }: { variant?: 'public' | 'dashboard' }) {
   const pathname = usePathname();
-  const resolved = variant ?? (pathname.startsWith('/dashboard') ? 'dashboard' : 'public');
+  // Il player live (/live/[id]) usa la navbar minimale come la dashboard.
+  const resolved =
+    variant ??
+    (pathname.startsWith('/dashboard') || pathname.startsWith('/live/') ? 'dashboard' : 'public');
 
   return resolved === 'dashboard' ? <DashboardNavbar /> : <PublicNavbar />;
 }

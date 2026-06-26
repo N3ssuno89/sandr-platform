@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { CircuitFilter, type CircuitSelection } from '@/components/sections/CircuitFilter';
 import { RowHeader, ScrollRow } from '@/components/ui/section-row';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
@@ -28,10 +26,9 @@ export function DashboardContent() {
   const tLive = useTranslations('Live');
   const tA = useTranslations('Athlete');
   const tFed = useTranslations('Federation');
-  const [selected, setSelected] = useState<CircuitSelection>('all');
 
-  const circuitRow = (circuit: CircuitTag) =>
-    mockContent.filter((c) => c.circuit === circuit && (selected === 'all' || selected === circuit));
+  // Nessun filtro circuito: tutte le righe sono sempre visibili.
+  const circuitRow = (circuit: CircuitTag) => mockContent.filter((c) => c.circuit === circuit);
   const typeRow = (type: ContentItem['type']) => mockContent.filter((c) => c.type === type);
 
   const liveItems = typeRow('live');
@@ -77,8 +74,6 @@ export function DashboardContent() {
 
   return (
     <>
-      <CircuitFilter selected={selected} onSelect={setSelected} />
-
       <div className="space-y-12 py-12">
         {/* 1 — In diretta ora */}
         {liveItems.length > 0 ? (

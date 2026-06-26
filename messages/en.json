@@ -92,6 +92,18 @@
       "highlights": "Highlights"
     }
   },
+  "Player": {
+    "tabs": { "chat": "Chat", "stats": "Stats", "upcoming": "Upcoming" },
+    "send": "Send",
+    "chatPlaceholder": "Write a message...",
+    "startedAt": "Started at 15:00",
+    "reminder": "Set Reminder",
+    "reminderSet": "Reminder set",
+    "share": "Share",
+    "liveNow": "Live now",
+    "upcoming": "Upcoming",
+    "cast": "Available on Smart TV and Chromecast"
+  },
   "Landing": {
     "circuitsAll": "All",
     "interviews": "Exclusive interviews",

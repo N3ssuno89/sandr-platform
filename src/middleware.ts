@@ -28,6 +28,8 @@ const demoPublicRoutes = [
 function isProtected(pathname: string): boolean {
   const path = stripLocale(pathname);
   if (demoPublicRoutes.includes(path)) return false;
+  // Player live pubblico in demo (nessun controllo accesso reale ancora).
+  if (path === '/live' || path.startsWith('/live/')) return false;
   return protectedRoutes.some(
     (route) => path === route || path.startsWith(`${route}/`),
   );
