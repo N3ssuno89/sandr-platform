@@ -30,6 +30,9 @@ function isProtected(pathname: string): boolean {
   if (demoPublicRoutes.includes(path)) return false;
   // Player live pubblico in demo (nessun controllo accesso reale ancora).
   if (path === '/live' || path.startsWith('/live/')) return false;
+  // Pannello admin pubblico in demo. PRODUZIONE: gating ruolo admin via
+  // Supabase RLS obbligatorio (AREA CRITICA, CLAUDE.md).
+  if (path === '/dashboard/admin' || path.startsWith('/dashboard/admin/')) return false;
   return protectedRoutes.some(
     (route) => path === route || path.startsWith(`${route}/`),
   );
