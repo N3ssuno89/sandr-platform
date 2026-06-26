@@ -33,9 +33,11 @@ export function RowHeader({
   );
 }
 
-// Riga a scroll orizzontale con snap.
+// Riga a scroll orizzontale con snap. Scrollbar nascosta (.no-scrollbar).
 export function ScrollRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">{children}</div>
+    <div className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
+      {children}
+    </div>
   );
 }

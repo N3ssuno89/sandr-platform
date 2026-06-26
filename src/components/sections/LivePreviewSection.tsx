@@ -45,7 +45,7 @@ export function LivePreviewSection() {
                 <div
                   key={item.id}
                   {...clickable}
-                  className="min-w-[82%] shrink-0 cursor-pointer snap-start sm:min-w-[320px]"
+                  className="shrink-0 cursor-pointer snap-start"
                 >
                   <LiveEventCard
                     title={item.title}
@@ -54,6 +54,7 @@ export function LivePreviewSection() {
                     sport={item.sport}
                     viewers={item.viewerCount ?? 0}
                     viewersLabel={tLive('watching')}
+                    cardWidth={320}
                   />
                 </div>
               );
@@ -83,13 +84,14 @@ export function LivePreviewSection() {
               <div
                 key={item.id}
                 {...clickable}
-                className="min-w-[70%] shrink-0 cursor-pointer snap-start sm:min-w-[260px]"
+                className="shrink-0 cursor-pointer snap-start"
               >
                 <VodCard
                   title={item.title}
                   date={item.date ?? ''}
                   duration={item.duration ?? ''}
                   access={item.isPremium ? 'premium' : 'free'}
+                  cardWidth={360}
                 />
               </div>
             ))}
