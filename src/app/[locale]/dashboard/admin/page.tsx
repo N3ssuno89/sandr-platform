@@ -1,10 +1,23 @@
 import { setRequestLocale } from 'next-intl/server';
 import { listVideos, getThumbnailUrl } from '@/lib/cloudflare-stream';
+import { FeaturedVideos, type AdminVideo } from '@/components/admin/FeaturedVideos';
 
 export default async function AdminHomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
 
   const videos = await listVideos();
+
+  // Video mappati per la sezione "Video in evidenza" (meta.featured === 'true').
+  const adminVideos: AdminVideo[] = videos.map((v) => {
+    const meta = v.meta as Record<string, string | undefined>;
+    return {
+      uid: v.uid,
+      title: meta?.name ?? 'Video',
+      circuit: meta?.circuit ?? '—',
+      thumb: getThumbnailUrl(v.uid),
+      featured: meta?.featured === 'true',
+    };
+  });
 
   const stats = [
     { label: 'Video totali', value: videos.length > 0 ? String(videos.length) : '24', trend: '+12%' },
@@ -29,6 +42,9 @@ export default async function AdminHomePage({ params }: { params: { locale: stri
           </div>
         ))}
       </div>
+
+      {/* Video in evidenza */}
+      <FeaturedVideos videos={adminVideos} />
 
       {/* Video recenti */}
       <h2 className="mt-10 font-condensed text-xl font-bold uppercase text-white">Video recenti</h2>

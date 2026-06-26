@@ -25,6 +25,9 @@ export default async function EditVideoPage({
     access: meta.access ?? 'free',
     description: meta.description,
     tags: meta.tags,
+    thumbnailCard: meta.thumbnailCard,
+    thumbnailFeatured: meta.thumbnailFeatured,
+    featured: meta.featured,
   };
 
   return (
