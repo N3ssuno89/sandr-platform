@@ -14,7 +14,9 @@ const config: Config = {
         'sandr-black': '#0C0C0C',
         'sandr-surface': '#1A1A1A',
         // Accento principale (arancione SANDR)
-        'sandr-orange': '#E8500A',
+        // NB: aggiornato a #F04E00 su richiesta del founder (era #E8500A in
+        // CLAUDE.md). Allineare CLAUDE.md/FACTORY.md di conseguenza.
+        'sandr-orange': '#F04E00',
         // Testo
         'sandr-text': '#F7F5F2',
         'sandr-muted': '#888888',
