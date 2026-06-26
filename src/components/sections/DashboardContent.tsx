@@ -20,16 +20,20 @@ type Row = {
   items: ContentItem[];
 };
 
-export function DashboardContent() {
+export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] }) {
   const t = useTranslations('AuthHome');
   const tc = useTranslations('Common');
   const tLive = useTranslations('Live');
   const tA = useTranslations('Athlete');
   const tFed = useTranslations('Federation');
 
+  // Sorgente contenuti: video reali da Cloudflare Stream se presenti, altrimenti
+  // i dati mock di fallback.
+  const source = realVideos ?? mockContent;
+
   // Nessun filtro circuito: tutte le righe sono sempre visibili.
-  const circuitRow = (circuit: CircuitTag) => mockContent.filter((c) => c.circuit === circuit);
-  const typeRow = (type: ContentItem['type']) => mockContent.filter((c) => c.type === type);
+  const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
+  const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
 
   const liveItems = typeRow('live');
 
@@ -68,6 +72,7 @@ export function DashboardContent() {
         duration={item.duration ?? ''}
         access={item.isPremium ? 'premium' : 'free'}
         cardWidth={cardWidth}
+        thumbnailUrl={item.thumbnail}
       />
     );
   };
