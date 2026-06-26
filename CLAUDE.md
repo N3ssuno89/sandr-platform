@@ -10,14 +10,20 @@ Dominio: sandr.tv | Founder: Emanuele Giartosio (zioema)
 ## Stack obbligatorio
 - Frontend: Next.js (React) + Tailwind CSS
 - Backend/DB: Supabase (PostgreSQL + Auth + Realtime + Storage)
+  → NEXT STEP: auth/sessioni/ruoli non ancora collegati. In demo le rotte
+    protette (incl. /dashboard/admin) sono pubbliche via eccezioni middleware.
+    Prima della produzione: gating ruolo via Supabase Auth + RLS (AREA CRITICA).
 - Video: Cloudflare Stream (RTMP ingest → HLS delivery)
+  → COLLEGATO: src/lib/cloudflare-stream.ts (listVideos/getVideo server-side,
+    getEmbedUrl/getThumbnailUrl client-safe). Token CLOUDFLARE_STREAM_TOKEN
+    SOLO server-side. Build-safe se non configurato (fallback vuoto/mock).
 - Pagamenti: Stripe (abbonamenti + PPV)
 - Deploy staging: Netlify (preview branch automatico)
 - Deploy produzione: MANUALE, solo su approvazione founder
 
 ## Identità visiva — rispettare sempre
 - Background: #0C0C0C o #1A1A1A
-- Accento principale: #E8500A (arancione SANDR)
+- Accento principale: #F04E00 (arancione SANDR ufficiale, token `sandr-orange`)
 - Testo principale: #F7F5F2
 - Testo secondario: #888888
 - Font headlines: Archivo Black o Barlow Condensed
@@ -60,6 +66,24 @@ Campionato Italiano, Marathon, King & Queen
 - free: visibile a tutti
 - premium: richiede abbonamento attivo
 - ppv: richiede acquisto singolo evento
+
+## Pannello admin (content management)
+Rotte sotto /dashboard/admin (tool interno staff, etichette in italiano):
+- /dashboard/admin — dashboard (stat + video recenti + video in evidenza)
+- /dashboard/admin/videos — gestione video (lista, ricerca, azioni)
+- /dashboard/admin/videos/upload — upload video + metadata (2 step)
+- /dashboard/admin/videos/[id]/edit — modifica metadata
+- /dashboard/admin/athletes — gestione atleti (mock, DB nella prossima versione)
+- /dashboard/admin/live | /users | /subscriptions — placeholder
+AREA CRITICA: in produzione richiede gating ruolo admin (Supabase Auth + RLS).
+
+## Metadati video (Cloudflare Stream `meta`)
+Campi custom scritti dal pannello admin nel `meta` del video:
+- name, circuit, type, sport, event, athletes, country, eventDate
+- access (free/premium/ppv), description, tags
+- thumbnailCard — copertina 16:9 per le righe a scorrimento
+- thumbnailFeatured — copertina 21:9 per l'hero "in evidenza"
+- featured — 'true' se il video è in evidenza (hero homepage)
 
 ## Copy corretto
 ✅ "Live on SANDR" | "SANDR Replay" | "SANDR Rankings"

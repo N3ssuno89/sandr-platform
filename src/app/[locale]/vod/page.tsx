@@ -42,14 +42,18 @@ export default async function VodPage({ params }: { params: { locale: string } }
   // Video reali se disponibili, altrimenti fallback ai mock.
   const items: CardItem[] =
     videos.length > 0
-      ? videos.map((v) => ({
-          id: v.uid,
-          title: v.meta?.name ?? 'Video',
-          date: formatDate(v.created),
-          duration: formatDuration(v.duration),
-          access: 'free',
-          thumbnailUrl: getThumbnailUrl(v.uid),
-        }))
+      ? videos.map((v) => {
+          // Copertina custom (meta.thumbnailCard) con fallback al frame generato.
+          const meta = v.meta as Record<string, string | undefined>;
+          return {
+            id: v.uid,
+            title: meta?.name ?? 'Video',
+            date: formatDate(v.created),
+            duration: formatDuration(v.duration),
+            access: 'free' as const,
+            thumbnailUrl: meta?.thumbnailCard || getThumbnailUrl(v.uid),
+          };
+        })
       : mockContent
           .filter((c) => c.type !== 'live')
           .map((c) => ({

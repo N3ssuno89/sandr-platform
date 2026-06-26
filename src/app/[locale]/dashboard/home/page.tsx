@@ -47,19 +47,23 @@ function toContentItem(video: StreamVideo): ContentItem {
   const circuit = (meta.circuit as CircuitTag) ?? 'BPT';
   const type = parseType(meta.type);
   const sport = (meta.sport as SportTag) ?? 'Beach Volley';
+  const featured = meta.featured === 'true';
 
   return {
     id: video.uid,
     title: meta.name ?? 'Video',
+    teams: meta.athletes || undefined,
     circuit,
     sport,
     type,
     nations: [],
-    thumbnail: getThumbnailUrl(video.uid),
+    thumbnail: meta.thumbnailCard || getThumbnailUrl(video.uid),
+    thumbnailFeatured: meta.thumbnailFeatured || undefined,
     duration: formatDuration(video.duration),
     isPremium: meta.access === 'premium',
     date: formatDate(video.created),
-    tags: [circuit, type, sport],
+    // 'featured' nei tag così il filtro hero è un semplice tags.includes.
+    tags: featured ? [circuit, type, sport, 'featured'] : [circuit, type, sport],
   };
 }
 
@@ -73,9 +77,12 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   const videos = await listVideos();
   const realVideos = videos.length > 0 ? videos.map(toContentItem) : undefined;
 
+  // Video in evidenza per l'hero (meta.featured === 'true' → tag 'featured').
+  const featuredVideos = realVideos?.filter((v) => v.tags.includes('featured'));
+
   return (
     <>
-      <HeroCarousel />
+      <HeroCarousel featuredVideos={featuredVideos} />
       <DashboardContent realVideos={realVideos} />
       <BettingPartnerSection />
     </>

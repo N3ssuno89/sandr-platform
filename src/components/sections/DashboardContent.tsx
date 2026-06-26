@@ -81,7 +81,9 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   return (
     <>
       <div className="space-y-12 py-12">
-        {/* 1 — In diretta ora */}
+        {/* 1 — In diretta ora. Mostrata solo se la sorgente (video reali o
+            mock) ha contenuti type === 'live'; coi video reali senza live,
+            la riga è nascosta del tutto. */}
         {liveItems.length > 0 ? (
           <section className="mx-auto max-w-6xl px-4">
             <RowHeader title={t('liveNow')} href="/live" viewAll={t('viewAll')} live />

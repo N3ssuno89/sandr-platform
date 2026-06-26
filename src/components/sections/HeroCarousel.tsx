@@ -6,16 +6,20 @@ import { Link } from '@/i18n/routing';
 import { mockContent } from '@/lib/mock-content';
 import type { ContentItem } from '@/types/tags';
 
-// Slide in evidenza: live, replay (Beach Pro Tour finale), intervista.
-const slides = ['live-1', 'replay-1', 'interview-1']
+// Slide mock di fallback: live, replay (Beach Pro Tour finale), intervista.
+const mockSlides = ['live-1', 'replay-1', 'interview-1']
   .map((id) => mockContent.find((c) => c.id === id))
   .filter(Boolean) as ContentItem[];
 
-export function HeroCarousel() {
+export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[] }) {
   const t = useTranslations('AuthHome');
   const [index, setIndex] = useState(0);
 
-  const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), []);
+  // Video reali in evidenza se presenti, altrimenti slide mock.
+  const usingFeatured = !!(featuredVideos && featuredVideos.length > 0);
+  const slides = usingFeatured ? (featuredVideos as ContentItem[]) : mockSlides;
+
+  const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [slides.length]);
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
 
   // Auto-avanzamento ogni 5 secondi.
@@ -24,12 +28,26 @@ export function HeroCarousel() {
     return () => clearInterval(id);
   }, [next]);
 
-  const slide = slides[index];
+  // Clamp: la sorgente può cambiare numero di slide tra i render.
+  const active = index % slides.length;
+  const slide = slides[active];
+  const bg = slide.thumbnailFeatured || slide.thumbnail;
+  const href = usingFeatured ? `/vod/${slide.id}` : `/live/${slide.id}`;
 
   return (
     <section className="relative h-[500px] w-full overflow-hidden bg-[#1C1C1C]">
-      {/* Sfondo con gradiente sottile */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
+      {/* Sfondo: immagine reale (brightness 0.4) o gradiente di fallback */}
+      {bg ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={bg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ filter: 'brightness(0.4)' }}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
+      )}
       <div
         className="absolute inset-0"
         style={{ background: 'linear-gradient(to top, rgba(20,20,20,0.95), transparent 60%)' }}
@@ -45,7 +63,7 @@ export function HeroCarousel() {
         </h2>
         {slide.teams ? <p className="mt-2 text-[#C0BDB8]">{slide.teams}</p> : null}
         <Link
-          href={`/live/${slide.id}`}
+          href={href}
           className="mt-5 w-fit rounded-lg bg-sandr-orange px-7 py-3 font-condensed font-bold uppercase tracking-wide text-black"
         >
           {t('watchNow')}
@@ -79,7 +97,7 @@ export function HeroCarousel() {
             aria-label={`Slide ${i + 1}`}
             onClick={() => setIndex(i)}
             className={`h-2 rounded-full transition-all ${
-              i === index ? 'w-6 bg-sandr-orange' : 'w-2 bg-white/40'
+              i === active ? 'w-6 bg-sandr-orange' : 'w-2 bg-white/40'
             }`}
           />
         ))}

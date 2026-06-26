@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+
 // Card VOD/replay (presentazionale). Nessun fetch dati: riceve tutto via props.
 export interface VodCardProps {
   title: string;
@@ -15,6 +19,11 @@ export interface VodCardProps {
 
 export function VodCard({ title, date, duration, access, progress, cardWidth, thumbnailUrl }: VodCardProps) {
   const isPremium = access === 'premium';
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
+  // Mostra la thumbnail solo se disponibile e non in errore; altrimenti
+  // resta il placeholder scuro del contenitore.
+  const showThumb = !!thumbnailUrl && !errored;
 
   return (
     <article
@@ -23,10 +32,17 @@ export function VodCard({ title, date, duration, access, progress, cardWidth, th
     >
       {/* Thumbnail 16:9 (paddingBottom 56.25% su contenitore relative) */}
       <div className="relative w-full bg-gradient-to-br from-white/10 to-transparent" style={{ paddingBottom: '56.25%' }}>
-        {/* Thumbnail reale se disponibile */}
-        {thumbnailUrl ? (
+        {/* Thumbnail reale: fade-in al load, fallback silenzioso su errore */}
+        {showThumb ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={thumbnailUrl} alt={title} className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={thumbnailUrl}
+            alt={title}
+            onLoad={() => setLoaded(true)}
+            onError={() => setErrored(true)}
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
+            style={{ opacity: loaded ? 1 : 0 }}
+          />
         ) : null}
         {/* Badge accesso */}
         <span
