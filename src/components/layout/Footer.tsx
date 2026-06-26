@@ -3,118 +3,57 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 
-// Footer: logo, griglia link, handle @sandr.tv, switcher lingua IT/EN,
-// copyright 2026. Le colonne si impilano in verticale su mobile.
-// L'age gate 18+ NON va mai rimosso (CLAUDE.md).
+// Footer minimale. L'age gate 18+ NON va mai rimosso (CLAUDE.md): resta un
+// piccolo indicatore accanto al copyright.
 export function Footer() {
-  const t = useTranslations('Footer');
-  const tNav = useTranslations('Nav');
   const tc = useTranslations('Common');
+  const tf = useTranslations('Footer');
   const pathname = usePathname();
   const locale = useLocale();
 
-  const explore = [
-    { href: '/live', label: tNav('live') },
-    { href: '/vod', label: tNav('replay') },
-    { href: '/#sports', label: tNav('sports') },
-    { href: '/pricing', label: tNav('pricing') },
-  ];
-
-  // Link placeholder (pagine non ancora implementate): puntano a "#".
-  const company = [t('about'), t('press'), t('contact')];
-  const legal = [t('terms'), t('privacy'), t('ageGate')];
-
   return (
-    <footer className="border-t border-white/10 bg-sandr-black">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
-          {/* Logo + tagline + handle */}
-          <div>
-            <Link href="/" className="inline-flex items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logo.png"
-                alt="SANDR"
-                width={88}
-                height={88}
-                style={{ height: '88px', width: '88px', objectFit: 'contain' }}
-              />
-            </Link>
-            <p className="mt-3 font-condensed uppercase tracking-wide text-sandr-muted">
-              {tc('tagline')}
-            </p>
-            <p className="mt-4 text-sm text-sandr-muted">@sandr.tv</p>
-          </div>
-
-          {/* Esplora */}
-          <div>
-            <h3 className="font-condensed text-sm uppercase tracking-wide text-sandr-text">
-              {t('exploreTitle')}
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm text-sandr-muted">
-              {explore.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="hover:text-sandr-text">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Azienda */}
-          <div>
-            <h3 className="font-condensed text-sm uppercase tracking-wide text-sandr-text">
-              {t('companyTitle')}
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm text-sandr-muted">
-              {company.map((label) => (
-                <li key={label}>
-                  <a href="#" className="hover:text-sandr-text">
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legale */}
-          <div>
-            <h3 className="font-condensed text-sm uppercase tracking-wide text-sandr-text">
-              {t('legalTitle')}
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm text-sandr-muted">
-              {legal.map((label) => (
-                <li key={label}>
-                  <a href="#" className="hover:text-sandr-text">
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <footer className="border-t border-white/[0.06] bg-[#141414] px-8 py-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        {/* Blocco sinistro */}
+        <div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="SANDR"
+            width={48}
+            height={48}
+            style={{ height: '48px', width: '48px', objectFit: 'contain' }}
+          />
+          <p className="mt-2 text-[13px] text-[#888888]">{tc('tagline')}</p>
+          <p className="text-[12px] text-[#888888]">@sandr.tv</p>
         </div>
 
-        {/* Barra inferiore: switcher lingua + copyright */}
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-sm font-condensed uppercase tracking-wide">
+        {/* Blocco destro */}
+        <div className="flex items-center gap-6">
+          {/* Switcher lingua IT / EN */}
+          <div className="flex items-center gap-2 font-condensed text-[12px] font-bold uppercase">
             <Link
               href={pathname}
               locale="it"
-              className={locale === 'it' ? 'text-sandr-orange' : 'text-sandr-muted hover:text-sandr-text'}
+              className={locale === 'it' ? 'text-sandr-orange' : 'text-[#888888] hover:text-sandr-text'}
             >
               IT
             </Link>
-            <span className="text-sandr-muted">/</span>
+            <span className="text-[#888888]">/</span>
             <Link
               href={pathname}
               locale="en"
-              className={locale === 'en' ? 'text-sandr-orange' : 'text-sandr-muted hover:text-sandr-text'}
+              className={locale === 'en' ? 'text-sandr-orange' : 'text-[#888888] hover:text-sandr-text'}
             >
               EN
             </Link>
           </div>
-          <p className="text-xs text-sandr-muted">© 2026 SANDR. {t('rights')}</p>
+
+          {/* Copyright + age gate 18+ (minimo, non rimuovibile) */}
+          <p className="flex items-center gap-2 text-[11px] text-[#888888]">
+            <span>© 2026 SANDR. {tf('rights')}</span>
+            <span className="rounded border border-white/15 px-1 text-[10px]">18+</span>
+          </p>
         </div>
       </div>
     </footer>

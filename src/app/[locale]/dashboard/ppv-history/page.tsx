@@ -7,7 +7,7 @@ export default function PpvHistoryPage({ params }: { params: { locale: string } 
   const t = useTranslations('Account');
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-[#141414] px-4 text-center">
+    <div className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center bg-[#141414] px-4 text-center">
       <h1 className="font-condensed text-3xl font-extrabold uppercase text-white md:text-4xl">
         {t('ppvHistory')}
       </h1>

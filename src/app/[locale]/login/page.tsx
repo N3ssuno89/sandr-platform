@@ -12,7 +12,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   const tc = useTranslations('Common');
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#141414] px-4 py-12">
+    <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center bg-[#141414] px-4 py-12">
       <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#1C1C1C] p-10">
         {/* Logo */}
         <div className="flex justify-center">
