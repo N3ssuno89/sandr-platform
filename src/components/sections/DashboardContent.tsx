@@ -14,6 +14,7 @@ type Row = {
   title: string;
   kind: 'live' | 'vod';
   live?: boolean;
+  cardWidth: number; // larghezza uniforme di tutte le card della riga
   items: ContentItem[];
 };
 
@@ -29,18 +30,19 @@ export function DashboardContent() {
   // Righe per tipo: NON filtrate dal circuito.
   const typeRow = (type: ContentItem['type']) => mockContent.filter((c) => c.type === type);
 
+  // Larghezza card fissa per riga (uniforme dentro la riga, diversa tra righe).
   const rows: Row[] = [
-    { id: 'live', title: t('liveNow'), kind: 'live', live: true, items: typeRow('live') },
-    { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', items: circuitRow('FIPAV') },
-    { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', items: circuitRow('AIBVC') },
-    { id: 'avp', title: 'AVP America', kind: 'vod', items: circuitRow('AVP') },
-    { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', items: circuitRow('BPT') },
-    { id: 'interview', title: t('interviews'), kind: 'vod', items: typeRow('interview') },
-    { id: 'bts', title: t('behindScenes'), kind: 'vod', items: typeRow('behind-the-scenes') },
-    { id: 'highlights', title: t('highlights'), kind: 'vod', items: typeRow('highlights') },
+    { id: 'live', title: t('liveNow'), kind: 'live', live: true, cardWidth: 320, items: typeRow('live') },
+    { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, items: circuitRow('FIPAV') },
+    { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, items: circuitRow('AIBVC') },
+    { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, items: circuitRow('AVP') },
+    { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, items: circuitRow('BPT') },
+    { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, items: typeRow('interview') },
+    { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, items: typeRow('behind-the-scenes') },
+    { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, items: typeRow('highlights') },
   ];
 
-  const renderCard = (item: ContentItem, kind: 'live' | 'vod') => {
+  const renderCard = (item: ContentItem, kind: 'live' | 'vod', cardWidth: number) => {
     if (kind === 'live') {
       const parts = (item.teams ?? '').split(' vs ');
       return (
@@ -53,6 +55,7 @@ export function DashboardContent() {
           viewersLabel={tLive('watching')}
           href={`/live/${item.id}`}
           ctaLabel={tc('watch')}
+          cardWidth={cardWidth}
         />
       );
     }
@@ -62,6 +65,7 @@ export function DashboardContent() {
         date={item.date ?? ''}
         duration={item.duration ?? ''}
         access={item.isPremium ? 'premium' : 'free'}
+        cardWidth={cardWidth}
       />
     );
   };
@@ -73,20 +77,17 @@ export function DashboardContent() {
 
       {/* Sezioni C–J */}
       <div className="space-y-12 py-12">
-        {rows.map((row, i) => {
+        {rows.map((row) => {
           // Righe vuote dopo il filtro: nascoste.
           if (row.items.length === 0) return null;
-          // Task 7: alterna card larghe (300px) e standard (220px).
-          const large = i % 2 === 0;
-          const width = large ? 'min-w-[85%] sm:min-w-[300px]' : 'min-w-[72%] sm:min-w-[220px]';
 
           return (
             <section key={row.id} className="mx-auto max-w-6xl px-4">
               <RowHeader title={row.title} href="/live" viewAll={t('viewAll')} live={row.live} />
               <ScrollRow>
                 {row.items.map((item) => (
-                  <div key={item.id} className={`${width} shrink-0 snap-start`}>
-                    {renderCard(item, row.kind)}
+                  <div key={item.id} className="shrink-0 snap-start">
+                    {renderCard(item, row.kind, row.cardWidth)}
                   </div>
                 ))}
               </ScrollRow>

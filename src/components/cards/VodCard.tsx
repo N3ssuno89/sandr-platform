@@ -7,19 +7,24 @@ export interface VodCardProps {
   access: 'free' | 'premium';
   // Avanzamento di visione 0..1: se presente mostra la barra "continua a guardare".
   progress?: number;
+  // Larghezza fissa della card (px). Default 220.
+  cardWidth?: number;
 }
 
-export function VodCard({ title, date, duration, access, progress }: VodCardProps) {
+export function VodCard({ title, date, duration, access, progress, cardWidth }: VodCardProps) {
   const isPremium = access === 'premium';
 
   return (
-    <article className="group overflow-hidden rounded-lg border border-white/10 bg-sandr-surface transition-colors hover:border-sandr-orange/50">
-      {/* Thumbnail placeholder */}
-      <div className="relative aspect-video bg-gradient-to-br from-white/10 to-transparent">
+    <article
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-sandr-surface transition-colors hover:border-sandr-orange/50"
+      style={{ width: cardWidth ?? 220 }}
+    >
+      {/* Thumbnail 16:9 (paddingBottom 56.25% su contenitore relative) */}
+      <div className="relative w-full bg-gradient-to-br from-white/10 to-transparent" style={{ paddingBottom: '56.25%' }}>
         {/* Badge accesso */}
         <span
           className={`absolute left-3 top-3 rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
-            isPremium ? 'bg-sandr-orange text-sandr-text' : 'bg-white/10 text-sandr-text'
+            isPremium ? 'bg-sandr-orange text-black' : 'bg-white/10 text-sandr-text'
           }`}
         >
           {isPremium ? 'Premium' : 'Free'}
@@ -39,10 +44,8 @@ export function VodCard({ title, date, duration, access, progress }: VodCardProp
         ) : null}
       </div>
 
-      <div className="p-4">
-        <h3 className="font-condensed text-lg uppercase tracking-wide text-sandr-text">
-          {title}
-        </h3>
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="font-condensed text-lg uppercase tracking-wide text-sandr-text">{title}</h3>
         <p className="mt-1 text-sm text-sandr-muted">{date}</p>
       </div>
     </article>

@@ -12,6 +12,8 @@ export interface LiveEventCardProps {
   // Se presenti, mostra una CTA che porta allo stream.
   href?: string;
   ctaLabel?: string;
+  // Larghezza fissa della card (px). Default 220.
+  cardWidth?: number;
 }
 
 export function LiveEventCard({
@@ -23,11 +25,15 @@ export function LiveEventCard({
   viewersLabel = 'watching',
   href,
   ctaLabel,
+  cardWidth,
 }: LiveEventCardProps) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-sandr-surface transition-colors hover:border-sandr-orange/50">
-      {/* Thumbnail 16:9 placeholder */}
-      <div className="relative aspect-video bg-gradient-to-br from-white/10 to-transparent">
+    <article
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-sandr-surface transition-colors hover:border-sandr-orange/50"
+      style={{ width: cardWidth ?? 220 }}
+    >
+      {/* Thumbnail 16:9 (paddingBottom 56.25% su contenitore relative) */}
+      <div className="relative w-full bg-gradient-to-br from-white/10 to-transparent" style={{ paddingBottom: '56.25%' }}>
         {/* Badge LIVE con pallino rosso pulsante */}
         <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded bg-black/70 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-sandr-text">
           <span className="relative flex h-2 w-2">

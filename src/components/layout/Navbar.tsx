@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/routing';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
 
 // Link di navigazione principali (Sports è un'ancora alla sezione homepage).
 const navLinks = [
@@ -12,9 +12,119 @@ const navLinks = [
   { href: '/pricing', key: 'pricing' },
 ] as const;
 
-// Navbar fissa con backdrop-blur. Logo a sinistra, link al centro, CTA a
-// destra. Su mobile: hamburger che apre un overlay full-screen opaco.
-export function Navbar() {
+// Logo riutilizzato in entrambe le varianti.
+function Logo({ href = '/', onClick }: { href?: string; onClick?: () => void }) {
+  return (
+    <Link href={href} onClick={onClick} className="flex items-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt="SANDR"
+        width={112}
+        height={112}
+        style={{ height: '112px', width: '112px', objectFit: 'contain' }}
+      />
+    </Link>
+  );
+}
+
+// La Navbar è renderizzata una sola volta nel layout: la variante è derivata
+// dalla rotta (tutte le pagine /dashboard usano la variante semplificata),
+// con possibilità di override esplicito via prop.
+export function Navbar({ variant }: { variant?: 'public' | 'dashboard' }) {
+  const pathname = usePathname();
+  const resolved = variant ?? (pathname.startsWith('/dashboard') ? 'dashboard' : 'public');
+
+  return resolved === 'dashboard' ? <DashboardNavbar /> : <PublicNavbar />;
+}
+
+// ===== Variante dashboard: solo logo + avatar =====
+function DashboardNavbar() {
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-sandr-black/70 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <Logo href="/dashboard/home" />
+        <AvatarMenu />
+      </div>
+    </header>
+  );
+}
+
+// Avatar con dropdown account (chiude al click fuori).
+function AvatarMenu() {
+  const t = useTranslations('Account');
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [open]);
+
+  // Logout simulato: torna alla landing pubblica.
+  const logout = () => {
+    setOpen(false);
+    router.push('/');
+  };
+
+  const links = [
+    { href: '/dashboard/subscription', label: t('subscription') },
+    { href: '/dashboard/payment', label: t('payment') },
+    { href: '/dashboard/ppv-history', label: t('ppvHistory') },
+    { href: '/dashboard/settings', label: t('settings') },
+  ] as const;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        aria-label="Account"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.08] bg-[#242424] font-condensed font-bold text-white"
+      >
+        E
+      </button>
+
+      {open ? (
+        <div className="absolute right-0 mt-2 min-w-[240px] overflow-hidden rounded-xl border border-white/[0.08] bg-[#1C1C1C]">
+          {/* Il mio account */}
+          <div className="border-b border-white/[0.06] px-4 py-3">
+            <p className="text-xs uppercase tracking-wide text-sandr-muted">{t('myAccount')}</p>
+            <p className="mt-0.5 text-sm text-[#C0BDB8]">utente@sandr.tv</p>
+          </div>
+
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="block border-b border-white/[0.06] px-4 py-3 text-sm text-[#C0BDB8] hover:bg-white/[0.04]"
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <button
+            type="button"
+            onClick={logout}
+            className="block w-full px-4 py-3 text-left text-sm text-[#C0BDB8] hover:bg-white/[0.04]"
+          >
+            {t('logout')}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ===== Variante public: navbar completa =====
+function PublicNavbar() {
   const t = useTranslations('Nav');
   const tc = useTranslations('Common');
   const [open, setOpen] = useState(false);
@@ -23,17 +133,7 @@ export function Navbar() {
     <>
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-sandr-black/70 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          {/* Logo — file caricato manualmente in /public/logo.png */}
-          <Link href="/" onClick={() => setOpen(false)} className="flex items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="SANDR"
-              width={112}
-              height={112}
-              style={{ height: '112px', width: '112px', objectFit: 'contain' }}
-            />
-          </Link>
+          <Logo onClick={() => setOpen(false)} />
 
           {/* Link desktop, centrati */}
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 font-condensed uppercase tracking-wide text-sandr-muted md:flex">
@@ -66,7 +166,6 @@ export function Navbar() {
               onClick={() => setOpen(true)}
               className="inline-flex h-10 w-10 items-center justify-center rounded text-sandr-text md:hidden"
             >
-              {/* Icona hamburger (niente emoji) */}
               <span className="relative block h-4 w-6">
                 <span className="absolute left-0 top-0 block h-0.5 w-6 bg-current" />
                 <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 bg-current" />
@@ -77,11 +176,9 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Overlay menu mobile: full-screen, sfondo opaco #141414, z-50.
-          Si chiude con la X o al click su un link. */}
+      {/* Overlay menu mobile: full-screen, sfondo opaco #141414, z-50. */}
       {open ? (
         <div className="fixed inset-0 z-50 flex flex-col bg-[#141414] md:hidden">
-          {/* Pulsante di chiusura (X) in alto a destra, arancione */}
           <div className="flex h-16 items-center justify-end px-4">
             <button
               type="button"
@@ -94,7 +191,6 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Voci di menu centrate (Barlow Condensed 700, 24px) */}
           <nav className="flex flex-1 flex-col items-center justify-center gap-8">
             {navLinks.map((l) => (
               <Link
@@ -108,7 +204,6 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA in fondo: Accedi (ghost) + Abbonati (arancione) */}
           <div className="flex flex-col gap-3 px-6 pb-10">
             <Link
               href="/login"

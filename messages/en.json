@@ -29,6 +29,15 @@
     "ageGate": "18+",
     "rights": "All rights reserved."
   },
+  "Account": {
+    "myAccount": "My account",
+    "subscription": "Subscription",
+    "payment": "Payment method",
+    "ppvHistory": "PPV payment history",
+    "settings": "Settings",
+    "logout": "Sign out",
+    "comingSoon": "Available in the next version"
+  },
   "Landing": {
     "circuitsAll": "All",
     "interviews": "Exclusive interviews",

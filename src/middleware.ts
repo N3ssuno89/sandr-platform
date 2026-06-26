@@ -16,11 +16,18 @@ function stripLocale(pathname: string): string {
   return pathname;
 }
 
+// Pagine dashboard pubbliche in demo (finché non c'è auth reale).
+const demoPublicRoutes = [
+  '/dashboard/home',
+  '/dashboard/subscription',
+  '/dashboard/payment',
+  '/dashboard/ppv-history',
+  '/dashboard/settings',
+];
+
 function isProtected(pathname: string): boolean {
   const path = stripLocale(pathname);
-  // Eccezione demo: la home post-login è pubblica finché non c'è auth reale.
-  // (Simulazione login dalla pagina /login — vedi LoginForm.)
-  if (path === '/dashboard/home') return false;
+  if (demoPublicRoutes.includes(path)) return false;
   return protectedRoutes.some(
     (route) => path === route || path.startsWith(`${route}/`),
   );
