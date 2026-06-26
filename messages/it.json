@@ -30,19 +30,111 @@
     "rights": "Tutti i diritti riservati."
   },
   "Landing": {
-    "eyebrow": "Sand sports network",
-    "headline1": "Ogni match.",
-    "headline2": "In diretta.",
-    "subline": "Beach volley. Sand sports. Tutto in un posto.",
-    "ctaPrimary": "Guarda il live",
-    "ctaSecondary": "Scopri i piani",
-    "liveNow": "Live ora",
-    "replay": "SANDR Replay",
-    "circuits": "I circuiti",
-    "upcoming": "Prossimi eventi",
-    "viewAll": "Vedi tutti",
-    "watching": "spettatori",
-    "matches": "match"
+    "circuitsAll": "Tutti",
+    "hero": {
+      "eyebrow": "Sand sports network",
+      "headline1": "Ogni match.",
+      "headline2": "In diretta.",
+      "subline": "Beach volley. Beach tennis. Sand sports. Tutto in un posto, in streaming premium.",
+      "ctaPrimary": "Abbonati ora",
+      "ctaSecondary": "Accedi",
+      "priceNote": "A partire da €9.99/mese · Disdici quando vuoi"
+    },
+    "coverage": {
+      "label": "Il nostro palinsesto",
+      "heading": "Sport da tutto il mondo.",
+      "subline": "Copriamo i migliori circuiti internazionali di beach volley e sand sports, dalle finali mondiali ai campionati nazionali.",
+      "cards": [
+        { "tag": "IT", "title": "Italia", "items": ["FIPAV Campionato Italiano", "AIBVC Tour", "King & Queen", "Marathon Tour"], "desc": "Il meglio del beach volley italiano", "sport": "#beachvolley" },
+        { "tag": "World", "title": "Internazionale", "items": ["Beach Pro Tour (FIVB)", "AVP America", "CEV Europeans", "World Championships"], "desc": "I circuiti che contano a livello mondiale", "sport": "#worldtour" },
+        { "tag": "+", "title": "Sand Sports +", "items": ["Beach Tennis", "Padel", "Freestyle Volley", "Snow Volley"], "desc": "Non solo beach volley", "sport": "#sandsports" }
+      ]
+    },
+    "livePreview": {
+      "title": "Live ora",
+      "viewAll": "Vedi tutti i live",
+      "gate": "Accedi per guardare in diretta"
+    },
+    "why": {
+      "label": "Perché scegliere SANDR",
+      "heading": "Costruito per chi ama lo sport, non per chi lo subisce.",
+      "features": [
+        { "title": "Multi-device", "desc": "Guarda su TV, tablet, smartphone e computer. Dove vuoi, quando vuoi." },
+        { "title": "Zero interruzioni", "desc": "Streaming HLS ottimizzato. Nessun lag, nessun buffering durante i momenti decisivi." },
+        { "title": "SANDR Replay", "desc": "Ogni match disponibile on-demand dopo la diretta. Non perdi più nulla." },
+        { "title": "Italiano & Inglese", "desc": "Piattaforma completamente bilingue. Commento e interfaccia in entrambe le lingue." },
+        { "title": "Stats in tempo reale", "desc": "Punteggio, set, statistiche per ogni match aggiornate in diretta." },
+        { "title": "Interviste esclusive", "desc": "Post-match, dietro le quinte, quattro chiacchiere con gli atleti. Solo su SANDR." }
+      ]
+    },
+    "pricing": {
+      "label": "Scegli il tuo piano",
+      "heading": "Inizia a guardare. Disdici quando vuoi.",
+      "monthly": "Mensile",
+      "annual": "Annuale",
+      "annualSave": "Risparmia 20%",
+      "perMonth": "/mese",
+      "perEvent": "/evento",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "badge": "Inizia qui",
+          "price": "0",
+          "features": [
+            { "ok": true, "text": "1 match gratuito a settimana" },
+            { "ok": true, "text": "Highlights post-match" },
+            { "ok": true, "text": "Accesso alla community" },
+            { "ok": false, "text": "Live streaming completo" },
+            { "ok": false, "text": "SANDR Replay" },
+            { "ok": false, "text": "Stats in tempo reale" }
+          ],
+          "cta": "Registrati gratis"
+        },
+        "premium": {
+          "name": "Premium",
+          "badge": "Più scelto",
+          "priceMonthly": "9.99",
+          "priceAnnual": "7.99",
+          "features": [
+            { "ok": true, "text": "Tutti i live in diretta" },
+            { "ok": true, "text": "SANDR Replay completo" },
+            { "ok": true, "text": "Stats in tempo reale" },
+            { "ok": true, "text": "Interviste esclusive" },
+            { "ok": true, "text": "Multi-device (3 schermi)" },
+            { "ok": true, "text": "Italiano & Inglese" },
+            { "ok": true, "text": "Copertura FIPAV + AIBVC + BPT + AVP" }
+          ],
+          "cta": "Abbonati ora"
+        },
+        "ppv": {
+          "name": "PPV — Evento singolo",
+          "badge": "Nessun impegno",
+          "price": "2.99",
+          "features": [
+            { "ok": true, "text": "Accesso singolo evento" },
+            { "ok": true, "text": "Qualità HD" },
+            { "ok": true, "text": "Valido 48h dalla data evento" },
+            { "ok": true, "text": "Include replay post-match" },
+            { "ok": false, "text": "Accesso agli altri contenuti" }
+          ],
+          "cta": "Scegli l'evento"
+        }
+      }
+    },
+    "showcase": {
+      "heading": "Tutto quello di cui un fan ha bisogno.",
+      "tabs": [
+        { "key": "multiview", "label": "Multi-view", "title": "Guarda più match contemporaneamente", "desc": "Segui tutti i campi in contemporanea. Componi la tua visuale e non perdere un punto." },
+        { "key": "replay", "label": "SANDR Replay", "title": "Rivivi ogni momento", "desc": "Tutti i match on-demand dopo la diretta. Cerca per atleta, torneo o data." },
+        { "key": "stats", "label": "Stats Live", "title": "Statistiche in tempo reale", "desc": "Ace, errori, efficienza in attacco e difesa. Ogni dato aggiornato punto per punto." },
+        { "key": "community", "label": "Community", "title": "La community del sand sports", "desc": "Discuti ogni match con altri appassionati. Rankings, pronostici, highlights condivisi." }
+      ]
+    },
+    "finalCta": {
+      "heading": "Entra nell'arena.",
+      "subline": "Il beach volley non aspetta. Abbonati e guarda ogni match, ogni punto, ogni torneo.",
+      "cta": "Abbonati ora"
+    }
   },
   "AuthHome": {
     "watchNow": "Guarda ora",

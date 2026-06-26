@@ -18,3 +18,14 @@
     @apply font-display;
   }
 }
+
+@layer utilities {
+  /* Nasconde la scrollbar mantenendo lo scroll (barre circuiti, righe a scroll) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

@@ -30,19 +30,111 @@
     "rights": "All rights reserved."
   },
   "Landing": {
-    "eyebrow": "Sand sports network",
-    "headline1": "Every match.",
-    "headline2": "Live.",
-    "subline": "Beach volleyball. Sand sports. All in one place.",
-    "ctaPrimary": "Watch live",
-    "ctaSecondary": "View pricing",
-    "liveNow": "Live now",
-    "replay": "SANDR Replay",
-    "circuits": "The circuits",
-    "upcoming": "Upcoming",
-    "viewAll": "View all",
-    "watching": "watching",
-    "matches": "matches"
+    "circuitsAll": "All",
+    "hero": {
+      "eyebrow": "Sand sports network",
+      "headline1": "Every match.",
+      "headline2": "Live.",
+      "subline": "Beach volleyball. Beach tennis. Sand sports. All in one place, in premium streaming.",
+      "ctaPrimary": "Subscribe now",
+      "ctaSecondary": "Sign in",
+      "priceNote": "From €9.99/month · Cancel anytime"
+    },
+    "coverage": {
+      "label": "Our schedule",
+      "heading": "Sport from all over the world.",
+      "subline": "We cover the best international beach volleyball and sand sports circuits, from world finals to national championships.",
+      "cards": [
+        { "tag": "IT", "title": "Italy", "items": ["FIPAV Campionato Italiano", "AIBVC Tour", "King & Queen", "Marathon Tour"], "desc": "The best of Italian beach volleyball", "sport": "#beachvolley" },
+        { "tag": "World", "title": "International", "items": ["Beach Pro Tour (FIVB)", "AVP America", "CEV Europeans", "World Championships"], "desc": "The circuits that matter worldwide", "sport": "#worldtour" },
+        { "tag": "+", "title": "Sand Sports +", "items": ["Beach Tennis", "Padel", "Freestyle Volley", "Snow Volley"], "desc": "Not just beach volleyball", "sport": "#sandsports" }
+      ]
+    },
+    "livePreview": {
+      "title": "Live now",
+      "viewAll": "See all live",
+      "gate": "Sign in to watch live"
+    },
+    "why": {
+      "label": "Why choose SANDR",
+      "heading": "Built for those who love the sport, not those who endure it.",
+      "features": [
+        { "title": "Multi-device", "desc": "Watch on TV, tablet, smartphone and computer. Wherever, whenever." },
+        { "title": "Zero interruptions", "desc": "Optimized HLS streaming. No lag, no buffering in the decisive moments." },
+        { "title": "SANDR Replay", "desc": "Every match available on-demand after the live. Never miss a thing." },
+        { "title": "Italian & English", "desc": "A fully bilingual platform. Commentary and interface in both languages." },
+        { "title": "Real-time stats", "desc": "Score, sets and statistics for every match, updated live." },
+        { "title": "Exclusive interviews", "desc": "Post-match, behind the scenes, candid talks with the athletes. Only on SANDR." }
+      ]
+    },
+    "pricing": {
+      "label": "Choose your plan",
+      "heading": "Start watching. Cancel anytime.",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "annualSave": "Save 20%",
+      "perMonth": "/mo",
+      "perEvent": "/event",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "badge": "Start here",
+          "price": "0",
+          "features": [
+            { "ok": true, "text": "1 free match per week" },
+            { "ok": true, "text": "Post-match highlights" },
+            { "ok": true, "text": "Community access" },
+            { "ok": false, "text": "Full live streaming" },
+            { "ok": false, "text": "SANDR Replay" },
+            { "ok": false, "text": "Real-time stats" }
+          ],
+          "cta": "Sign up free"
+        },
+        "premium": {
+          "name": "Premium",
+          "badge": "Most popular",
+          "priceMonthly": "9.99",
+          "priceAnnual": "7.99",
+          "features": [
+            { "ok": true, "text": "All live matches" },
+            { "ok": true, "text": "Full SANDR Replay" },
+            { "ok": true, "text": "Real-time stats" },
+            { "ok": true, "text": "Exclusive interviews" },
+            { "ok": true, "text": "Multi-device (3 screens)" },
+            { "ok": true, "text": "Italian & English" },
+            { "ok": true, "text": "Coverage: FIPAV + AIBVC + BPT + AVP" }
+          ],
+          "cta": "Subscribe now"
+        },
+        "ppv": {
+          "name": "PPV — Single event",
+          "badge": "No commitment",
+          "price": "2.99",
+          "features": [
+            { "ok": true, "text": "Single event access" },
+            { "ok": true, "text": "HD quality" },
+            { "ok": true, "text": "Valid 48h from event date" },
+            { "ok": true, "text": "Includes post-match replay" },
+            { "ok": false, "text": "Access to other content" }
+          ],
+          "cta": "Choose your event"
+        }
+      }
+    },
+    "showcase": {
+      "heading": "Everything a fan needs.",
+      "tabs": [
+        { "key": "multiview", "label": "Multi-view", "title": "Watch multiple matches at once", "desc": "Follow every court at the same time. Build your own view and never miss a point." },
+        { "key": "replay", "label": "SANDR Replay", "title": "Relive every moment", "desc": "Every match on-demand after the live. Search by athlete, tournament or date." },
+        { "key": "stats", "label": "Live Stats", "title": "Real-time statistics", "desc": "Aces, errors, attack and defense efficiency. Every number updated point by point." },
+        { "key": "community", "label": "Community", "title": "The sand sports community", "desc": "Discuss every match with other fans. Rankings, predictions, shared highlights." }
+      ]
+    },
+    "finalCta": {
+      "heading": "Enter the arena.",
+      "subline": "Beach volleyball doesn't wait. Subscribe and watch every match, every point, every tournament.",
+      "cta": "Subscribe now"
+    }
   },
   "AuthHome": {
     "watchNow": "Watch now",
