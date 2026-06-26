@@ -42,23 +42,24 @@ const ACCESS: { value: AccessLevel; label: string; cls: string }[] = [
   { value: 'ppv', label: 'PPV', cls: 'bg-amber-400/15 text-amber-400 border-amber-400/40' },
 ];
 
-export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: VideoMeta }) {
+export function VideoMetadataForm({ uid, defaultValues }: { uid: string; defaultValues?: VideoMeta }) {
   const router = useRouter();
+  // Tutti i campi sono inizializzati dai defaultValues (pre-fill in modifica).
   const [meta, setMeta] = useState<VideoMeta>({
-    name: initial?.name ?? '',
-    circuit: initial?.circuit ?? '',
-    type: initial?.type ?? '',
-    sport: initial?.sport ?? '',
-    event: initial?.event ?? '',
-    athletes: initial?.athletes ?? '',
-    country: initial?.country ?? '',
-    eventDate: initial?.eventDate ?? '',
-    access: initial?.access ?? 'free',
-    description: initial?.description ?? '',
-    tags: initial?.tags ?? '',
-    thumbnailCard: initial?.thumbnailCard ?? '',
-    thumbnailFeatured: initial?.thumbnailFeatured ?? '',
-    featured: initial?.featured ?? '',
+    name: defaultValues?.name ?? '',
+    circuit: defaultValues?.circuit ?? '',
+    type: defaultValues?.type ?? '',
+    sport: defaultValues?.sport ?? '',
+    event: defaultValues?.event ?? '',
+    athletes: defaultValues?.athletes ?? '',
+    country: defaultValues?.country ?? '',
+    eventDate: defaultValues?.eventDate ?? '',
+    access: defaultValues?.access ?? 'free',
+    description: defaultValues?.description ?? '',
+    tags: defaultValues?.tags ?? '',
+    thumbnailCard: defaultValues?.thumbnailCard ?? '',
+    thumbnailFeatured: defaultValues?.thumbnailFeatured ?? '',
+    featured: defaultValues?.featured ?? '',
   });
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(false);
@@ -69,16 +70,22 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
     e.preventDefault();
     setSaving(true);
     try {
-      await fetch('/api/stream/update-meta', {
+      // meta include sempre name (titolo): Cloudflare Stream lo usa come titolo.
+      const res = await fetch('/api/stream/update-meta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid, meta }),
       });
+      const data = await res.json();
+      // Verifica: logghiamo i meta restituiti da Cloudflare per conferma.
+      console.log('[update-meta] saved meta:', data?.result?.meta ?? data);
       setToast(true);
       setTimeout(() => {
         setToast(false);
+        // router.refresh() forza il re-fetch della lista (verifica salvataggio).
         router.push('/dashboard/admin/videos');
-      }, 3000);
+        router.refresh();
+      }, 2000);
     } catch {
       setSaving(false);
     }
@@ -262,7 +269,7 @@ export function VideoMetadataForm({ uid, initial }: { uid: string; initial?: Vid
 
       {toast && (
         <div className="fixed bottom-6 right-6 rounded-lg bg-emerald-500 px-5 py-3 text-sm font-bold text-black shadow-lg">
-          Metadata salvati con successo
+          Salvato con successo
         </div>
       )}
     </form>

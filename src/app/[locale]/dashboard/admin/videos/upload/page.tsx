@@ -109,7 +109,7 @@ export default function UploadVideoPage() {
         /* STEP 2 — Metadata */
         <div className="mt-8">
           <p className="mb-4 text-sm text-emerald-400">Video caricato. Compila i metadata.</p>
-          <VideoMetadataForm uid={uid} initial={{ name: file?.name?.replace(/\.[^.]+$/, '') ?? '' }} />
+          <VideoMetadataForm uid={uid} defaultValues={{ name: file?.name?.replace(/\.[^.]+$/, '') ?? '' }} />
         </div>
       )}
     </div>

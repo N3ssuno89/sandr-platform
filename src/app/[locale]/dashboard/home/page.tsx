@@ -47,7 +47,6 @@ function toContentItem(video: StreamVideo): ContentItem {
   const circuit = (meta.circuit as CircuitTag) ?? 'BPT';
   const type = parseType(meta.type);
   const sport = (meta.sport as SportTag) ?? 'Beach Volley';
-  const featured = meta.featured === 'true';
 
   return {
     id: video.uid,
@@ -62,8 +61,9 @@ function toContentItem(video: StreamVideo): ContentItem {
     duration: formatDuration(video.duration),
     isPremium: meta.access === 'premium',
     date: formatDate(video.created),
-    // 'featured' nei tag così il filtro hero è un semplice tags.includes.
-    tags: featured ? [circuit, type, sport, 'featured'] : [circuit, type, sport],
+    // 'featured' nei tag (solo se meta.featured === 'true') così il filtro hero
+    // è un semplice tags.includes('featured').
+    tags: [circuit, type, sport, ...(meta.featured === 'true' ? ['featured'] : [])],
   };
 }
 
@@ -78,7 +78,11 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   const realVideos = videos.length > 0 ? videos.map(toContentItem) : undefined;
 
   // Video in evidenza per l'hero (meta.featured === 'true' → tag 'featured').
-  const featuredVideos = realVideos?.filter((v) => v.tags.includes('featured'));
+  const featured = realVideos?.filter((v) => v.tags.includes('featured')) ?? [];
+  // Debug: quanti video reali e quanti in evidenza (log lato server).
+  console.log('[home] realVideos:', realVideos?.length ?? 0, '— featured:', featured.length);
+  // Passa all'hero SOLO se c'è almeno un video in evidenza, altrimenti mock.
+  const featuredVideos = featured.length > 0 ? featured : undefined;
 
   return (
     <>

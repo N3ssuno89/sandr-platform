@@ -11,16 +11,17 @@ export default async function EditVideoPage({
 
   const video = await getVideo(params.id);
 
-  // I metadati custom vivono in meta su Cloudflare Stream.
+  // I metadati custom vivono in meta su Cloudflare Stream. Pre-compiliamo TUTTI
+  // i campi del form dai meta del video (nation è salvata come meta.country).
   const meta = (video?.meta ?? {}) as Record<string, string | undefined>;
-  const initial: VideoMeta = {
+  const defaultValues: VideoMeta = {
     name: meta.name,
     circuit: meta.circuit,
     type: meta.type,
     sport: meta.sport,
     event: meta.event,
     athletes: meta.athletes,
-    country: meta.country,
+    country: meta.country ?? meta.nation,
     eventDate: meta.eventDate,
     access: meta.access ?? 'free',
     description: meta.description,
@@ -33,9 +34,9 @@ export default async function EditVideoPage({
   return (
     <div className="max-w-3xl">
       <h1 className="font-condensed text-3xl font-extrabold uppercase text-white">Modifica video</h1>
-      <p className="mt-1 text-sm text-[#888888]">{initial.name ?? params.id}</p>
+      <p className="mt-1 text-sm text-[#888888]">{defaultValues.name ?? params.id}</p>
       <div className="mt-8">
-        <VideoMetadataForm uid={params.id} initial={initial} />
+        <VideoMetadataForm uid={params.id} defaultValues={defaultValues} />
       </div>
     </div>
   );

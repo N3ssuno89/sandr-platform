@@ -12,6 +12,8 @@ export async function POST(req: Request) {
     return Response.json({ success: false, error: 'not-configured' });
   }
 
+  // Cloudflare Stream usa meta.name come TITOLO del video: il body deve sempre
+  // includere meta (con name) quando il titolo è fornito.
   try {
     const res = await fetch(
       `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/${uid}`,
@@ -25,8 +27,12 @@ export async function POST(req: Request) {
       },
     );
     const data = await res.json();
+    // Log di debug (visibile nei log server / Netlify functions).
+    console.log('[update-meta] Cloudflare response:', JSON.stringify(data));
+    // Ritorna l'oggetto completo così il client può verificare il salvataggio.
     return Response.json(data);
-  } catch {
+  } catch (err) {
+    console.error('[update-meta] fetch error:', err);
     return Response.json({ success: false, error: 'fetch-failed' });
   }
 }
