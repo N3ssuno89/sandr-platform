@@ -32,7 +32,13 @@ export const env = {
   },
 
   cloudflare: {
+    // AREA CRITICA (CLAUDE.md): Cloudflare Stream richiede review umana.
     accountId: () => required('CLOUDFLARE_ACCOUNT_ID', process.env.CLOUDFLARE_ACCOUNT_ID),
+    // Token Stream — SOLO server-side, mai esposto al client.
+    streamToken: () => required('CLOUDFLARE_STREAM_TOKEN', process.env.CLOUDFLARE_STREAM_TOKEN),
+    // Account ID pubblico per l'embed iframe (lato client).
+    publicAccountId: () =>
+      required('NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID', process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID),
     streamApiToken: () =>
       required('CLOUDFLARE_STREAM_API_TOKEN', process.env.CLOUDFLARE_STREAM_API_TOKEN),
     streamCustomerSubdomain: () =>

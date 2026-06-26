@@ -9,9 +9,11 @@ export interface VodCardProps {
   progress?: number;
   // Larghezza fissa della card (px). Default 220.
   cardWidth?: number;
+  // Thumbnail reale (es. Cloudflare Stream). Se assente: placeholder scuro.
+  thumbnailUrl?: string;
 }
 
-export function VodCard({ title, date, duration, access, progress, cardWidth }: VodCardProps) {
+export function VodCard({ title, date, duration, access, progress, cardWidth, thumbnailUrl }: VodCardProps) {
   const isPremium = access === 'premium';
 
   return (
@@ -21,6 +23,11 @@ export function VodCard({ title, date, duration, access, progress, cardWidth }: 
     >
       {/* Thumbnail 16:9 (paddingBottom 56.25% su contenitore relative) */}
       <div className="relative w-full bg-gradient-to-br from-white/10 to-transparent" style={{ paddingBottom: '56.25%' }}>
+        {/* Thumbnail reale se disponibile */}
+        {thumbnailUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={thumbnailUrl} alt={title} className="absolute inset-0 h-full w-full object-cover" />
+        ) : null}
         {/* Badge accesso */}
         <span
           className={`absolute left-3 top-3 rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${

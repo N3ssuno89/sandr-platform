@@ -394,6 +394,18 @@
       "beach-volley": "Beach Volley",
       "beach-tennis": "Beach Tennis",
       "by-circuit": "Per circuito"
+    },
+    "player": {
+      "notAvailable": "Video non disponibile",
+      "otherVideos": "Altri video",
+      "noOther": "Nessun altro video disponibile",
+      "tabs": { "info": "Info", "athletes": "Atleti", "other": "Altri video" },
+      "info": {
+        "duration": "Durata",
+        "published": "Pubblicato",
+        "status": "Stato",
+        "resolution": "Risoluzione"
+      }
     }
   },
   "Interviews": {
