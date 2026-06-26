@@ -102,7 +102,16 @@
     "share": "Condividi",
     "liveNow": "In diretta ora",
     "upcoming": "Prossimi eventi",
-    "cast": "Disponibile su Smart TV e Chromecast"
+    "cast": "Disponibile su Smart TV e Chromecast",
+    "statsTitle": "Statistiche live",
+    "quoteLive": "Quote Live",
+    "oddsGate": "Accedi per vedere le quote",
+    "bettingDisclaimer": "Il gioco è vietato ai minori. Gioca responsabilmente. 18+",
+    "adLabel": "Pubblicità",
+    "adSpace": "Il tuo spazio pubblicitario",
+    "bettingTime": "In corso — Set 2",
+    "set1": "Set 1: 21-18",
+    "set2": "Set 2: in corso"
   },
   "Landing": {
     "circuitsAll": "Tutti",
