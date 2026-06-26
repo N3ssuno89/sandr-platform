@@ -1,8 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { LiveEventCard } from '@/components/cards/LiveEventCard';
-import { RowHeader, ScrollRow } from '@/components/ui/section-row';
+import { LivePreviewSection } from '@/components/sections/LivePreviewSection';
 import { LandingPricing } from '@/components/sections/LandingPricing';
 import { FeatureTabs } from '@/components/sections/FeatureTabs';
 
@@ -22,21 +21,12 @@ const circuitNames = [
   'Padel',
 ];
 
-// Dati placeholder: nessun fetch reale. Da sostituire con query Supabase.
-const liveEvents = [
-  { id: '1', title: 'BPT Elite — Quarterfinal', teamA: 'Mol / Sørum', teamB: 'Plavins / Tocs', sport: 'Beach Volley', viewers: 12840 },
-  { id: '2', title: 'AIBVC Tour — Semifinal', teamA: 'Carambula / Cottafava', teamB: 'Åhman / Hellvig', sport: 'Beach Volley', viewers: 8210 },
-  { id: '3', title: 'Padel Pro — Round 2', teamA: 'Galán / Chingotto', teamB: 'Tapia / Coello', sport: 'Padel', viewers: 9450 },
-];
-
 type CoverageCard = { tag: string; title: string; items: string[]; desc: string; sport: string };
 type WhyFeature = { title: string; desc: string };
 
 export default function HomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   const t = useTranslations('Landing');
-  const tc = useTranslations('Common');
-  const tLive = useTranslations('Live');
   const coverageCards = t.raw('coverage.cards') as CoverageCard[];
   const features = t.raw('why.features') as WhyFeature[];
 
@@ -143,30 +133,8 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         </div>
       </section>
 
-      {/* ===== SECTION 4 — Live preview ===== */}
-      <section className="bg-[#141414] px-4 pb-20">
-        <div className="mx-auto max-w-6xl">
-          <RowHeader title={t('livePreview.title')} href="/live" viewAll={t('livePreview.viewAll')} live />
-          <ScrollRow>
-            {liveEvents.map((e) => (
-              <div key={e.id} className="min-w-[82%] shrink-0 snap-start sm:min-w-[320px]">
-                <LiveEventCard {...e} viewersLabel={tLive('watching')} href={`/live/${e.id}`} ctaLabel={tc('watch')} />
-              </div>
-            ))}
-          </ScrollRow>
-
-          {/* Gate: invito ad accedere per la diretta */}
-          <div className="mt-6 flex flex-col items-center gap-4 rounded-xl border border-white/[0.08] bg-[#1C1C1C] p-6 text-center sm:flex-row sm:justify-between sm:text-left">
-            <p className="text-[#C0BDB8]">{t('livePreview.gate')}</p>
-            <Link
-              href="/login"
-              className="shrink-0 rounded-lg bg-sandr-orange px-6 py-3 font-condensed font-bold uppercase tracking-wide text-black"
-            >
-              {tc('signIn')}
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ===== SECTION 4 — Live preview + Interviste (client, click -> /login) ===== */}
+      <LivePreviewSection />
 
       {/* ===== SECTION 5 — Perché SANDR ===== */}
       <section className="bg-[#1C1C1C] px-4 py-20">

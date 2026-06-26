@@ -18,6 +18,9 @@ function stripLocale(pathname: string): string {
 
 function isProtected(pathname: string): boolean {
   const path = stripLocale(pathname);
+  // Eccezione demo: la home post-login è pubblica finché non c'è auth reale.
+  // (Simulazione login dalla pagina /login — vedi LoginForm.)
+  if (path === '/dashboard/home') return false;
   return protectedRoutes.some(
     (route) => path === route || path.startsWith(`${route}/`),
   );
