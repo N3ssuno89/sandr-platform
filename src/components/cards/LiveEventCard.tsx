@@ -49,10 +49,14 @@ export function LiveEventCard({ title, teamA, teamB, sport, href, ctaLabel, card
         </span>
       </div>
 
+      {/* Altezza costante: sport (1 riga), titolo MAX 2 righe con min-height,
+          squadre 1 riga (line-clamp) → tutte le card della riga uguali (BUG 4). */}
       <div className="flex flex-1 flex-col p-4">
         <span className="text-xs font-semibold uppercase tracking-wide text-sandr-orange">{sport}</span>
-        <h3 className="mt-1 font-condensed text-lg uppercase tracking-wide text-sandr-text">{title}</h3>
-        <p className="mt-1 text-sm text-sandr-muted">
+        <h3 className="mt-1 line-clamp-2 min-h-[2.8rem] font-condensed text-lg uppercase leading-tight tracking-wide text-sandr-text">
+          {title}
+        </h3>
+        <p className="mt-1 line-clamp-1 text-sm text-sandr-muted">
           <span className="text-sandr-text">{teamA}</span> vs{' '}
           <span className="text-sandr-text">{teamB}</span>
         </p>

@@ -18,11 +18,9 @@ type Row = {
   kind: 'live' | 'vod';
   live?: boolean;
   cardWidth: number;
+  href: string;
   items: ContentItem[];
 };
-
-// Circuiti con una riga dedicata in home.
-const DISPLAYED_CIRCUITS: CircuitTag[] = ['FIPAV', 'AIBVC', 'AVP', 'BPT'];
 
 export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] }) {
   const t = useTranslations('AuthHome');
@@ -32,40 +30,32 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   const tFed = useTranslations('Federation');
 
   const real = realVideos ?? [];
+  // hasRealVideos: ci sono video reali da Cloudflare Stream?
+  const hasRealVideos = real.length > 0;
 
-  // Riga per circuito/tipo: usa i video REALI della categoria; se quella
-  // categoria non ha video reali, fallback ai MOCK così la home non è MAI
-  // vuota in questa fase (placeholder). In demo (nessun reale) usa sempre mock.
-  const circuitRow = (circuit: CircuitTag): ContentItem[] => {
-    const r = real.filter((c) => c.circuit === circuit);
-    return r.length ? r : mockContent.filter((c) => c.circuit === circuit);
-  };
-  const typeRow = (type: ContentItem['type']): ContentItem[] => {
-    const r = real.filter((c) => c.type === type);
-    return r.length ? r : mockContent.filter((c) => c.type === type);
-  };
+  // Sorgente dei video. Con video reali si usano SOLO quelli (le righe vuote
+  // mostrano un messaggio, non card finte). Senza alcun video reale (account
+  // Cloudflare vuoto / niente credenziali) si mostra il mock ovunque.
+  // MOCK FALLBACK: shown only when no real videos exist (dev mode)
+  const source: ContentItem[] = hasRealVideos ? real : mockContent;
 
-  // Video reali senza un circuito tra quelli mostrati (o senza circuito):
-  // vanno nella riga "Novità" invece di sparire o finire tutti su BPT.
-  const novita = real.filter((c) => !c.circuit || !DISPLAYED_CIRCUITS.includes(c.circuit));
+  const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
+  const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
 
-  const liveItems = typeRow('live');
-
-  const contentRows: Row[] = [
-    ...(novita.length > 0
-      ? [{ id: 'novita', title: t('newest'), kind: 'vod' as const, cardWidth: 260, items: novita }]
-      : []),
-    { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, items: circuitRow('FIPAV') },
-    { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, items: circuitRow('AIBVC') },
-    { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, items: circuitRow('AVP') },
-    { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, items: circuitRow('BPT') },
-    { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, items: typeRow('interview') },
-    { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, items: typeRow('behind-the-scenes') },
-    { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, items: typeRow('highlights') },
+  // Ordine sezioni video (BUG 2): In diretta, Highlights, poi circuiti, poi
+  // Interviste e Dietro le quinte. (Novità rimossa — BUG 3.)
+  const rows: Row[] = [
+    { id: 'live', title: t('liveNow'), kind: 'live', live: true, cardWidth: 320, href: '/live', items: typeRow('live') },
+    { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, href: '/vod', items: typeRow('highlights') },
+    { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, href: '/vod', items: circuitRow('FIPAV') },
+    { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, href: '/vod', items: circuitRow('AIBVC') },
+    { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, href: '/vod', items: circuitRow('AVP') },
+    { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, href: '/vod', items: circuitRow('BPT') },
+    { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, href: '/vod', items: typeRow('interview') },
+    { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, href: '/vod', items: typeRow('behind-the-scenes') },
   ];
 
-  // Card: live -> LiveEventCard (href interno). vod -> VodCard SEMPRE avvolta
-  // in un Link verso /vod/[id] (così OGNI card è cliccabile in OGNI riga).
+  // Card: live -> LiveEventCard (href interno). vod -> VodCard avvolta in Link.
   const renderCard = (item: ContentItem, kind: 'live' | 'vod', cardWidth: number) => {
     if (kind === 'live') {
       const parts = (item.teams ?? '').split(' vs ');
@@ -98,63 +88,52 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   };
 
   return (
-    <>
-      <div className="space-y-12 py-12">
-        {/* 1 — Atleti in evidenza */}
-        <section className="mx-auto max-w-6xl px-4">
-          <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
-          <ScrollRow>
-            {mockAthletes.map((a) => (
-              <div key={a.id} className="shrink-0 snap-start">
-                <AthleteCard athlete={a} cardWidth={160} />
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
+    <div className="space-y-12 py-12">
+      {/* 1 — Atleti in evidenza (dati mock: profili atleti) */}
+      <section className="mx-auto max-w-6xl px-4">
+        <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
+        <ScrollRow>
+          {mockAthletes.map((a) => (
+            <div key={a.id} className="shrink-0 snap-start">
+              <AthleteCard athlete={a} cardWidth={160} />
+            </div>
+          ))}
+        </ScrollRow>
+      </section>
 
-        {/* 2 — I circuiti */}
-        <section className="mx-auto max-w-6xl px-4">
-          <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
-          <ScrollRow>
-            {mockFederations.map((f) => (
-              <div key={f.id} className="shrink-0 snap-start">
-                <FederationCard federation={f} />
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
+      {/* 2 — I circuiti (dati mock: federazioni) */}
+      <section className="mx-auto max-w-6xl px-4">
+        <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
+        <ScrollRow>
+          {mockFederations.map((f) => (
+            <div key={f.id} className="shrink-0 snap-start">
+              <FederationCard federation={f} />
+            </div>
+          ))}
+        </ScrollRow>
+      </section>
 
-        {/* 3 — In diretta ora (con fallback mock, riga sempre presente) */}
-        {liveItems.length > 0 ? (
-          <section className="mx-auto max-w-6xl px-4">
-            <RowHeader title={t('liveNow')} href="/live" viewAll={t('viewAll')} live />
+      {/* 3+ — Righe video (ordine BUG 2). Con video reali una riga vuota mostra
+          un messaggio invece di card finte (BUG 5). */}
+      {rows.map((row) => (
+        <section key={row.id} className="mx-auto max-w-6xl px-4">
+          <RowHeader title={row.title} href={row.href} viewAll={t('viewAll')} live={row.live} />
+          {row.items.length > 0 ? (
             <ScrollRow>
-              {liveItems.map((item) => (
-                <div key={item.id} className="shrink-0 snap-start">
-                  {renderCard(item, 'live', 320)}
+              {row.items.map((item) => (
+                <div key={`${row.id}-${item.id}`} className="shrink-0 snap-start">
+                  {renderCard(item, row.kind, row.cardWidth)}
                 </div>
               ))}
             </ScrollRow>
-          </section>
-        ) : null}
-
-        {/* 4 — Righe contenuti (Novità + circuiti + tipi) */}
-        {contentRows.map((row) => {
-          if (row.items.length === 0) return null;
-          return (
-            <section key={row.id} className="mx-auto max-w-6xl px-4">
-              <RowHeader title={row.title} href="/vod" viewAll={t('viewAll')} live={row.live} />
-              <ScrollRow>
-                {row.items.map((item) => (
-                  <div key={`${row.id}-${item.id}`} className="shrink-0 snap-start">
-                    {renderCard(item, row.kind, row.cardWidth)}
-                  </div>
-                ))}
-              </ScrollRow>
-            </section>
-          );
-        })}
-      </div>
-    </>
+          ) : (
+            // Solo in modalità dati reali: categoria senza video → messaggio.
+            <p className="py-8 text-center text-sm text-[#888888]">
+              Nessun video disponibile in questa sezione
+            </p>
+          )}
+        </section>
+      ))}
+    </div>
   );
 }
