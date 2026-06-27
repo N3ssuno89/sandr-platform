@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { RowHeader, ScrollRow } from '@/components/ui/section-row';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
@@ -20,6 +21,9 @@ type Row = {
   items: ContentItem[];
 };
 
+// Circuiti con una riga dedicata in home.
+const DISPLAYED_CIRCUITS: CircuitTag[] = ['FIPAV', 'AIBVC', 'AVP', 'BPT'];
+
 export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] }) {
   const t = useTranslations('AuthHome');
   const tc = useTranslations('Common');
@@ -27,19 +31,30 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   const tA = useTranslations('Athlete');
   const tFed = useTranslations('Federation');
 
-  // Sorgente contenuti: SOLO video reali da Cloudflare Stream se presenti
-  // (mai mescolati col mock), altrimenti i dati mock di fallback (demo / no creds).
-  const source = realVideos ?? mockContent;
+  const real = realVideos ?? [];
 
-  // Le righe per circuito filtrano dalla sorgente; una riga senza contenuti
-  // viene nascosta (vedi `if (row.items.length === 0) return null` sotto).
-  const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
-  const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
+  // Riga per circuito/tipo: usa i video REALI della categoria; se quella
+  // categoria non ha video reali, fallback ai MOCK così la home non è MAI
+  // vuota in questa fase (placeholder). In demo (nessun reale) usa sempre mock.
+  const circuitRow = (circuit: CircuitTag): ContentItem[] => {
+    const r = real.filter((c) => c.circuit === circuit);
+    return r.length ? r : mockContent.filter((c) => c.circuit === circuit);
+  };
+  const typeRow = (type: ContentItem['type']): ContentItem[] => {
+    const r = real.filter((c) => c.type === type);
+    return r.length ? r : mockContent.filter((c) => c.type === type);
+  };
+
+  // Video reali senza un circuito tra quelli mostrati (o senza circuito):
+  // vanno nella riga "Novità" invece di sparire o finire tutti su BPT.
+  const novita = real.filter((c) => !c.circuit || !DISPLAYED_CIRCUITS.includes(c.circuit));
 
   const liveItems = typeRow('live');
 
-  // Righe per circuito + tipo (dopo atleti e federazioni).
   const contentRows: Row[] = [
+    ...(novita.length > 0
+      ? [{ id: 'novita', title: t('newest'), kind: 'vod' as const, cardWidth: 260, items: novita }]
+      : []),
     { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, items: circuitRow('FIPAV') },
     { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, items: circuitRow('AIBVC') },
     { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, items: circuitRow('AVP') },
@@ -49,6 +64,8 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
     { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, items: typeRow('highlights') },
   ];
 
+  // Card: live -> LiveEventCard (href interno). vod -> VodCard SEMPRE avvolta
+  // in un Link verso /vod/[id] (così OGNI card è cliccabile in OGNI riga).
   const renderCard = (item: ContentItem, kind: 'live' | 'vod', cardWidth: number) => {
     if (kind === 'live') {
       const parts = (item.teams ?? '').split(' vs ');
@@ -67,14 +84,16 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
       );
     }
     return (
-      <VodCard
-        title={item.title}
-        date={item.date ?? ''}
-        duration={item.duration ?? ''}
-        access={item.isPremium ? 'premium' : 'free'}
-        cardWidth={cardWidth}
-        thumbnailUrl={item.thumbnail}
-      />
+      <Link href={`/vod/${item.id}`} className="block">
+        <VodCard
+          title={item.title}
+          date={item.date ?? ''}
+          duration={item.duration ?? ''}
+          access={item.isPremium ? 'premium' : 'free'}
+          cardWidth={cardWidth}
+          thumbnailUrl={item.thumbnail}
+        />
+      </Link>
     );
   };
 
@@ -105,9 +124,7 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
           </ScrollRow>
         </section>
 
-        {/* 3 — In diretta ora. Mostrata solo se la sorgente (video reali o
-            mock) ha contenuti type === 'live'; coi video reali senza live,
-            la riga è nascosta del tutto. */}
+        {/* 3 — In diretta ora (con fallback mock, riga sempre presente) */}
         {liveItems.length > 0 ? (
           <section className="mx-auto max-w-6xl px-4">
             <RowHeader title={t('liveNow')} href="/live" viewAll={t('viewAll')} live />
@@ -121,15 +138,15 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
           </section>
         ) : null}
 
-        {/* 4 — Righe contenuti */}
+        {/* 4 — Righe contenuti (Novità + circuiti + tipi) */}
         {contentRows.map((row) => {
           if (row.items.length === 0) return null;
           return (
             <section key={row.id} className="mx-auto max-w-6xl px-4">
-              <RowHeader title={row.title} href="/live" viewAll={t('viewAll')} live={row.live} />
+              <RowHeader title={row.title} href="/vod" viewAll={t('viewAll')} live={row.live} />
               <ScrollRow>
                 {row.items.map((item) => (
-                  <div key={item.id} className="shrink-0 snap-start">
+                  <div key={`${row.id}-${item.id}`} className="shrink-0 snap-start">
                     {renderCard(item, row.kind, row.cardWidth)}
                   </div>
                 ))}

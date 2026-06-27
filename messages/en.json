@@ -234,7 +234,8 @@
     "all": "All",
     "interviews": "Exclusive interviews",
     "behindScenes": "Behind the scenes",
-    "highlights": "Highlights"
+    "highlights": "Highlights",
+    "newest": "Newest"
   },
   "Login": {
     "headline": "Welcome back.",
@@ -268,9 +269,7 @@
     "errCallback": "Email confirmation failed. Please try signing in again.",
     "haveAccount": "Already have an account?",
     "noAccount": "Don't have an account?",
-    "notConfigured": "Authentication is not configured in this environment.",
-    "show": "Show",
-    "hide": "Hide"
+    "notConfigured": "Authentication is not configured in this environment."
   },
   "Home": {
     "hero": {

@@ -1,7 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { HeroCarousel } from '@/components/sections/HeroCarousel';
 import { DashboardContent } from '@/components/sections/DashboardContent';
-import { BettingPartnerSection } from '@/components/sections/BettingPartnerSection';
 import { listVideos, getThumbnailUrl, type StreamVideo } from '@/lib/cloudflare-stream';
 import type { CircuitTag, ContentItem, ContentType, SportTag } from '@/types/tags';
 
@@ -44,7 +43,9 @@ function formatDate(iso: string): string {
 // I metadati custom (circuit/type/sport/access) vivono in meta su Cloudflare.
 function toContentItem(video: StreamVideo): ContentItem {
   const meta = video.meta as Record<string, string | undefined>;
-  const circuit = (meta.circuit as CircuitTag) ?? 'BPT';
+  // Niente default su 'BPT': un video senza circuito resta `undefined` e finisce
+  // nella riga "Novità" (vedi DashboardContent), non tutto ammassato su BPT.
+  const circuit = (meta.circuit as CircuitTag | undefined) || undefined;
   const type = parseType(meta.type);
   const sport = (meta.sport as SportTag) ?? 'Beach Volley';
 
@@ -63,7 +64,7 @@ function toContentItem(video: StreamVideo): ContentItem {
     date: formatDate(video.created),
     // 'featured' nei tag (solo se meta.featured === 'true') così il filtro hero
     // è un semplice tags.includes('featured').
-    tags: [circuit, type, sport, ...(meta.featured === 'true' ? ['featured'] : [])],
+    tags: [type, sport, ...(circuit ? [circuit] : []), ...(meta.featured === 'true' ? ['featured'] : [])],
   };
 }
 
@@ -84,11 +85,12 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   // Passa all'hero SOLO se c'è almeno un video in evidenza, altrimenti mock.
   const featuredVideos = featured.length > 0 ? featured : undefined;
 
+  // Il betting NON sta nella home post-login: vive solo come singola feature
+  // card nella landing (src/app/[locale]/page.tsx).
   return (
     <>
       <HeroCarousel featuredVideos={featuredVideos} />
       <DashboardContent realVideos={realVideos} />
-      <BettingPartnerSection />
     </>
   );
 }

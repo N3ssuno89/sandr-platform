@@ -15,78 +15,96 @@ function initialsOf(fullName: string | null, email: string | null): string {
   return 'U';
 }
 
-// Logo centrato, riutilizzato in entrambe le varianti.
-function Logo({ href = '/' }: { href?: string }) {
+// Logo centrato. Se href è null, è solo display (es. sulla landing dove sei
+// già): nessun link.
+function Logo({ href }: { href: string | null }) {
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/logo.png"
+      alt="SANDR"
+      width={72}
+      height={72}
+      style={{ height: '72px', width: '72px', objectFit: 'contain' }}
+    />
+  );
+  if (href === null) {
+    return <div className="flex items-center justify-center">{img}</div>;
+  }
   return (
     <Link href={href} className="flex items-center justify-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo.png"
-        alt="SANDR"
-        width={72}
-        height={72}
-        style={{ height: '72px', width: '72px', objectFit: 'contain' }}
-      />
+      {img}
     </Link>
   );
 }
 
-// La Navbar è renderizzata una sola volta nel layout: la variante è derivata
-// dalla rotta (tutte le pagine /dashboard usano la variante semplificata),
-// con possibilità di override esplicito via prop. Niente link di navigazione.
-export function Navbar({ variant }: { variant?: 'public' | 'dashboard' }) {
+// La Navbar è renderizzata una sola volta nel layout. È CONSAPEVOLE DELLA
+// SESSIONE su OGNI pagina (non solo /dashboard): legge lo stato Supabase via
+// getUser() iniziale + onAuthStateChange. AREA CRITICA (CLAUDE.md): Auth.
+//
+// - loggato     -> avatar a destra, logo verso /dashboard/home
+// - non loggato -> Accedi/Abbonati, logo verso / (landing)
+// - su / (landing): il logo non è cliccabile (sei già lì)
+// loggedIn === null = stato ancora sconosciuto: mostriamo solo il logo per
+// evitare di lampeggiare la CTA sbagliata (es. "Accedi" a un utente loggato).
+export function Navbar() {
   const pathname = usePathname();
-  // Il player live (/live/[id]) usa la navbar minimale come la dashboard.
-  const resolved =
-    variant ??
-    (pathname.startsWith('/dashboard') || pathname.startsWith('/live/') ? 'dashboard' : 'public');
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
 
-  return resolved === 'dashboard' ? <DashboardNavbar /> : <PublicNavbar />;
-}
+  useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setLoggedIn(false);
+      return;
+    }
+    const supabase = createClient();
+    const apply = (user: { email?: string; user_metadata?: Record<string, unknown> } | null) => {
+      setLoggedIn(!!user);
+      setEmail(user?.email ?? null);
+      setFullName((user?.user_metadata?.full_name as string | undefined) ?? null);
+    };
+    supabase.auth.getUser().then(({ data }) => apply(data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      apply(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
-// ===== Variante public: ACCEDI · logo · ABBONATI =====
-function PublicNavbar() {
   const tc = useTranslations('Common');
+  const isLanding = pathname === '/';
+  const logoHref = isLanding ? null : loggedIn ? '/dashboard/home' : '/';
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-sandr-black/70 backdrop-blur">
       <div className="mx-auto grid h-20 max-w-6xl grid-cols-3 items-center px-4">
-        {/* Sinistra: ACCEDI */}
+        {/* Sinistra: Accedi (solo se non loggato e stato noto) */}
         <div className="flex justify-start">
-          <Link
-            href="/login"
-            className="rounded border border-white/[0.15] px-3 py-2 font-condensed text-sm font-semibold uppercase tracking-wide text-white sm:px-4"
-          >
-            {tc('signIn')}
-          </Link>
+          {loggedIn === false ? (
+            <Link
+              href="/login"
+              className="rounded border border-white/[0.15] px-3 py-2 font-condensed text-sm font-semibold uppercase tracking-wide text-white sm:px-4"
+            >
+              {tc('signIn')}
+            </Link>
+          ) : null}
         </div>
 
         {/* Centro: logo */}
-        <Logo />
+        <Logo href={logoHref} />
 
-        {/* Destra: ABBONATI */}
+        {/* Destra: avatar (loggato) o Abbonati (non loggato) */}
         <div className="flex justify-end">
-          <Link
-            href="/pricing"
-            className="rounded bg-sandr-orange px-3 py-2 font-condensed text-sm font-semibold uppercase tracking-wide text-sandr-text sm:px-4"
-          >
-            {tc('subscribe')}
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-// ===== Variante dashboard: (vuoto) · logo · avatar =====
-function DashboardNavbar() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-sandr-black/70 backdrop-blur">
-      <div className="mx-auto grid h-20 max-w-6xl grid-cols-3 items-center px-4">
-        <div />
-        <Logo href="/dashboard/home" />
-        <div className="flex justify-end">
-          <AvatarMenu />
+          {loggedIn === true ? (
+            <AvatarMenu email={email} fullName={fullName} />
+          ) : loggedIn === false ? (
+            <Link
+              href="/pricing"
+              className="rounded bg-sandr-orange px-3 py-2 font-condensed text-sm font-semibold uppercase tracking-wide text-sandr-text sm:px-4"
+            >
+              {tc('subscribe')}
+            </Link>
+          ) : null}
         </div>
       </div>
     </header>
@@ -94,14 +112,11 @@ function DashboardNavbar() {
 }
 
 // Avatar con dropdown account (chiude al click fuori).
-// AREA CRITICA (CLAUDE.md): legge la sessione Supabase reale e gestisce il
-// logout. La riga `profiles` è creata dal trigger DB, non qui.
-function AvatarMenu() {
+// AREA CRITICA (CLAUDE.md): gestisce il logout reale (signOut Supabase).
+function AvatarMenu({ email, fullName }: { email: string | null; fullName: string | null }) {
   const t = useTranslations('Account');
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -112,21 +127,6 @@ function AvatarMenu() {
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [open]);
-
-  // Carica l'utente corrente dalla sessione Supabase (se configurata).
-  useEffect(() => {
-    if (!isSupabaseConfigured()) return;
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setEmail(data.user?.email ?? null);
-      setFullName((data.user?.user_metadata?.full_name as string | undefined) ?? null);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setEmail(session?.user?.email ?? null);
-      setFullName((session?.user?.user_metadata?.full_name as string | undefined) ?? null);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   // Logout reale: signOut Supabase, poi torna alla landing pubblica.
   const logout = async () => {
