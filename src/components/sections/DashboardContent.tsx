@@ -81,7 +81,31 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   return (
     <>
       <div className="space-y-12 py-12">
-        {/* 1 — In diretta ora. Mostrata solo se la sorgente (video reali o
+        {/* 1 — Atleti in evidenza */}
+        <section className="mx-auto max-w-6xl px-4">
+          <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
+          <ScrollRow>
+            {mockAthletes.map((a) => (
+              <div key={a.id} className="shrink-0 snap-start">
+                <AthleteCard athlete={a} cardWidth={160} />
+              </div>
+            ))}
+          </ScrollRow>
+        </section>
+
+        {/* 2 — I circuiti */}
+        <section className="mx-auto max-w-6xl px-4">
+          <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
+          <ScrollRow>
+            {mockFederations.map((f) => (
+              <div key={f.id} className="shrink-0 snap-start">
+                <FederationCard federation={f} />
+              </div>
+            ))}
+          </ScrollRow>
+        </section>
+
+        {/* 3 — In diretta ora. Mostrata solo se la sorgente (video reali o
             mock) ha contenuti type === 'live'; coi video reali senza live,
             la riga è nascosta del tutto. */}
         {liveItems.length > 0 ? (
@@ -96,30 +120,6 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
             </ScrollRow>
           </section>
         ) : null}
-
-        {/* 2 — Atleti in evidenza */}
-        <section className="mx-auto max-w-6xl px-4">
-          <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
-          <ScrollRow>
-            {mockAthletes.map((a) => (
-              <div key={a.id} className="shrink-0 snap-start">
-                <AthleteCard athlete={a} cardWidth={160} />
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
-
-        {/* 3 — I circuiti */}
-        <section className="mx-auto max-w-6xl px-4">
-          <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
-          <ScrollRow>
-            {mockFederations.map((f) => (
-              <div key={f.id} className="shrink-0 snap-start">
-                <FederationCard federation={f} />
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
 
         {/* 4 — Righe contenuti */}
         {contentRows.map((row) => {
