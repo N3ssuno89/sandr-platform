@@ -234,7 +234,8 @@
     "all": "Tutti",
     "interviews": "Interviste esclusive",
     "behindScenes": "Dietro le quinte",
-    "highlights": "Highlights"
+    "highlights": "Highlights",
+    "newest": "Novità"
   },
   "Login": {
     "headline": "Bentornato.",
@@ -268,9 +269,7 @@
     "errCallback": "Conferma email non riuscita. Riprova ad accedere.",
     "haveAccount": "Hai già un account?",
     "noAccount": "Non hai un account?",
-    "notConfigured": "Autenticazione non configurata in questo ambiente.",
-    "show": "Mostra",
-    "hide": "Nascondi"
+    "notConfigured": "Autenticazione non configurata in questo ambiente."
   },
   "Home": {
     "hero": {

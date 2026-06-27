@@ -31,7 +31,9 @@ export interface ContentItem {
   id: string;
   title: string;
   teams?: string;
-  circuit: CircuitTag;
+  // Opzionale: i video reali possono non avere un circuito assegnato. In quel
+  // caso finiscono nella riga "Novità" invece di essere forzati su un circuito.
+  circuit?: CircuitTag;
   sport: SportTag;
   type: ContentType;
   nations: NationTag[];
