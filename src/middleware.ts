@@ -23,9 +23,14 @@ function localeOf(pathname: string): string {
     : routing.defaultLocale;
 }
 
-// Rotte protette: tutto sotto /dashboard (home, admin, subscription, payment,
-// settings, ppv-history, ...) e /broadcast. Pubbliche: landing, /pricing,
-// /live, /vod, /athletes, /federations (non sotto /dashboard né /broadcast).
+// Prefissi PROTETTI (richiedono login): tutto sotto /dashboard (home, admin,
+// admin/*, subscription, payment, settings, ppv-history) e /broadcast.
+// `protectedRoutes` = ['/dashboard', '/broadcast'] (src/config/site.ts).
+//
+// Tutto il resto è PUBBLICO e non deve MAI generare un redirect al login:
+// / (landing), /pricing, /live, /live/[id], /vod, /vod/[id], /athletes,
+// /athletes/[id], /federations, /federations/[id], /login, /auth/callback.
+// La verifica avviene sul path "logico" (locale /it,/en già rimossa).
 function isProtected(pathname: string): boolean {
   const path = stripLocale(pathname);
   return protectedRoutes.some((route) => path === route || path.startsWith(`${route}/`));

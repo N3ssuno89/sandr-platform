@@ -60,12 +60,15 @@ export async function getVideo(uid: string): Promise<StreamVideo | null> {
   }
 }
 
-// Client-safe: usa solo l'account ID pubblico per l'embed iframe.
+// Client-safe: URL universale dell'iframe Cloudflare Stream.
+// Funziona col solo video UID (nessun account ID / library ID, nessun token).
+// FIX: il precedente iframe.mediadelivery.net causava errori "libraryId not
+// valid". Il formato corretto e universale è iframe.cloudflarestream.com/{uid}.
 export function getEmbedUrl(uid: string): string {
-  return `https://iframe.mediadelivery.net/embed/${process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID}/${uid}?autoplay=false&loop=false&muted=false&preload=true&responsive=true`;
+  return `https://iframe.cloudflarestream.com/${uid}`;
 }
 
-// Client-safe: URL di thumbnail pubblico.
+// Client-safe: URL di thumbnail pubblico (videodelivery.net, solo UID).
 export function getThumbnailUrl(uid: string): string {
   return `https://videodelivery.net/${uid}/thumbnails/thumbnail.jpg?time=1s&height=400`;
 }

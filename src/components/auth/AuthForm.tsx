@@ -30,6 +30,7 @@ export function AuthForm() {
     searchParams.get('error') === 'auth' ? t('errCallback') : null,
   );
   const [confirmSent, setConfirmSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Mappa i messaggi di errore Supabase su copy in italiano/inglese.
   function mapError(message: string): string {
@@ -174,16 +175,27 @@ export function AuthForm() {
           autoComplete="email"
           className={inputCls}
         />
-        <input
-          type="password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder={t('password')}
-          autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-          className={inputCls}
-        />
+        {/* Password con toggle mostra/nascondi (testuale, no emoji). */}
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t('password')}
+            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+            className={`${inputCls} pr-24`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? t('hide') : t('show')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 font-condensed text-[11px] uppercase tracking-wide text-[#888888] hover:text-white"
+          >
+            {showPassword ? t('hide') : t('show')}
+          </button>
+        </div>
 
         {error ? (
           <p className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">

@@ -268,7 +268,9 @@
     "errCallback": "Conferma email non riuscita. Riprova ad accedere.",
     "haveAccount": "Hai già un account?",
     "noAccount": "Non hai un account?",
-    "notConfigured": "Autenticazione non configurata in questo ambiente."
+    "notConfigured": "Autenticazione non configurata in questo ambiente.",
+    "show": "Mostra",
+    "hide": "Nascondi"
   },
   "Home": {
     "hero": {

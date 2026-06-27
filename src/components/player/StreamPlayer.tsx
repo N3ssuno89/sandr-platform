@@ -18,9 +18,9 @@ export function StreamPlayer({
 }) {
   const [loaded, setLoaded] = useState(false);
 
-  const src = autoplay
-    ? getEmbedUrl(videoId).replace('autoplay=false', 'autoplay=true')
-    : getEmbedUrl(videoId);
+  // L'embed Cloudflare accetta i parametri come query string sull'URL iframe.
+  const base = getEmbedUrl(videoId);
+  const src = autoplay ? `${base}?autoplay=true&muted=true` : base;
 
   return (
     <div
