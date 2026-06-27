@@ -142,14 +142,15 @@
     },
     "why": {
       "label": "Perché scegliere SANDR",
-      "heading": "Costruito per chi ama lo sport, non per chi lo subisce.",
+      "heading": "Tutto lo sport in un posto solo.",
+      "subline": "SANDR non è solo streaming. È l'ecosistema completo attorno a ogni evento sportivo.",
       "features": [
-        { "title": "Multi-device", "desc": "Guarda su TV, tablet, smartphone e computer. Dove vuoi, quando vuoi." },
-        { "title": "Zero interruzioni", "desc": "Streaming HLS ottimizzato. Nessun lag, nessun buffering durante i momenti decisivi." },
-        { "title": "SANDR Replay", "desc": "Ogni match disponibile on-demand dopo la diretta. Non perdi più nulla." },
-        { "title": "Italiano & Inglese", "desc": "Piattaforma completamente bilingue. Commento e interfaccia in entrambe le lingue." },
-        { "title": "Stats in tempo reale", "desc": "Punteggio, set, statistiche per ogni match aggiornate in diretta." },
-        { "title": "Interviste esclusive", "desc": "Post-match, dietro le quinte, quattro chiacchiere con gli atleti. Solo su SANDR." }
+        { "title": "Statistiche Live", "desc": "Punteggio, set e statistiche aggiornate in tempo reale, punto per punto." },
+        { "title": "Fantasy", "desc": "Crea la tua squadra fantasy e guadagna punti in base alle performance reali degli atleti." },
+        { "title": "Tornei e Bracket", "desc": "Segui ogni torneo con bracket completi, risultati e calendari aggiornati." },
+        { "title": "Streaming Interattivo", "desc": "Multi-view, chat live, sondaggi e voto MVP durante ogni match." },
+        { "title": "Profili Atleti", "desc": "Statistiche, storico match e ranking per ogni atleta." },
+        { "title": "Betting Integration", "desc": "Quote e informazioni betting tramite partner ufficiali autorizzati, dove disponibile.", "disclaimer": "Dove consentito dalle normative locali. 18+" }
       ]
     },
     "pricing": {
