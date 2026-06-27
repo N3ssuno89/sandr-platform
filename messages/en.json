@@ -247,6 +247,29 @@
     "noAccount": "Don't have an account?",
     "demoNote": "Demo mode — real authentication coming in the next version"
   },
+  "Auth": {
+    "loginTab": "Sign in",
+    "signupTab": "Sign up",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "loginCta": "Sign in",
+    "signupCta": "Sign up",
+    "loginLoading": "Signing in…",
+    "signupLoading": "Signing up…",
+    "or": "or",
+    "comingSoon": "Coming soon",
+    "google": "Continue with Google",
+    "apple": "Continue with Apple",
+    "confirmSent": "We've sent you a confirmation email. Check your inbox.",
+    "errInvalid": "Incorrect email or password.",
+    "errNotConfirmed": "You must confirm your email before signing in.",
+    "errGeneric": "Something went wrong. Please try again.",
+    "errCallback": "Email confirmation failed. Please try signing in again.",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "notConfigured": "Authentication is not configured in this environment."
+  },
   "Home": {
     "hero": {
       "eyebrow": "Sand sports network",

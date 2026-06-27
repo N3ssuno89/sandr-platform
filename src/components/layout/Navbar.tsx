@@ -3,6 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
+
+// Iniziali per l'avatar: dal nome completo (max 2), altrimenti dall'email.
+function initialsOf(fullName: string | null, email: string | null): string {
+  if (fullName && fullName.trim()) {
+    const parts = fullName.trim().split(/\s+/).slice(0, 2);
+    return parts.map((p) => p[0]?.toUpperCase() ?? '').join('') || 'U';
+  }
+  if (email) return email[0]?.toUpperCase() ?? 'U';
+  return 'U';
+}
 
 // Logo centrato, riutilizzato in entrambe le varianti.
 function Logo({ href = '/' }: { href?: string }) {
@@ -83,10 +94,14 @@ function DashboardNavbar() {
 }
 
 // Avatar con dropdown account (chiude al click fuori).
+// AREA CRITICA (CLAUDE.md): legge la sessione Supabase reale e gestisce il
+// logout. La riga `profiles` è creata dal trigger DB, non qui.
 function AvatarMenu() {
   const t = useTranslations('Account');
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -98,11 +113,32 @@ function AvatarMenu() {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [open]);
 
-  // Logout simulato: torna alla landing pubblica.
-  const logout = () => {
+  // Carica l'utente corrente dalla sessione Supabase (se configurata).
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+      setFullName((data.user?.user_metadata?.full_name as string | undefined) ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setEmail(session?.user?.email ?? null);
+      setFullName((session?.user?.user_metadata?.full_name as string | undefined) ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  // Logout reale: signOut Supabase, poi torna alla landing pubblica.
+  const logout = async () => {
     setOpen(false);
+    if (isSupabaseConfigured()) {
+      await createClient().auth.signOut();
+    }
     router.push('/');
+    router.refresh();
   };
+
+  const initials = initialsOf(fullName, email);
 
   const links = [
     { href: '/dashboard/subscription', label: t('subscription') },
@@ -120,14 +156,14 @@ function AvatarMenu() {
         onClick={() => setOpen((v) => !v)}
         className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.08] bg-[#242424] font-condensed font-bold text-white"
       >
-        E
+        {initials}
       </button>
 
       {open ? (
         <div className="absolute right-0 mt-2 min-w-[240px] overflow-hidden rounded-xl border border-white/[0.08] bg-[#1C1C1C]">
           <div className="border-b border-white/[0.06] px-4 py-3">
             <p className="text-xs uppercase tracking-wide text-sandr-muted">{t('myAccount')}</p>
-            <p className="mt-0.5 text-sm text-[#C0BDB8]">utente@sandr.tv</p>
+            <p className="mt-0.5 truncate text-sm text-[#C0BDB8]">{email ?? '—'}</p>
           </div>
 
           {links.map((l) => (

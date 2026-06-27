@@ -1,11 +1,12 @@
+import { Suspense } from 'react';
 import { setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { LoginForm } from '@/components/sections/LoginForm';
+import { AuthForm } from '@/components/auth/AuthForm';
 
-// Pagina di login (solo presentazionale / demo). AREA CRITICA: Supabase Auth
-// richiede review umana obbligatoria (CLAUDE.md). L'interazione (redirect
-// simulato) vive nel client component LoginForm.
+// Pagina di login. AREA CRITICA (CLAUDE.md): Supabase Auth richiede review
+// umana obbligatoria. L'autenticazione reale (email/password con conferma
+// email) vive nel client component AuthForm.
 export default function LoginPage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   const t = useTranslations('Login');
@@ -31,11 +32,11 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
         </h1>
         <p className="mt-2 text-center text-sm text-[#C0BDB8]">{t('subline')}</p>
 
-        {/* Form (client): social, input, CTA — redirect demo */}
-        <LoginForm />
-
-        {/* Nota demo */}
-        <p className="mt-4 text-center text-xs text-sandr-muted">{t('demoNote')}</p>
+        {/* Form (client): Supabase Auth reale (login/registrazione).
+            Suspense richiesto da useSearchParams nella pagina statica. */}
+        <Suspense>
+          <AuthForm />
+        </Suspense>
 
         {/* Link agli abbonamenti */}
         <p className="mt-6 text-center text-sm text-sandr-muted">

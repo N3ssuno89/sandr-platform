@@ -247,6 +247,29 @@
     "noAccount": "Non hai un account?",
     "demoNote": "Demo mode — autenticazione reale disponibile nella prossima versione"
   },
+  "Auth": {
+    "loginTab": "Accedi",
+    "signupTab": "Registrati",
+    "fullName": "Nome completo",
+    "email": "Email",
+    "password": "Password",
+    "loginCta": "Accedi",
+    "signupCta": "Registrati",
+    "loginLoading": "Accesso…",
+    "signupLoading": "Registrazione…",
+    "or": "oppure",
+    "comingSoon": "Prossimamente",
+    "google": "Continua con Google",
+    "apple": "Continua con Apple",
+    "confirmSent": "Ti abbiamo inviato un'email di conferma. Controlla la tua casella.",
+    "errInvalid": "Email o password non corretti.",
+    "errNotConfirmed": "Devi confermare la tua email prima di accedere.",
+    "errGeneric": "Si è verificato un errore. Riprova.",
+    "errCallback": "Conferma email non riuscita. Riprova ad accedere.",
+    "haveAccount": "Hai già un account?",
+    "noAccount": "Non hai un account?",
+    "notConfigured": "Autenticazione non configurata in questo ambiente."
+  },
   "Home": {
     "hero": {
       "eyebrow": "Sand sports network",
