@@ -1,5 +1,4 @@
 import { setRequestLocale } from 'next-intl/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { Link } from '@/i18n/routing';
 import { createClient } from '@/lib/supabase/server';
 import { DemoPill } from '@/components/account/DemoPill';
@@ -56,22 +55,21 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      const sb = supabase as unknown as SupabaseClient;
-      const { data: sub } = await sb
+      const { data: sub } = await supabase
         .from('subscriptions')
-        .select('plan, status, current_period_end, cancel_at_period_end')
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      subscription = (sub as SubscriptionRow | null) ?? null;
+      subscription = sub ?? null;
 
-      const { data: ppv } = await sb
+      const { data: ppv } = await supabase
         .from('ppv_purchases')
-        .select('id, amount, currency, valid_until, purchased_at, video_id, videos(title)')
+        .select('*,videos(title)')
         .eq('user_id', user.id)
         .order('purchased_at', { ascending: false });
-      purchases = (ppv as PpvRow[] | null) ?? [];
+      purchases = ppv ?? [];
     }
   }
 
