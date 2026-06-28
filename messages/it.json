@@ -146,7 +146,6 @@
       "subline": "SANDR non è solo streaming. È l'ecosistema completo attorno a ogni evento sportivo.",
       "features": [
         { "title": "Statistiche Live", "desc": "Punteggio, set e statistiche aggiornate in tempo reale, punto per punto." },
-        { "title": "Fantasy", "desc": "Crea la tua squadra fantasy e guadagna punti in base alle performance reali degli atleti." },
         { "title": "Tornei e Bracket", "desc": "Segui ogni torneo con bracket completi, risultati e calendari aggiornati." },
         { "title": "Streaming Interattivo", "desc": "Multi-view, chat live, sondaggi e voto MVP durante ogni match." },
         { "title": "Profili Atleti", "desc": "Statistiche, storico match e ranking per ogni atleta." },

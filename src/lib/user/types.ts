@@ -23,6 +23,7 @@ export type ReminderItem = {
   remindAt: string | null;
 };
 
+// Schema kept for future FantaBeach integration — UI intentionally removed
 export type FantasyTeamItem = {
   id: string;
   name: string | null;

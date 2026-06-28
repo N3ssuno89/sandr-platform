@@ -2,39 +2,46 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
 import { AthleteCard } from '@/components/cards/AthleteCard';
-import { mockContent } from '@/lib/mock-content';
-import { mockAthletes } from '@/lib/mock-athletes';
-import type { Federation } from '@/types/federation';
+import type { Athlete } from '@/types/athlete';
 import type { ContentItem } from '@/types/tags';
+import type { EventView } from '@/lib/public/queries';
 
-const TABS = ['home', 'live', 'replay', 'interviews', 'athletes', 'highlights'] as const;
+const TABS = ['home', 'live', 'replay', 'interviews', 'athletes', 'highlights', 'events'] as const;
 type Tab = (typeof TABS)[number];
 
-export function FederationContent({ federation }: { federation: Federation }) {
+// Presentazionale: riceve i contenuti già filtrati da Supabase (o mock) via props.
+export function FederationContent({
+  fedId,
+  videos,
+  athletes,
+  events,
+}: {
+  fedId: string;
+  videos: ContentItem[];
+  athletes: Athlete[];
+  events: EventView[];
+}) {
   const t = useTranslations('Federation');
   const tLive = useTranslations('Live');
   const tc = useTranslations('Common');
   const [tab, setTab] = useState<Tab>('home');
 
-  // Filtro per circuito = shortName della federazione.
-  const content = mockContent.filter((c) => c.circuit === federation.shortName);
-  const athletes = mockAthletes.filter((a) => a.circuit === federation.shortName);
-
   const itemsForTab = (): ContentItem[] => {
     switch (tab) {
       case 'live':
-        return content.filter((c) => c.type === 'live');
+        return videos.filter((c) => c.type === 'live');
       case 'replay':
-        return content.filter((c) => c.type === 'replay');
+        return videos.filter((c) => c.type === 'replay');
       case 'interviews':
-        return content.filter((c) => c.type === 'interview');
+        return videos.filter((c) => c.type === 'interview');
       case 'highlights':
-        return content.filter((c) => c.type === 'highlights');
+        return videos.filter((c) => c.type === 'highlights');
       case 'home':
-        return content;
+        return videos;
       default:
         return [];
     }
@@ -61,20 +68,22 @@ export function FederationContent({ federation }: { federation: Federation }) {
       );
     }
     return (
-      <VodCard
-        key={item.id}
-        title={item.title}
-        date={item.date ?? ''}
-        duration={item.duration ?? ''}
-        access={item.isPremium ? 'premium' : 'free'}
-        cardWidth={260}
-      />
+      <Link key={item.id} href={`/vod/${item.id}`} className="block">
+        <VodCard
+          title={item.title}
+          date={item.date ?? ''}
+          duration={item.duration ?? ''}
+          access={item.isPremium ? 'premium' : 'free'}
+          cardWidth={260}
+          thumbnailUrl={item.thumbnail}
+        />
+      </Link>
     );
   };
 
   return (
     <>
-      {/* Tab bar (stile barra circuiti) */}
+      {/* Tab bar */}
       <div className="sticky top-20 z-40 border-b border-white/[0.08] bg-[#1C1C1C]">
         <div className="no-scrollbar mx-auto max-w-6xl overflow-x-auto px-4">
           <div className="flex gap-6 whitespace-nowrap">
@@ -84,12 +93,10 @@ export function FederationContent({ federation }: { federation: Federation }) {
                 type="button"
                 onClick={() => setTab(tb)}
                 className={`-mb-px border-b-2 py-3 font-condensed text-sm font-bold uppercase tracking-wide transition-colors ${
-                  tab === tb
-                    ? 'border-sandr-orange text-white'
-                    : 'border-transparent text-sandr-muted hover:text-white'
+                  tab === tb ? 'border-sandr-orange text-white' : 'border-transparent text-sandr-muted hover:text-white'
                 }`}
               >
-                {t(`tabs.${tb}`)}
+                {tb === 'events' ? 'Calendario eventi' : t(`tabs.${tb}`)}
               </button>
             ))}
           </div>
@@ -107,6 +114,26 @@ export function FederationContent({ federation }: { federation: Federation }) {
             </div>
           ) : (
             <p className="text-sandr-muted">{t('empty')}</p>
+          )
+        ) : tab === 'events' ? (
+          events.length > 0 ? (
+            <ul className="space-y-3">
+              {events.map((e) => (
+                <li key={e.id} className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-[#1C1C1C] p-4">
+                  <div>
+                    <p className="font-condensed text-[15px] font-bold uppercase tracking-wide text-white">{e.title}</p>
+                    <p className="text-[13px] text-[#888888]">
+                      {e.location} · {e.dateRange} · {e.stage}
+                    </p>
+                  </div>
+                  <Link href={`/federations/${fedId}`} className="shrink-0 text-[13px] font-semibold uppercase tracking-wide text-sandr-orange hover:text-sandr-text">
+                    Dettagli
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sandr-muted">Nessun evento in programma per questo circuito</p>
           )
         ) : items.length > 0 ? (
           <div className="flex flex-wrap gap-5">{items.map((item) => renderContentCard(item))}</div>

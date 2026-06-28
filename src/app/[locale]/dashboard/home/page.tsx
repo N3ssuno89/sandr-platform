@@ -2,10 +2,13 @@ import { setRequestLocale } from 'next-intl/server';
 import { HeroCarousel } from '@/components/sections/HeroCarousel';
 import { DashboardContent } from '@/components/sections/DashboardContent';
 import { getVideosForDisplay } from '@/lib/videos/actions';
+import { supabaseReadable, getPublicAthletes, getPublicFederations, getSportsMap } from '@/lib/public/queries';
+import { toAthleteCard, toFederationCard } from '@/lib/public/map';
+import type { Athlete } from '@/types/athlete';
+import type { Federation } from '@/types/federation';
 
-// Homepage autenticata (stile DAZN post-login). I video arrivano da SUPABASE
-// (source of truth per tag/circuito/tipo), non più dai meta Cloudflare.
-// Build-safe: lista vuota → DashboardContent usa il mock (dev mode).
+// Homepage autenticata (stile DAZN post-login). Video/atleti/circuiti da
+// SUPABASE (source of truth). Build-safe: liste vuote → mock (dev mode).
 export default async function AuthHomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
 
@@ -16,11 +19,33 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   const featured = realVideos?.filter((v) => v.tags.includes('featured')) ?? [];
   const featuredVideos = featured.length > 0 ? featured : undefined;
 
-  // Il betting NON sta nella home post-login: vive solo nella landing.
+  // Atleti/federazioni reali per le righe home (mock fallback se vuoto/non config).
+  let athletes: Athlete[] | undefined;
+  let federations: Federation[] | undefined;
+  if (supabaseReadable()) {
+    const [aRows, fRows, sportsMap] = await Promise.all([
+      getPublicAthletes(),
+      getPublicFederations(),
+      getSportsMap(),
+    ]);
+    if (aRows.length > 0) {
+      athletes = aRows.map((a) =>
+        toAthleteCard(
+          a,
+          sportsMap.get(a.sport_id ?? '') ?? 'Beach Volley',
+          fRows.find((f) => f.id === a.federation_id)?.short_name ?? '—',
+        ),
+      );
+    }
+    if (fRows.length > 0) {
+      federations = fRows.map((f) => toFederationCard(f, sportsMap.get(f.sport_id ?? '') ?? 'Beach Volley'));
+    }
+  }
+
   return (
     <>
       <HeroCarousel featuredVideos={featuredVideos} />
-      <DashboardContent realVideos={realVideos} />
+      <DashboardContent realVideos={realVideos} athletes={athletes} federations={federations} />
     </>
   );
 }

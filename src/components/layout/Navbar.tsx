@@ -153,13 +153,13 @@ function AvatarMenu({ email, fullName, isAdmin }: { email: string | null; fullNa
   const initials = initialsOf(fullName, email);
 
   // Menu account organizzato (etichette italiane).
+  // Fantasy rimosso dalla UI (schema DB mantenuto per FantaBeach futuro).
   const links = [
     { href: '/dashboard/profile', label: 'Il mio account' },
     { href: '/dashboard/settings', label: 'Impostazioni' },
     { href: '/dashboard/subscription', label: 'Abbonamento' },
     { href: '/dashboard/watch-history', label: 'Cronologia' },
     { href: '/dashboard/reminders', label: 'Reminder' },
-    { href: '/dashboard/fantasy', label: 'Fantasy' },
   ] as const;
 
   return (
