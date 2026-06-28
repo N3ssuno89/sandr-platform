@@ -15,9 +15,11 @@ export interface VodCardProps {
   cardWidth?: number;
   // Thumbnail reale (es. Cloudflare Stream). Se assente: placeholder scuro.
   thumbnailUrl?: string;
+  // Dato di esempio (mock fallback): mostra una pill "MOCK".
+  isMock?: boolean;
 }
 
-export function VodCard({ title, date, duration, access, progress, cardWidth, thumbnailUrl }: VodCardProps) {
+export function VodCard({ title, date, duration, access, progress, cardWidth, thumbnailUrl, isMock }: VodCardProps) {
   const isPremium = access === 'premium';
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
@@ -44,11 +46,17 @@ export function VodCard({ title, date, duration, access, progress, cardWidth, th
             style={{ opacity: loaded ? 1 : 0 }}
           />
         ) : null}
-        {/* Badge accesso */}
+        {/* Pill MOCK (dati di esempio) in alto a sinistra */}
+        {isMock ? (
+          <span className="absolute left-3 top-3 rounded bg-[#F04E00]/90 px-2 py-0.5 font-condensed text-[9px] font-bold uppercase text-black">
+            Mock
+          </span>
+        ) : null}
+        {/* Badge accesso (scende sotto la pill MOCK quando presente) */}
         <span
-          className={`absolute left-3 top-3 rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
-            isPremium ? 'bg-sandr-orange text-black' : 'bg-white/10 text-sandr-text'
-          }`}
+          className={`absolute left-3 rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
+            isMock ? 'top-10' : 'top-3'
+          } ${isPremium ? 'bg-sandr-orange text-black' : 'bg-white/10 text-sandr-text'}`}
         >
           {isPremium ? 'Premium' : 'Free'}
         </span>

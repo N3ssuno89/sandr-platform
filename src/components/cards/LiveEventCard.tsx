@@ -18,9 +18,11 @@ export interface LiveEventCardProps {
   ctaLabel?: string;
   // Larghezza fissa della card (px). Default 220.
   cardWidth?: number;
+  // Dato di esempio (mock fallback): mostra una pill "MOCK".
+  isMock?: boolean;
 }
 
-export function LiveEventCard({ title, teamA, teamB, sport, href, ctaLabel, cardWidth }: LiveEventCardProps) {
+export function LiveEventCard({ title, teamA, teamB, sport, href, ctaLabel, cardWidth, isMock }: LiveEventCardProps) {
   const t = useTranslations('Athlete');
   const [reminderOn, setReminderOn] = useState(false);
   const [tooltip, setTooltip] = useState(false);
@@ -40,7 +42,13 @@ export function LiveEventCard({ title, teamA, teamB, sport, href, ctaLabel, card
     <>
       {/* Thumbnail 16:9 (paddingBottom 56.25% su contenitore relative) */}
       <div className="relative w-full bg-gradient-to-br from-white/10 to-transparent" style={{ paddingBottom: '56.25%' }}>
-        <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded bg-black/70 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-sandr-text">
+        {/* Pill MOCK (dati di esempio) in alto a sinistra */}
+        {isMock ? (
+          <span className="absolute left-3 top-3 z-10 rounded bg-[#F04E00]/90 px-2 py-0.5 font-condensed text-[9px] font-bold uppercase text-black">
+            Mock
+          </span>
+        ) : null}
+        <span className={`absolute left-3 inline-flex items-center gap-2 rounded bg-black/70 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-sandr-text ${isMock ? 'top-10' : 'top-3'}`}>
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
