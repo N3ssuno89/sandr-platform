@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
+import { deleteVideo } from '@/lib/videos/actions';
 
 export type VideoRow = {
   uid: string;
@@ -17,11 +18,27 @@ export type VideoRow = {
 const COLS = 'grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] items-center gap-3 px-4';
 
 export function VideoManager({ videos }: { videos: VideoRow[] }) {
+  const router = useRouter();
   const [rows, setRows] = useState<VideoRow[]>(videos);
   const [q, setQ] = useState('');
 
   const visible = rows.filter((r) => r.name.toLowerCase().includes(q.toLowerCase()));
-  const remove = (uid: string) => setRows((prev) => prev.filter((r) => r.uid !== uid));
+
+  // Elimina su Supabase (server action, verifica admin), poi aggiorna la lista.
+  const remove = async (uid: string) => {
+    if (!window.confirm('Eliminare definitivamente questo video?')) return;
+    const res = await deleteVideo(uid);
+    if (res.ok) {
+      setRows((prev) => prev.filter((r) => r.uid !== uid));
+      router.refresh();
+    } else {
+      window.alert(
+        res.error === 'forbidden' || res.error === 'unauthorized'
+          ? 'Solo un admin può eliminare i video.'
+          : `Errore: ${res.error}`,
+      );
+    }
+  };
 
   return (
     <div>

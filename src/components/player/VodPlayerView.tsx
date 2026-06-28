@@ -1,6 +1,6 @@
 'use client';
 
-// Vista VOD player (client). Usa il player reale Cloudflare Stream.
+// Vista VOD player (client). Player reale Cloudflare Stream; metadati da Supabase.
 // AREA CRITICA (CLAUDE.md): integrazione Cloudflare Stream, review umana.
 
 import { useState } from 'react';
@@ -9,39 +9,32 @@ import { Link } from '@/i18n/routing';
 import { StreamPlayer } from '@/components/player/StreamPlayer';
 import { VodCard } from '@/components/cards/VodCard';
 import { AthleteCard } from '@/components/cards/AthleteCard';
-import { getThumbnailUrl, type StreamVideo } from '@/lib/cloudflare-stream';
 import { mockAthletes } from '@/lib/mock-athletes';
 
-function fmtDuration(seconds: number): string {
-  if (!seconds || seconds < 0) return '0:00';
-  const s = Math.floor(seconds % 60);
-  const m = Math.floor((seconds / 60) % 60);
-  const h = Math.floor(seconds / 3600);
-  const ss = String(s).padStart(2, '0');
-  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
-}
+export type PlayerVideoView = {
+  cloudflareUid: string; // id Cloudflare (per il player)
+  title: string;
+  durationLabel: string;
+  dateLabel: string;
+  description?: string | null;
+};
 
-function fmtDate(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime())
-    ? '—'
-    : d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
-}
+export type OtherVideo = {
+  id: string; // id Supabase (per il link /vod/[id])
+  title: string;
+  durationLabel: string;
+  thumbnailUrl?: string;
+};
 
-export function VodPlayerView({ video, others }: { video: StreamVideo; others: StreamVideo[] }) {
+export function VodPlayerView({ video, others }: { video: PlayerVideoView; others: OtherVideo[] }) {
   const t = useTranslations('Vod');
   const [tab, setTab] = useState<'info' | 'athletes' | 'other'>('info');
 
   const athletes = mockAthletes.slice(0, 6);
 
   const info = [
-    { label: t('player.info.duration'), value: fmtDuration(video.duration) },
-    { label: t('player.info.published'), value: fmtDate(video.created) },
-    { label: t('player.info.status'), value: video.status?.state ?? '—' },
-    {
-      label: t('player.info.resolution'),
-      value: video.input ? `${video.input.width}×${video.input.height}` : '—',
-    },
+    { label: t('player.info.duration'), value: video.durationLabel || '—' },
+    { label: t('player.info.published'), value: video.dateLabel || '—' },
   ];
 
   return (
@@ -49,16 +42,15 @@ export function VodPlayerView({ video, others }: { video: StreamVideo; others: S
       <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 py-6 lg:flex-row">
         {/* ===== LEFT ===== */}
         <div className="min-w-0 flex-1">
-          <StreamPlayer videoId={video.uid} title={video.meta?.name} />
+          <StreamPlayer videoId={video.cloudflareUid} title={video.title} />
 
           {/* Info bar */}
           <div className="mt-2 rounded-lg bg-[#141414] p-4">
-            <p className="font-condensed text-lg font-bold uppercase tracking-wide text-white">
-              {video.meta?.name ?? 'Video'}
-            </p>
+            <p className="font-condensed text-lg font-bold uppercase tracking-wide text-white">{video.title}</p>
             <p className="text-sm text-[#C0BDB8]">
-              {fmtDuration(video.duration)} · {fmtDate(video.created)}
+              {video.durationLabel} · {video.dateLabel}
             </p>
+            {video.description ? <p className="mt-2 text-sm text-[#888888]">{video.description}</p> : null}
           </div>
 
           {/* Tabs */}
@@ -70,9 +62,7 @@ export function VodPlayerView({ video, others }: { video: StreamVideo; others: S
                   type="button"
                   onClick={() => setTab(tb)}
                   className={`-mb-px border-b-2 py-3 font-condensed text-sm font-bold uppercase tracking-wide transition-colors ${
-                    tab === tb
-                      ? 'border-sandr-orange text-white'
-                      : 'border-transparent text-sandr-muted hover:text-white'
+                    tab === tb ? 'border-sandr-orange text-white' : 'border-transparent text-sandr-muted hover:text-white'
                   }`}
                 >
                   {t(`player.tabs.${tb}`)}
@@ -104,13 +94,13 @@ export function VodPlayerView({ video, others }: { video: StreamVideo; others: S
                 others.length > 0 ? (
                   <div className="flex flex-wrap gap-5">
                     {others.map((v) => (
-                      <Link key={v.uid} href={`/vod/${v.uid}`} className="shrink-0">
+                      <Link key={v.id} href={`/vod/${v.id}`} className="shrink-0">
                         <VodCard
-                          title={v.meta?.name ?? 'Video'}
-                          date={fmtDate(v.created)}
-                          duration={fmtDuration(v.duration)}
+                          title={v.title}
+                          date=""
+                          duration={v.durationLabel}
                           access="free"
-                          thumbnailUrl={getThumbnailUrl(v.uid)}
+                          thumbnailUrl={v.thumbnailUrl}
                           cardWidth={260}
                         />
                       </Link>
@@ -133,21 +123,15 @@ export function VodPlayerView({ video, others }: { video: StreamVideo; others: S
             <div className="mt-3 space-y-2">
               {others.slice(0, 4).map((v) => (
                 <Link
-                  key={v.uid}
-                  href={`/vod/${v.uid}`}
+                  key={v.id}
+                  href={`/vod/${v.id}`}
                   className="flex h-20 gap-3 overflow-hidden rounded-lg border border-white/[0.06] bg-[#141414] transition-colors hover:border-sandr-orange/50"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={getThumbnailUrl(v.uid)}
-                    alt={v.meta?.name ?? 'Video'}
-                    className="h-full w-20 shrink-0 object-cover"
-                  />
+                  <img src={v.thumbnailUrl ?? ''} alt={v.title} className="h-full w-20 shrink-0 object-cover" />
                   <div className="min-w-0 flex-1 py-2 pr-2">
-                    <p className="mt-1 truncate font-condensed text-[12px] font-bold uppercase text-white">
-                      {v.meta?.name ?? 'Video'}
-                    </p>
-                    <p className="truncate text-[11px] text-[#888888]">{fmtDuration(v.duration)}</p>
+                    <p className="mt-1 truncate font-condensed text-[12px] font-bold uppercase text-white">{v.title}</p>
+                    <p className="truncate text-[11px] text-[#888888]">{v.durationLabel}</p>
                   </div>
                 </Link>
               ))}

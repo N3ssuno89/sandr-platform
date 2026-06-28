@@ -845,7 +845,11 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      // RPC admin (migration 0002): estende un enum whitelisted (content_type).
+      admin_add_enum_value: {
+        Args: { enum_name: string; new_value: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       user_role: 'viewer' | 'broadcaster' | 'admin' | 'organizer';
