@@ -30,32 +30,27 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
   const tFed = useTranslations('Federation');
 
   const real = realVideos ?? [];
-  // hasRealVideos: ci sono video reali da Cloudflare Stream?
   const hasRealVideos = real.length > 0;
-
-  // Sorgente dei video. Con video reali si usano SOLO quelli (le righe vuote
-  // mostrano un messaggio, non card finte). Senza alcun video reale (account
-  // Cloudflare vuoto / niente credenziali) si mostra il mock ovunque.
   // MOCK FALLBACK: shown only when no real videos exist (dev mode)
+  const isMock = !hasRealVideos;
   const source: ContentItem[] = hasRealVideos ? real : mockContent;
 
   const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
   const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
 
-  // Ordine sezioni video (BUG 2): In diretta, Highlights, poi circuiti, poi
-  // Interviste e Dietro le quinte. (Novità rimossa — BUG 3.)
-  const rows: Row[] = [
-    { id: 'live', title: t('liveNow'), kind: 'live', live: true, cardWidth: 320, href: '/live', items: typeRow('live') },
-    { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, href: '/vod', items: typeRow('highlights') },
-    { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, href: '/vod', items: circuitRow('FIPAV') },
-    { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, href: '/vod', items: circuitRow('AIBVC') },
-    { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, href: '/vod', items: circuitRow('AVP') },
-    { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, href: '/vod', items: circuitRow('BPT') },
-    { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, href: '/vod', items: typeRow('interview') },
-    { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, href: '/vod', items: typeRow('behind-the-scenes') },
-  ];
+  // Righe video (definite singolarmente per poterle disporre nell'ordine
+  // richiesto, intercalate alle sezioni Circuiti/Atleti).
+  const liveRow: Row = { id: 'live', title: t('liveNow'), kind: 'live', live: true, cardWidth: 320, href: '/live', items: typeRow('live') };
+  const highlightsRow: Row = { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, href: '/vod', items: typeRow('highlights') };
+  const fipavRow: Row = { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, href: '/vod', items: circuitRow('FIPAV') };
+  const aibvcRow: Row = { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, href: '/vod', items: circuitRow('AIBVC') };
+  const avpRow: Row = { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, href: '/vod', items: circuitRow('AVP') };
+  const bptRow: Row = { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, href: '/vod', items: circuitRow('BPT') };
+  const interviewRow: Row = { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, href: '/vod', items: typeRow('interview') };
+  const btsRow: Row = { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, href: '/vod', items: typeRow('behind-the-scenes') };
 
   // Card: live -> LiveEventCard (href interno). vod -> VodCard avvolta in Link.
+  // isMock propaga l'etichetta "MOCK" sui dati di esempio.
   const renderCard = (item: ContentItem, kind: 'live' | 'vod', cardWidth: number) => {
     if (kind === 'live') {
       const parts = (item.teams ?? '').split(' vs ');
@@ -70,6 +65,7 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
           href={`/live/${item.id}`}
           ctaLabel={tc('watch')}
           cardWidth={cardWidth}
+          isMock={isMock}
         />
       );
     }
@@ -82,26 +78,45 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
           access={item.isPremium ? 'premium' : 'free'}
           cardWidth={cardWidth}
           thumbnailUrl={item.thumbnail}
+          isMock={isMock}
         />
       </Link>
     );
   };
 
-  return (
-    <div className="space-y-12 py-12">
-      {/* 1 — Atleti in evidenza (dati mock: profili atleti) */}
-      <section className="mx-auto max-w-6xl px-4">
-        <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
+  // Sezione video: card o messaggio (solo in modalità dati reali se vuota).
+  const renderVideoRow = (row: Row) => (
+    <section key={row.id} className="mx-auto max-w-6xl px-4">
+      <RowHeader title={row.title} href={row.href} viewAll={t('viewAll')} live={row.live} />
+      {row.items.length > 0 ? (
         <ScrollRow>
-          {mockAthletes.map((a) => (
-            <div key={a.id} className="shrink-0 snap-start">
-              <AthleteCard athlete={a} cardWidth={160} />
+          {row.items.map((item) => (
+            <div key={`${row.id}-${item.id}`} className="shrink-0 snap-start">
+              {renderCard(item, row.kind, row.cardWidth)}
             </div>
           ))}
         </ScrollRow>
-      </section>
+      ) : (
+        <p className="py-8 text-center text-sm text-[#888888]">Nessun video disponibile in questa sezione</p>
+      )}
+    </section>
+  );
 
-      {/* 2 — I circuiti (dati mock: federazioni) */}
+  return (
+    <div className="space-y-12 py-12">
+      {/* Banner modalità demo (mock fallback) */}
+      {isMock ? (
+        <div className="mx-auto max-w-6xl px-4">
+          <p className="rounded-lg border border-[#F04E00]/30 bg-[#F04E00]/10 py-2 text-center text-[13px] text-[#F04E00]">
+            Modalità demo — stai vedendo contenuti di esempio. Carica video reali dal pannello admin.
+          </p>
+        </div>
+      ) : null}
+
+      {/* 1 — In diretta ora */}
+      {renderVideoRow(liveRow)}
+
+      {/* 2 — I circuiti (federazioni) */}
       <section className="mx-auto max-w-6xl px-4">
         <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
         <ScrollRow>
@@ -113,27 +128,28 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
         </ScrollRow>
       </section>
 
-      {/* 3+ — Righe video (ordine BUG 2). Con video reali una riga vuota mostra
-          un messaggio invece di card finte (BUG 5). */}
-      {rows.map((row) => (
-        <section key={row.id} className="mx-auto max-w-6xl px-4">
-          <RowHeader title={row.title} href={row.href} viewAll={t('viewAll')} live={row.live} />
-          {row.items.length > 0 ? (
-            <ScrollRow>
-              {row.items.map((item) => (
-                <div key={`${row.id}-${item.id}`} className="shrink-0 snap-start">
-                  {renderCard(item, row.kind, row.cardWidth)}
-                </div>
-              ))}
-            </ScrollRow>
-          ) : (
-            // Solo in modalità dati reali: categoria senza video → messaggio.
-            <p className="py-8 text-center text-sm text-[#888888]">
-              Nessun video disponibile in questa sezione
-            </p>
-          )}
-        </section>
-      ))}
+      {/* 3 — Highlights */}
+      {renderVideoRow(highlightsRow)}
+
+      {/* 4 — Atleti in evidenza */}
+      <section className="mx-auto max-w-6xl px-4">
+        <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
+        <ScrollRow>
+          {mockAthletes.map((a) => (
+            <div key={a.id} className="shrink-0 snap-start">
+              <AthleteCard athlete={a} cardWidth={160} />
+            </div>
+          ))}
+        </ScrollRow>
+      </section>
+
+      {/* 5 — Righe per circuito + tipo */}
+      {renderVideoRow(fipavRow)}
+      {renderVideoRow(aibvcRow)}
+      {renderVideoRow(avpRow)}
+      {renderVideoRow(bptRow)}
+      {renderVideoRow(interviewRow)}
+      {renderVideoRow(btsRow)}
     </div>
   );
 }
