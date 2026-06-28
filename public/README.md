@@ -58,3 +58,15 @@ migration 0002):
 
 Senza queste variabili il sito builda comunque: le sezioni video usano dati
 mock (dev mode) e le scritture admin rispondono `not-configured`.
+
+### Storage buckets aggiuntivi (atleti / federazioni)
+
+Oltre a `video-thumbnails`, servono due bucket **pubblici** (li crea anche la
+migration `0004_storage_buckets.sql`):
+- `athlete-photos` — foto atleti (gestione admin)
+- `federation-logos` — loghi federazioni (gestione admin)
+
+Upload server-side con la **service role** (route `/api/storage/upload`,
+admin-gated); lettura pubblica via URL `…/storage/v1/object/public/<bucket>/…`.
+
+Migrazioni da applicare in ordine: `0001` → `0002` → `0003` (seed) → `0004`.

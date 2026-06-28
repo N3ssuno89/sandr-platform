@@ -2,8 +2,21 @@
 
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
-import { getAdminContext } from '@/lib/supabase/guard';
-import type { SportRef, FederationRef, AthleteRef, ActionResult } from './types';
+import { getAdminContext, getReadClient } from '@/lib/supabase/guard';
+import type {
+  SportRef,
+  FederationRef,
+  AthleteRef,
+  AthleteFull,
+  AthleteInput,
+  FederationFull,
+  FederationInput,
+  ActionResult,
+  DeleteResult,
+} from './types';
+
+const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points';
+const FEDERATION_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
 
 // slug semplice da nome (lowercase, trattini).
 function slugify(s: string): string {
@@ -53,14 +66,37 @@ export async function getExistingTags(): Promise<string[]> {
   return Array.from(set).sort();
 }
 
+// ----- READ admin (tutte le righe, bypassa RLS via service role) -----
+export async function getAthletesFull(): Promise<AthleteFull[]> {
+  const db = getReadClient();
+  if (!db) return [];
+  const { data } = await db.from('athletes').select(ATHLETE_COLS).order('full_name');
+  return (data as AthleteFull[] | null) ?? [];
+}
+
+export async function getAthleteById(id: string): Promise<AthleteFull | null> {
+  const db = getReadClient();
+  if (!db) return null;
+  const { data } = await db.from('athletes').select(ATHLETE_COLS).eq('id', id).maybeSingle();
+  return (data as AthleteFull | null) ?? null;
+}
+
+export async function getFederationsFull(): Promise<FederationFull[]> {
+  const db = getReadClient();
+  if (!db) return [];
+  const { data } = await db.from('federations').select(FEDERATION_COLS).order('name');
+  return (data as FederationFull[] | null) ?? [];
+}
+
+export async function getFederationById(id: string): Promise<FederationFull | null> {
+  const db = getReadClient();
+  if (!db) return null;
+  const { data } = await db.from('federations').select(FEDERATION_COLS).eq('id', id).maybeSingle();
+  return (data as FederationFull | null) ?? null;
+}
+
 // ----- WRITE (admin) ------------------------------------------------
-export async function createFederation(input: {
-  name: string;
-  short_name?: string;
-  sport_id?: string;
-  nation?: string;
-  color?: string;
-}): Promise<ActionResult<FederationRef>> {
+export async function createFederation(input: FederationInput): Promise<ActionResult<FederationRef>> {
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
 
@@ -73,6 +109,8 @@ export async function createFederation(input: {
       sport_id: input.sport_id || null,
       nation: input.nation || null,
       color: input.color || null,
+      description: input.description || null,
+      logo_url: input.logo_url || null,
     })
     .select('id,name,short_name,slug,sport_id,nation,color')
     .single();
@@ -81,12 +119,35 @@ export async function createFederation(input: {
   return { ok: true, data };
 }
 
-export async function createAthlete(input: {
-  full_name: string;
-  nation?: string;
-  sport_id?: string;
-  federation_id?: string;
-}): Promise<ActionResult<AthleteRef>> {
+export async function updateFederation(id: string, input: FederationInput): Promise<DeleteResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin
+    .from('federations')
+    .update({
+      name: input.name,
+      short_name: input.short_name || null,
+      slug: slugify(input.short_name || input.name),
+      sport_id: input.sport_id || null,
+      nation: input.nation || null,
+      color: input.color || null,
+      description: input.description || null,
+      logo_url: input.logo_url || null,
+    })
+    .eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function deleteFederation(id: string): Promise<DeleteResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin.from('federations').delete().eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function createAthlete(input: AthleteInput): Promise<ActionResult<AthleteRef>> {
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
 
@@ -95,14 +156,48 @@ export async function createAthlete(input: {
     .insert({
       full_name: input.full_name,
       nation: input.nation || null,
+      nation_code: input.nation_code || null,
+      photo_url: input.photo_url || null,
       sport_id: input.sport_id || null,
       federation_id: input.federation_id || null,
+      bio: input.bio || null,
+      ranking: input.ranking ?? null,
+      season_points: input.season_points ?? null,
     })
     .select('id,full_name,nation,sport_id,federation_id')
     .single();
 
   if (error || !data) return { ok: false, error: error?.message ?? 'insert-failed' };
   return { ok: true, data };
+}
+
+export async function updateAthlete(id: string, input: AthleteInput): Promise<DeleteResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin
+    .from('athletes')
+    .update({
+      full_name: input.full_name,
+      nation: input.nation || null,
+      nation_code: input.nation_code || null,
+      photo_url: input.photo_url || null,
+      sport_id: input.sport_id || null,
+      federation_id: input.federation_id || null,
+      bio: input.bio || null,
+      ranking: input.ranking ?? null,
+      season_points: input.season_points ?? null,
+    })
+    .eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function deleteAthlete(id: string): Promise<DeleteResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin.from('athletes').delete().eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }
 
 // Gli SPORT sono una TABELLA (non un enum): "aggiungi sport" inserisce una riga.

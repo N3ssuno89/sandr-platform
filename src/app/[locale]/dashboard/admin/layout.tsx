@@ -1,9 +1,11 @@
 import { setRequestLocale } from 'next-intl/server';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { requireAdminPage } from '@/lib/supabase/guard';
 
-// Layout pannello admin. AREA CRITICA (CLAUDE.md): in produzione l'accesso
-// va limitato al ruolo admin via Supabase RLS (qui pubblico solo in demo).
-export default function AdminLayout({
+// Layout pannello admin. AREA CRITICA (CLAUDE.md): accesso limitato al ruolo
+// admin (requireAdminPage redirige i non-admin a /dashboard/home). In demo
+// (Supabase non configurato) non blocca.
+export default async function AdminLayout({
   children,
   params,
 }: {
@@ -11,6 +13,7 @@ export default function AdminLayout({
   params: { locale: string };
 }) {
   setRequestLocale(params.locale);
+  await requireAdminPage(params.locale);
 
   return (
     <div className="flex min-h-[calc(100vh-5rem)] bg-[#0a0a0a]">
