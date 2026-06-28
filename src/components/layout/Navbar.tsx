@@ -52,6 +52,7 @@ export function Navbar() {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -59,10 +60,21 @@ export function Navbar() {
       return;
     }
     const supabase = createClient();
-    const apply = (user: { email?: string; user_metadata?: Record<string, unknown> } | null) => {
+    const apply = (user: { id?: string; email?: string; user_metadata?: Record<string, unknown> } | null) => {
       setLoggedIn(!!user);
       setEmail(user?.email ?? null);
       setFullName((user?.user_metadata?.full_name as string | undefined) ?? null);
+      // Ruolo (per mostrare "Pannello Admin"). RLS: self-read del proprio profilo.
+      if (user?.id) {
+        supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle()
+          .then(({ data }) => setIsAdmin(data?.role === 'admin'));
+      } else {
+        setIsAdmin(false);
+      }
     };
     supabase.auth.getUser().then(({ data }) => apply(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -96,7 +108,7 @@ export function Navbar() {
         {/* Destra: avatar (loggato) o Abbonati (non loggato) */}
         <div className="flex justify-end">
           {loggedIn === true ? (
-            <AvatarMenu email={email} fullName={fullName} />
+            <AvatarMenu email={email} fullName={fullName} isAdmin={isAdmin} />
           ) : loggedIn === false ? (
             <Link
               href="/pricing"
@@ -113,7 +125,7 @@ export function Navbar() {
 
 // Avatar con dropdown account (chiude al click fuori).
 // AREA CRITICA (CLAUDE.md): gestisce il logout reale (signOut Supabase).
-function AvatarMenu({ email, fullName }: { email: string | null; fullName: string | null }) {
+function AvatarMenu({ email, fullName, isAdmin }: { email: string | null; fullName: string | null; isAdmin: boolean }) {
   const t = useTranslations('Account');
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -140,11 +152,14 @@ function AvatarMenu({ email, fullName }: { email: string | null; fullName: strin
 
   const initials = initialsOf(fullName, email);
 
-  // Storico PPV è stato unito alla pagina Abbonamento: link rimosso dal menu.
+  // Menu account organizzato (etichette italiane).
   const links = [
-    { href: '/dashboard/subscription', label: t('subscription') },
-    { href: '/dashboard/payment', label: t('payment') },
-    { href: '/dashboard/settings', label: t('settings') },
+    { href: '/dashboard/profile', label: 'Il mio account' },
+    { href: '/dashboard/settings', label: 'Impostazioni' },
+    { href: '/dashboard/subscription', label: 'Abbonamento' },
+    { href: '/dashboard/watch-history', label: 'Cronologia' },
+    { href: '/dashboard/reminders', label: 'Reminder' },
+    { href: '/dashboard/fantasy', label: 'Fantasy' },
   ] as const;
 
   return (
@@ -176,6 +191,17 @@ function AvatarMenu({ email, fullName }: { email: string | null; fullName: strin
               {l.label}
             </Link>
           ))}
+
+          {/* Pannello Admin: solo per gli admin */}
+          {isAdmin ? (
+            <Link
+              href="/dashboard/admin"
+              onClick={() => setOpen(false)}
+              className="block border-b border-white/[0.06] px-4 py-3 text-sm font-semibold text-sandr-orange hover:bg-white/[0.04]"
+            >
+              Pannello Admin
+            </Link>
+          ) : null}
 
           <button
             type="button"

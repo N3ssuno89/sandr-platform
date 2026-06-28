@@ -8,6 +8,8 @@ const NAV = [
   { href: '/dashboard/admin/videos', label: 'Video' },
   { href: '/dashboard/admin/live', label: 'Live' },
   { href: '/dashboard/admin/athletes', label: 'Atleti' },
+  { href: '/dashboard/admin/federations', label: 'Federazioni' },
+  { href: '/dashboard/admin/events', label: 'Eventi' },
   { href: '/dashboard/admin/users', label: 'Utenti' },
   { href: '/dashboard/admin/subscriptions', label: 'Abbonamenti' },
 ] as const;

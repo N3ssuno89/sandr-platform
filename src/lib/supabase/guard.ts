@@ -1,8 +1,31 @@
 import 'server-only';
+import { redirect } from 'next/navigation';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createAdminClient, isSupabaseConfiguredServer } from '@/lib/supabase/admin';
+
+// Ruolo dell'utente loggato (null se non loggato / non configurato).
+export async function getCurrentUserRole(): Promise<string | null> {
+  if (!isSupabaseConfiguredServer()) return null;
+  const sb = createServerClient();
+  const {
+    data: { user },
+  } = await sb.auth.getUser();
+  if (!user) return null;
+  const { data } = await sb.from('profiles').select('role').eq('id', user.id).single();
+  return data?.role ?? null;
+}
+
+// Gating pagine admin: redirect a /dashboard/home se non admin.
+// AREA CRITICA (CLAUDE.md): Supabase Auth + ruolo admin.
+// In demo (Supabase non configurato) non blocca (le rotte /dashboard sono
+// comunque protette dal middleware quando l'auth è attiva).
+export async function requireAdminPage(locale: string): Promise<void> {
+  if (!isSupabaseConfiguredServer()) return;
+  const role = await getCurrentUserRole();
+  if (role !== 'admin') redirect(`/${locale}/dashboard/home`);
+}
 
 // Contesto admin per le scritture. AREA CRITICA (CLAUDE.md): verifica che il
 // chiamante sia admin (ruolo dalla sessione) PRIMA di usare la service role
