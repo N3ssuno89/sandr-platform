@@ -140,10 +140,10 @@ function AvatarMenu({ email, fullName }: { email: string | null; fullName: strin
 
   const initials = initialsOf(fullName, email);
 
+  // Storico PPV è stato unito alla pagina Abbonamento: link rimosso dal menu.
   const links = [
     { href: '/dashboard/subscription', label: t('subscription') },
     { href: '/dashboard/payment', label: t('payment') },
-    { href: '/dashboard/ppv-history', label: t('ppvHistory') },
     { href: '/dashboard/settings', label: t('settings') },
   ] as const;
 
