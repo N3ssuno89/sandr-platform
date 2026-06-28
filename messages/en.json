@@ -146,7 +146,6 @@
       "subline": "SANDR isn't just streaming. It's the complete ecosystem around every sporting event.",
       "features": [
         { "title": "Live Stats", "desc": "Score, sets and statistics updated in real time, point by point." },
-        { "title": "Fantasy", "desc": "Build your fantasy team and earn points based on athletes' real performances." },
         { "title": "Tournaments & Brackets", "desc": "Follow every tournament with full brackets, results and up-to-date schedules." },
         { "title": "Interactive Streaming", "desc": "Multi-view, live chat, polls and MVP voting during every match." },
         { "title": "Athlete Profiles", "desc": "Stats, match history and ranking for every athlete." },

@@ -3,16 +3,17 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AthleteCard } from '@/components/cards/AthleteCard';
-import { mockAthletes } from '@/lib/mock-athletes';
+import type { Athlete } from '@/types/athlete';
 
 const SPORTS = ['all', 'Beach Volley', 'Beach Tennis', 'Padel'] as const;
 type SportFilter = (typeof SPORTS)[number];
 
-export function AthletesIndex() {
+// Riceve gli atleti via prop (Supabase o mock fallback, deciso dalla pagina).
+export function AthletesIndex({ athletes }: { athletes: Athlete[] }) {
   const t = useTranslations('Athlete');
   const [sport, setSport] = useState<SportFilter>('all');
 
-  const list = sport === 'all' ? mockAthletes : mockAthletes.filter((a) => a.sport === sport);
+  const list = sport === 'all' ? athletes : athletes.filter((a) => a.sport === sport);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">

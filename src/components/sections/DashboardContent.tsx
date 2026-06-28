@@ -11,6 +11,8 @@ import { mockContent } from '@/lib/mock-content';
 import { mockAthletes } from '@/lib/mock-athletes';
 import { mockFederations } from '@/lib/mock-federations';
 import type { CircuitTag, ContentItem } from '@/types/tags';
+import type { Athlete } from '@/types/athlete';
+import type { Federation } from '@/types/federation';
 
 type Row = {
   id: string;
@@ -22,12 +24,24 @@ type Row = {
   items: ContentItem[];
 };
 
-export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] }) {
+export function DashboardContent({
+  realVideos,
+  athletes,
+  federations,
+}: {
+  realVideos?: ContentItem[];
+  athletes?: Athlete[];
+  federations?: Federation[];
+}) {
   const t = useTranslations('AuthHome');
   const tc = useTranslations('Common');
   const tLive = useTranslations('Live');
   const tA = useTranslations('Athlete');
   const tFed = useTranslations('Federation');
+
+  // Atleti/federazioni: reali da Supabase se presenti, altrimenti mock.
+  const athleteList = athletes && athletes.length > 0 ? athletes : mockAthletes;
+  const federationList = federations && federations.length > 0 ? federations : mockFederations;
 
   const real = realVideos ?? [];
   const hasRealVideos = real.length > 0;
@@ -120,7 +134,7 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
       <section className="mx-auto max-w-6xl px-4">
         <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
         <ScrollRow>
-          {mockFederations.map((f) => (
+          {federationList.map((f) => (
             <div key={f.id} className="shrink-0 snap-start">
               <FederationCard federation={f} />
             </div>
@@ -135,7 +149,7 @@ export function DashboardContent({ realVideos }: { realVideos?: ContentItem[] })
       <section className="mx-auto max-w-6xl px-4">
         <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
         <ScrollRow>
-          {mockAthletes.map((a) => (
+          {athleteList.map((a) => (
             <div key={a.id} className="shrink-0 snap-start">
               <AthleteCard athlete={a} cardWidth={160} />
             </div>
