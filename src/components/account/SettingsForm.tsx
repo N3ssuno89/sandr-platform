@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { useRouter } from '@/i18n/routing';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { DemoPill } from '@/components/account/DemoPill';
@@ -43,7 +42,7 @@ export function SettingsForm({
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      await (supabase as unknown as SupabaseClient)
+      await supabase
         .from('profiles')
         .update({ full_name: fullName, preferred_language: language })
         .eq('id', user.id);
