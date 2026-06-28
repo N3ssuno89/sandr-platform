@@ -1,29 +1,11 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { VodCard } from '@/components/cards/VodCard';
-import { listVideos, getThumbnailUrl } from '@/lib/cloudflare-stream';
+import { getVideosForDisplay } from '@/lib/videos/actions';
 import { mockContent } from '@/lib/mock-content';
 
-// Pagina libreria VOD. Server component: prova a leggere i video reali da
-// Cloudflare Stream (AREA CRITICA, CLAUDE.md). In assenza di configurazione
-// o errore, fallback ai dati mock.
-function formatDuration(seconds: number): string {
-  if (!seconds || seconds < 0) return '0:00';
-  const s = Math.floor(seconds % 60);
-  const m = Math.floor((seconds / 60) % 60);
-  const h = Math.floor(seconds / 3600);
-  const mm = h > 0 ? String(m).padStart(2, '0') : String(m);
-  const ss = String(s).padStart(2, '0');
-  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime())
-    ? ''
-    : d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
+// Libreria VOD. I video arrivano da SUPABASE (getVideosForDisplay). MOCK
+// FALLBACK: solo quando Supabase non ha video (dev mode).
 type CardItem = {
   id: string;
   title: string;
@@ -37,24 +19,22 @@ export default async function VodPage({ params }: { params: { locale: string } }
   setRequestLocale(params.locale);
   const t = await getTranslations('Vod');
 
-  const videos = await listVideos();
+  const videos = await getVideosForDisplay();
 
-  // Video reali se disponibili, altrimenti fallback ai mock.
   const items: CardItem[] =
     videos.length > 0
-      ? videos.map((v) => {
-          // Copertina custom (meta.thumbnailCard) con fallback al frame generato.
-          const meta = v.meta as Record<string, string | undefined>;
-          return {
-            id: v.uid,
-            title: meta?.name ?? 'Video',
-            date: formatDate(v.created),
-            duration: formatDuration(v.duration),
-            access: 'free' as const,
-            thumbnailUrl: meta?.thumbnailCard || getThumbnailUrl(v.uid),
-          };
-        })
-      : mockContent
+      ? videos
+          .filter((v) => v.type !== 'live')
+          .map((v) => ({
+            id: v.id,
+            title: v.title,
+            date: v.date ?? '',
+            duration: v.duration ?? '',
+            access: v.isPremium ? 'premium' : 'free',
+            thumbnailUrl: v.thumbnail,
+          }))
+      : // MOCK FALLBACK: shown only when Supabase has zero videos (dev mode)
+        mockContent
           .filter((c) => c.type !== 'live')
           .map((c) => ({
             id: c.id,
@@ -62,6 +42,7 @@ export default async function VodPage({ params }: { params: { locale: string } }
             date: c.date ?? '',
             duration: c.duration ?? '',
             access: (c.isPremium ? 'premium' : 'free') as 'free' | 'premium',
+            thumbnailUrl: c.thumbnail,
           }));
 
   return (

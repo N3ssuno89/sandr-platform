@@ -1,92 +1,22 @@
 import { setRequestLocale } from 'next-intl/server';
 import { HeroCarousel } from '@/components/sections/HeroCarousel';
 import { DashboardContent } from '@/components/sections/DashboardContent';
-import { listVideos, getThumbnailUrl, type StreamVideo } from '@/lib/cloudflare-stream';
-import type { CircuitTag, ContentItem, ContentType, SportTag } from '@/types/tags';
+import { getVideosForDisplay } from '@/lib/videos/actions';
 
-// Mappa il tipo (etichetta admin in italiano) sul ContentType interno.
-function parseType(raw?: string): ContentType {
-  switch (raw) {
-    case 'Live Recording':
-      return 'live';
-    case 'Replay':
-      return 'replay';
-    case 'Intervista':
-      return 'interview';
-    case 'Highlights':
-      return 'highlights';
-    case 'Dietro le quinte':
-      return 'behind-the-scenes';
-    default:
-      return 'replay';
-  }
-}
-
-// Formatta i secondi in "H:MM:SS" (o "M:SS" se sotto l'ora).
-function formatDuration(seconds: number): string {
-  if (!seconds || seconds < 0) return '';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime())
-    ? ''
-    : d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-// Converte un video Cloudflare Stream nel formato ContentItem usato dalle righe.
-// I metadati custom (circuit/type/sport/access) vivono in meta su Cloudflare.
-function toContentItem(video: StreamVideo): ContentItem {
-  const meta = video.meta as Record<string, string | undefined>;
-  // Niente default su 'BPT': un video senza circuito resta `undefined` e finisce
-  // nella riga "Novità" (vedi DashboardContent), non tutto ammassato su BPT.
-  const circuit = (meta.circuit as CircuitTag | undefined) || undefined;
-  const type = parseType(meta.type);
-  const sport = (meta.sport as SportTag) ?? 'Beach Volley';
-
-  return {
-    id: video.uid,
-    title: meta.name ?? 'Video',
-    teams: meta.athletes || undefined,
-    circuit,
-    sport,
-    type,
-    nations: [],
-    thumbnail: meta.thumbnailCard || getThumbnailUrl(video.uid),
-    thumbnailFeatured: meta.thumbnailFeatured || undefined,
-    duration: formatDuration(video.duration),
-    isPremium: meta.access === 'premium',
-    date: formatDate(video.created),
-    // 'featured' nei tag (solo se meta.featured === 'true') così il filtro hero
-    // è un semplice tags.includes('featured').
-    tags: [type, sport, ...(circuit ? [circuit] : []), ...(meta.featured === 'true' ? ['featured'] : [])],
-  };
-}
-
-// Homepage autenticata (stile DAZN post-login). In demo è pubblica: il
-// middleware esenta /dashboard/home finché non c'è auth reale (CLAUDE.md).
-// Carosello e filtro circuiti vivono in client component dedicati.
+// Homepage autenticata (stile DAZN post-login). I video arrivano da SUPABASE
+// (source of truth per tag/circuito/tipo), non più dai meta Cloudflare.
+// Build-safe: lista vuota → DashboardContent usa il mock (dev mode).
 export default async function AuthHomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
 
-  // Video reali da Cloudflare Stream (build-safe: [] se non configurato).
-  const videos = await listVideos();
-  const realVideos = videos.length > 0 ? videos.map(toContentItem) : undefined;
+  const videos = await getVideosForDisplay();
+  const realVideos = videos.length > 0 ? videos : undefined;
 
-  // Video in evidenza per l'hero (meta.featured === 'true' → tag 'featured').
+  // Video in evidenza per l'hero (tag 'featured' = is_featured nel DB).
   const featured = realVideos?.filter((v) => v.tags.includes('featured')) ?? [];
-  // Debug: quanti video reali e quanti in evidenza (log lato server).
-  console.log('[home] realVideos:', realVideos?.length ?? 0, '— featured:', featured.length);
-  // Passa all'hero SOLO se c'è almeno un video in evidenza, altrimenti mock.
   const featuredVideos = featured.length > 0 ? featured : undefined;
 
-  // Il betting NON sta nella home post-login: vive solo come singola feature
-  // card nella landing (src/app/[locale]/page.tsx).
+  // Il betting NON sta nella home post-login: vive solo nella landing.
   return (
     <>
       <HeroCarousel featuredVideos={featuredVideos} />

@@ -1,7 +1,9 @@
 import { setRequestLocale } from 'next-intl/server';
-import { getVideo } from '@/lib/cloudflare-stream';
-import { VideoMetadataForm, type VideoMeta } from '@/components/admin/VideoMetadataForm';
+import { VideoMetadataForm } from '@/components/admin/VideoMetadataForm';
+import { getVideoForEdit } from '@/lib/videos/actions';
+import { getSports, getFederations, getAthletes, getExistingTags } from '@/lib/reference/actions';
 
+// Server component: legge il video da SUPABASE (id Supabase) + dati riferimento.
 export default async function EditVideoPage({
   params,
 }: {
@@ -9,34 +11,38 @@ export default async function EditVideoPage({
 }) {
   setRequestLocale(params.locale);
 
-  const video = await getVideo(params.id);
+  const [video, sports, federations, athletes, existingTags] = await Promise.all([
+    getVideoForEdit(params.id),
+    getSports(),
+    getFederations(),
+    getAthletes(),
+    getExistingTags(),
+  ]);
 
-  // I metadati custom vivono in meta su Cloudflare Stream. Pre-compiliamo TUTTI
-  // i campi del form dai meta del video (nation è salvata come meta.country).
-  const meta = (video?.meta ?? {}) as Record<string, string | undefined>;
-  const defaultValues: VideoMeta = {
-    name: meta.name,
-    circuit: meta.circuit,
-    type: meta.type,
-    sport: meta.sport,
-    event: meta.event,
-    athletes: meta.athletes,
-    country: meta.country ?? meta.nation,
-    eventDate: meta.eventDate,
-    access: meta.access ?? 'free',
-    description: meta.description,
-    tags: meta.tags,
-    thumbnailCard: meta.thumbnailCard,
-    thumbnailFeatured: meta.thumbnailFeatured,
-    featured: meta.featured,
-  };
+  if (!video) {
+    return (
+      <div className="max-w-3xl">
+        <h1 className="font-condensed text-3xl font-extrabold uppercase text-white">Modifica video</h1>
+        <p className="mt-3 text-sm text-sandr-muted">
+          Video non trovato (o Supabase non configurato / accesso non admin).
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl">
       <h1 className="font-condensed text-3xl font-extrabold uppercase text-white">Modifica video</h1>
-      <p className="mt-1 text-sm text-[#888888]">{defaultValues.name ?? params.id}</p>
+      <p className="mt-1 text-sm text-[#888888]">{video.title}</p>
       <div className="mt-8">
-        <VideoMetadataForm uid={params.id} defaultValues={defaultValues} />
+        <VideoMetadataForm
+          cloudflareUid={video.cloudflareUid ?? ''}
+          defaultValues={video}
+          sports={sports}
+          federations={federations}
+          athletes={athletes}
+          existingTags={existingTags}
+        />
       </div>
     </div>
   );
