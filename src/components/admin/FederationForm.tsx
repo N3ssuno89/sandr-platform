@@ -22,6 +22,7 @@ export function FederationForm({ federation, sports }: { federation?: Federation
   const [color, setColor] = useState(federation?.color ?? '#F04E00');
   const [description, setDescription] = useState(federation?.description ?? '');
   const [logoUrl, setLogoUrl] = useState(federation?.logo_url ?? '');
+  const [logoBusy, setLogoBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +36,11 @@ export function FederationForm({ federation, sports }: { federation?: Federation
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Non salvare mentre il logo è ancora in upload: l'URL non è ancora pronto.
+    if (logoBusy) {
+      setError('Attendi il completamento del caricamento del logo.');
+      return;
+    }
     setSaving(true);
     setError(null);
     const input = {
@@ -69,7 +75,7 @@ export function FederationForm({ federation, sports }: { federation?: Federation
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
       <div className={`${cardCls} space-y-4`}>
-        <ImageUpload label="Logo" bucket="federation-logos" value={logoUrl} onUploaded={setLogoUrl} />
+        <ImageUpload label="Logo" bucket="federation-logos" value={logoUrl} onUploaded={setLogoUrl} onBusyChange={setLogoBusy} />
 
         <div>
           <label className={labelCls}>Nome</label>
@@ -121,8 +127,8 @@ export function FederationForm({ federation, sports }: { federation?: Federation
       {error ? <p className="mt-4 rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p> : null}
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <button type="submit" disabled={saving} className={orangeBtn}>
-          {saving ? 'Salvataggio…' : federation ? 'Salva modifiche' : 'Crea federazione'}
+        <button type="submit" disabled={saving || logoBusy} className={orangeBtn}>
+          {logoBusy ? 'Caricamento logo…' : saving ? 'Salvataggio…' : federation ? 'Salva modifiche' : 'Crea federazione'}
         </button>
         {federation ? <button type="button" onClick={handleDelete} className={redBtn}>Elimina federazione</button> : null}
       </div>

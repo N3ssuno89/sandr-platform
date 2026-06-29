@@ -29,6 +29,7 @@ export function AthleteForm({
   const [seasonPoints, setSeasonPoints] = useState(athlete?.season_points?.toString() ?? '');
   const [photoUrl, setPhotoUrl] = useState(athlete?.photo_url ?? '');
   const [isFeatured, setIsFeatured] = useState(athlete?.is_featured ?? false);
+  const [photoBusy, setPhotoBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +43,11 @@ export function AthleteForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Non salvare mentre la foto è ancora in upload: l'URL non è ancora pronto.
+    if (photoBusy) {
+      setError('Attendi il completamento del caricamento della foto.');
+      return;
+    }
     setSaving(true);
     setError(null);
     const input = {
@@ -81,7 +87,14 @@ export function AthleteForm({
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
       <div className={`${cardCls} space-y-4`}>
-        <ImageUpload label="Foto" bucket="athlete-photos" value={photoUrl} onUploaded={setPhotoUrl} round />
+        <ImageUpload
+          label="Foto"
+          bucket="athlete-photos"
+          value={photoUrl}
+          onUploaded={setPhotoUrl}
+          onBusyChange={setPhotoBusy}
+          round
+        />
 
         <div>
           <label className={labelCls}>Nome completo</label>
@@ -155,8 +168,8 @@ export function AthleteForm({
       {error ? <p className="mt-4 rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p> : null}
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <button type="submit" disabled={saving} className={orangeBtn}>
-          {saving ? 'Salvataggio…' : athlete ? 'Salva modifiche' : 'Crea atleta'}
+        <button type="submit" disabled={saving || photoBusy} className={orangeBtn}>
+          {photoBusy ? 'Caricamento foto…' : saving ? 'Salvataggio…' : athlete ? 'Salva modifiche' : 'Crea atleta'}
         </button>
         {athlete ? (
           <button type="button" onClick={handleDelete} className={redBtn}>Elimina atleta</button>

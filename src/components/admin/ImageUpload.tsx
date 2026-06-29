@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { labelCls } from '@/components/admin/styles';
 import { uploadToBucket } from '@/lib/storage/actions';
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/lib/storage/limits';
@@ -32,18 +32,33 @@ export function ImageUpload({
   bucket,
   value,
   onUploaded,
+  onBusyChange,
   round = false,
 }: {
   label: string;
   bucket: 'athlete-photos' | 'federation-logos' | 'video-thumbnails';
   value?: string;
   onUploaded: (url: string) => void;
+  // Notifica il form quando un upload è in corso, così può bloccare il salvataggio
+  // finché l'URL non è stato propagato (evita di salvare photo_url vuoto).
+  onBusyChange?: (busy: boolean) => void;
   round?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(value || null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Mantiene l'anteprima allineata al valore esterno (pre-fill in modifica,
+  // o reset dopo un salvataggio) quando non è in corso un upload locale.
+  useEffect(() => {
+    if (!busy) setPreview(value || null);
+  }, [value, busy]);
+
+  function setBusyState(b: boolean) {
+    setBusy(b);
+    onBusyChange?.(b);
+  }
 
   async function handleFile(file: File) {
     setError(null);
@@ -54,13 +69,14 @@ export function ImageUpload({
       return;
     }
     setPreview(URL.createObjectURL(file));
-    setBusy(true);
+    setBusyState(true);
     try {
       const body = new FormData();
       body.append('file', file);
       body.append('bucket', bucket);
       const res = await uploadToBucket(body);
       if (res.ok) {
+        console.log('uploaded photo url:', res.data.url);
         setPreview(res.data.url);
         onUploaded(res.data.url);
       } else {
@@ -72,7 +88,7 @@ export function ImageUpload({
       setError(`Errore upload: ${e instanceof Error ? e.message : 'sconosciuto'}`);
       setPreview(value || null);
     } finally {
-      setBusy(false);
+      setBusyState(false);
     }
   }
 

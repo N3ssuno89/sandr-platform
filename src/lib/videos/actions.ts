@@ -303,6 +303,11 @@ export async function saveVideo(payload: VideoFormPayload): Promise<ActionResult
     status: 'ready' as const,
   };
 
+  console.log('saving video with thumbnails:', {
+    card: row.thumbnail_card_url,
+    featured: row.thumbnail_featured_url,
+  });
+
   let videoId: string;
   if (payload.id) {
     const { error } = await admin.from('videos').update(row).eq('id', payload.id);
