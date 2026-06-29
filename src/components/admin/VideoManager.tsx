@@ -53,10 +53,10 @@ export function VideoManager({ videos }: { videos: VideoRow[] }) {
           className="flex-1 rounded-lg border border-white/[0.08] bg-[#1C1C1C] px-4 py-3 text-sm text-white placeholder:text-sandr-muted focus:border-[#F04E00] focus:outline-none"
         />
         <Link
-          href="/dashboard/admin/videos/upload"
+          href="/dashboard/admin/videos/add"
           className="rounded-lg bg-sandr-orange px-5 py-3 text-center font-condensed font-bold uppercase tracking-wide text-black"
         >
-          Carica nuovo video
+          Aggiungi video
         </Link>
       </div>
 
