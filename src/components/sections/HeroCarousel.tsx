@@ -36,12 +36,13 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const href = usingFeatured ? `/vod/${slide.id}` : `/live/${slide.id}`;
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[440px] lg:h-auto lg:aspect-[21/9] lg:max-h-[600px]">
-      {/* Le copertine "in evidenza" sono 21:9: da lg in su il contenitore è 21:9
-          (aspect-[21/9], max 600px) così l'immagine non viene tagliata in
-          verticale. Su mobile/tablet un'altezza fissa più alta (crop accettabile,
-          centrato) per leggibilità. Immagine vivida (nessun oscuramento globale):
-          la leggibilità del testo è data dal solo gradiente in basso. */}
+    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[60vh] min-h-[420px] md:h-[70vh] md:min-h-[520px] md:max-h-[820px]">
+      {/* OPTION B (modello DAZN): altezza fissa alta, immagine SEMPRE a tutta
+          larghezza/altezza con object-cover + object-center → riempie il
+          contenitore senza barre nere, ritagliando dal centro ciò che eccede.
+          Niente aspect-ratio (che, con max-height, restringeva la larghezza e
+          creava le barre laterali). Immagine vivida: il testo è leggibile grazie
+          al solo gradiente in basso. Il soggetto delle copertine va centrato. */}
       {bg ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
@@ -53,7 +54,7 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 45%, transparent 70%)',
+            'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 65%)',
         }}
       />
 
