@@ -15,9 +15,9 @@ export async function AthleteVideoRows({ videos }: { videos: ContentItem[] }) {
     return <p className="mt-4 text-sm text-[#888888]">{t('noVideos')}</p>;
   }
 
-  // "Video recenti" = tutti (già ordinati per pubblicazione desc), poi per tipo.
+  // Righe per tipo (i video sono già ordinati per pubblicazione desc, newest-first).
+  // La riga generica "Video recenti" è stata rimossa: solo righe specifiche.
   const rows = [
-    { key: 'recent', title: t('videosTitle'), items: videos },
     { key: 'highlights', title: t('videosHighlights'), items: videos.filter((v) => v.type === 'highlights') },
     { key: 'interview', title: t('videosInterviews'), items: videos.filter((v) => v.type === 'interview') },
     { key: 'replay', title: t('videosReplay'), items: videos.filter((v) => v.type === 'replay') },

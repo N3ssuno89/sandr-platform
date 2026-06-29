@@ -763,6 +763,7 @@ export interface Database {
           watched_seconds: number;
           completed: boolean;
           last_watched_at: string;
+          dismissed: boolean;
         };
         Insert: {
           id?: string;
@@ -771,6 +772,7 @@ export interface Database {
           watched_seconds?: number;
           completed?: boolean;
           last_watched_at?: string;
+          dismissed?: boolean;
         };
         Update: Partial<Database['public']['Tables']['watch_history']['Insert']>;
         Relationships: [

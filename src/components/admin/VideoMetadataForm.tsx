@@ -20,7 +20,7 @@ import type { VideoEditData } from '@/lib/videos/types';
 
 const CONTENT_TYPE_BASE = [
   { value: 'live', label: 'Live' },
-  { value: 'replay', label: 'Replay' },
+  { value: 'replay', label: 'Partite' },
   { value: 'interview', label: 'Intervista' },
   { value: 'highlights', label: 'Highlights' },
   { value: 'behind_scenes', label: 'Dietro le quinte' },

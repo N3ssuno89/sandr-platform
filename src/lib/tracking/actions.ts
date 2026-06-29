@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
 
@@ -21,6 +22,28 @@ type EventInput = {
   sessionId?: string;
   payload?: Record<string, unknown>;
 };
+
+// Rimuove un video dalla riga "Continua a guardare" (dismissed = true).
+// La cronologia completa lo mostra comunque. Solo l'utente loggato sui propri.
+export async function removeFromContinueWatching(videoId: string): Promise<void> {
+  try {
+    if (!isSupabaseConfiguredServer()) return;
+    const sb = createServerClient();
+    const {
+      data: { user },
+    } = await sb.auth.getUser();
+    if (!user) return;
+    await sb
+      .from('watch_history')
+      .update({ dismissed: true })
+      .eq('user_id', user.id)
+      .eq('video_id', videoId);
+    revalidatePath('/[locale]/dashboard/home', 'page');
+    revalidatePath('/[locale]/dashboard/watch-history', 'page');
+  } catch {
+    // Fail silently.
+  }
+}
 
 // Salva/aggiorna il progresso di visione (service-necessary, sempre per i loggati).
 export async function recordWatchProgress(
