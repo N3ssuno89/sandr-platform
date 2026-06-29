@@ -45,6 +45,8 @@ export interface ContentItem {
   viewerCount?: number;
   isLive?: boolean;
   isPremium?: boolean;
+  // Livello di accesso reale del contenuto (per badge FREE/PREMIUM/PPV e gating).
+  access?: 'free' | 'premium' | 'ppv';
   date?: string;
   tags: string[]; // flat array for filtering
 }

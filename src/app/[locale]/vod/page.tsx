@@ -3,6 +3,7 @@ import { Link } from '@/i18n/routing';
 import { VodCard } from '@/components/cards/VodCard';
 import { getVideosForDisplay } from '@/lib/videos/actions';
 import { mockContent } from '@/lib/mock-content';
+import { badgeTier } from '@/lib/access/check';
 
 // Dati sempre freschi: nessuna cache (la libreria deve riflettere subito le scritture).
 export const dynamic = 'force-dynamic';
@@ -15,7 +16,7 @@ type CardItem = {
   title: string;
   date: string;
   duration: string;
-  access: 'free' | 'premium';
+  access: 'free' | 'premium' | 'ppv';
   thumbnailUrl?: string;
 };
 
@@ -34,7 +35,7 @@ export default async function VodPage({ params }: { params: { locale: string } }
             title: v.title,
             date: v.date ?? '',
             duration: v.duration ?? '',
-            access: v.isPremium ? 'premium' : 'free',
+            access: badgeTier(v.access ?? (v.isPremium ? 'premium' : 'free'), v.type),
             thumbnailUrl: v.thumbnail,
           }))
       : // MOCK FALLBACK: shown only when Supabase has zero videos (dev mode)

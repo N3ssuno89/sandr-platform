@@ -1,5 +1,6 @@
 import { Link } from '@/i18n/routing';
 import type { Athlete } from '@/types/athlete';
+import { PhotoFill } from '@/components/ui/PhotoFill';
 
 // Card atleta verticale stile "stories". Click -> profilo /athletes/[id].
 // Con cardWidth: larghezza fissa (px). Senza: riempie la cella (grid).
@@ -12,9 +13,8 @@ export function AthleteCard({ athlete, cardWidth }: { athlete: Athlete; cardWidt
         cardWidth ? '' : 'w-full'
       }`}
     >
-      {/* Foto full-bleed */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={athlete.photo} alt={athlete.name} className="absolute inset-0 h-full w-full object-cover" />
+      {/* Foto full-bleed (placeholder con iniziali se assente/errore) */}
+      <PhotoFill src={athlete.photo} name={athlete.name} />
 
       {/* Overlay gradiente scuro (parte bassa) */}
       <div

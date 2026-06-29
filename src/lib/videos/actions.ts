@@ -12,6 +12,7 @@ import type {
   VideoEditResult,
   VideoEditFailReason,
   PlayerVideo,
+  VideoAthlete,
   AdminVideoRow,
   AdminDashboard,
 } from './types';
@@ -124,6 +125,7 @@ export async function getVideosForDisplay(): Promise<ContentItem[]> {
       thumbnailFeatured: v.thumbnail_featured_url ?? undefined,
       duration: fmtDuration(v.duration_seconds),
       isPremium: v.access_level === 'premium',
+      access: v.access_level,
       isLive: v.is_live,
       date: fmtDate(v.published_at ?? v.created_at),
       tags: [
@@ -151,7 +153,25 @@ export async function getVideoForPlayer(id: string): Promise<PlayerVideo | null>
     publishedAt: v.published_at,
     createdAt: v.created_at,
     thumbnailCardUrl: v.thumbnail_card_url,
+    accessLevel: v.access_level,
+    type: v.type,
+    ppvPrice: v.ppv_price,
   };
+}
+
+// Atleti taggati su un video (via video_athletes). Per la tab "Atleti" del
+// player: solo quelli linkati a QUESTO video, non tutti.
+export async function getVideoAthletes(videoId: string): Promise<VideoAthlete[]> {
+  const db = getReadClient();
+  if (!db) return [];
+  const { data } = await db
+    .from('video_athletes')
+    .select('athletes(id,full_name,nation,photo_url)')
+    .eq('video_id', videoId);
+  return (data ?? [])
+    .map((r) => r.athletes)
+    .filter((a): a is NonNullable<typeof a> => !!a)
+    .map((a) => ({ id: a.id, name: a.full_name, nation: a.nation, photo: a.photo_url }));
 }
 
 // Lista per il pannello admin (tutti i video, anche draft).

@@ -7,12 +7,14 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { StreamPlayer } from '@/components/player/StreamPlayer';
+import { Paywall } from '@/components/player/Paywall';
 import { VodCard } from '@/components/cards/VodCard';
-import { AthleteCard } from '@/components/cards/AthleteCard';
-import { mockAthletes } from '@/lib/mock-athletes';
+import { PhotoFill } from '@/components/ui/PhotoFill';
+import type { VideoAthlete } from '@/lib/videos/types';
+import type { AccessReason } from '@/lib/access/check';
 
 export type PlayerVideoView = {
-  cloudflareUid: string; // id Cloudflare (per il player)
+  cloudflareUid: string; // id Cloudflare (per il player) — '' se accesso negato
   title: string;
   durationLabel: string;
   dateLabel: string;
@@ -24,13 +26,24 @@ export type OtherVideo = {
   title: string;
   durationLabel: string;
   thumbnailUrl?: string;
+  access: 'free' | 'premium' | 'ppv';
 };
 
-export function VodPlayerView({ video, others }: { video: PlayerVideoView; others: OtherVideo[] }) {
+export type AccessView = { allowed: boolean; reason: AccessReason; ppvPrice?: number | null };
+
+export function VodPlayerView({
+  video,
+  others,
+  athletes,
+  access,
+}: {
+  video: PlayerVideoView;
+  others: OtherVideo[];
+  athletes: VideoAthlete[];
+  access: AccessView;
+}) {
   const t = useTranslations('Vod');
   const [tab, setTab] = useState<'info' | 'athletes' | 'other'>('info');
-
-  const athletes = mockAthletes.slice(0, 6);
 
   const info = [
     { label: t('player.info.duration'), value: video.durationLabel || '—' },
@@ -42,7 +55,13 @@ export function VodPlayerView({ video, others }: { video: PlayerVideoView; other
       <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 py-6 lg:flex-row">
         {/* ===== LEFT ===== */}
         <div className="min-w-0 flex-1">
-          <StreamPlayer videoId={video.cloudflareUid} title={video.title} />
+          {/* Accesso consentito → player Cloudflare. Negato → paywall (il
+              cloudflare_uid NON viene mai passato al player: gating server-side). */}
+          {access.allowed ? (
+            <StreamPlayer videoId={video.cloudflareUid} title={video.title} />
+          ) : (
+            <Paywall reason={access.reason} ppvPrice={access.ppvPrice} />
+          )}
 
           {/* Info bar */}
           <div className="mt-2 rounded-lg bg-[#141414] p-4">
@@ -83,11 +102,27 @@ export function VodPlayerView({ video, others }: { video: PlayerVideoView; other
               ) : null}
 
               {tab === 'athletes' ? (
-                <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-                  {athletes.map((a) => (
-                    <AthleteCard key={a.id} athlete={a} />
-                  ))}
-                </div>
+                athletes.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+                    {athletes.map((a) => (
+                      <Link
+                        key={a.id}
+                        href={`/athletes/${a.id}`}
+                        className="group block overflow-hidden rounded-xl border border-white/[0.08] transition-colors hover:border-sandr-orange"
+                      >
+                        <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
+                          <PhotoFill src={a.photo} name={a.name} />
+                        </div>
+                        <div className="p-2">
+                          <p className="truncate font-condensed text-[13px] font-bold uppercase text-white">{a.name}</p>
+                          <p className="truncate text-[11px] uppercase tracking-wide text-[#888888]">{a.nation ?? ''}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sandr-muted">{t('player.noAthletes')}</p>
+                )
               ) : null}
 
               {tab === 'other' ? (
@@ -99,7 +134,7 @@ export function VodPlayerView({ video, others }: { video: PlayerVideoView; other
                           title={v.title}
                           date=""
                           duration={v.durationLabel}
-                          access="free"
+                          access={v.access}
                           thumbnailUrl={v.thumbnailUrl}
                           cardWidth={260}
                         />

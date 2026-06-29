@@ -10,6 +10,7 @@ import { FederationCard } from '@/components/cards/FederationCard';
 import { mockContent } from '@/lib/mock-content';
 import { mockAthletes } from '@/lib/mock-athletes';
 import { mockFederations } from '@/lib/mock-federations';
+import { badgeTier } from '@/lib/access/check';
 import type { CircuitTag, ContentItem } from '@/types/tags';
 import type { Athlete } from '@/types/athlete';
 import type { Federation } from '@/types/federation';
@@ -89,7 +90,7 @@ export function DashboardContent({
           title={item.title}
           date={item.date ?? ''}
           duration={item.duration ?? ''}
-          access={item.isPremium ? 'premium' : 'free'}
+          access={badgeTier(item.access ?? (item.isPremium ? 'premium' : 'free'), item.type)}
           cardWidth={cardWidth}
           thumbnailUrl={item.thumbnail}
           isMock={isMock}

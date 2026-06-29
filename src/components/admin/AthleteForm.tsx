@@ -28,6 +28,7 @@ export function AthleteForm({
   const [ranking, setRanking] = useState(athlete?.ranking?.toString() ?? '');
   const [seasonPoints, setSeasonPoints] = useState(athlete?.season_points?.toString() ?? '');
   const [photoUrl, setPhotoUrl] = useState(athlete?.photo_url ?? '');
+  const [isFeatured, setIsFeatured] = useState(athlete?.is_featured ?? false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,6 +54,7 @@ export function AthleteForm({
       bio: bio || undefined,
       ranking: ranking ? Number(ranking) : undefined,
       season_points: seasonPoints ? Number(seasonPoints) : undefined,
+      is_featured: isFeatured,
     };
     const res = athlete ? await updateAthlete(athlete.id, input) : await createAthlete(input);
     if (!res.ok) {
@@ -131,6 +133,22 @@ export function AthleteForm({
             <label className={labelCls}>Punti stagione</label>
             <input type="number" value={seasonPoints} onChange={(e) => setSeasonPoints(e.target.value)} className={inputCls} />
           </div>
+        </div>
+
+        {/* In evidenza: appare nella riga "Atleti in evidenza" (home + landing) */}
+        <div>
+          <label className={labelCls}>In evidenza</label>
+          <button
+            type="button"
+            onClick={() => setIsFeatured((v) => !v)}
+            className={`rounded-full border px-5 py-2 font-condensed text-xs font-bold uppercase tracking-wide transition ${
+              isFeatured
+                ? 'border-[#F04E00]/40 bg-[#F04E00]/15 text-[#F04E00]'
+                : 'border-white/[0.08] bg-[#1C1C1C] text-[#888888]'
+            }`}
+          >
+            {isFeatured ? 'In evidenza' : 'Metti in evidenza'}
+          </button>
         </div>
       </div>
 
