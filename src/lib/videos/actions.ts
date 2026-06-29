@@ -298,16 +298,30 @@ export async function getVideoForEdit(id: string): Promise<VideoEditResult> {
 // meta Cloudflare. Title prende il fallback "(senza titolo)" se vuoto.
 export async function getAdminDashboard(): Promise<AdminDashboard> {
   const db = getReadClient();
-  if (!db) return { total: 0, recent: [], videos: [] };
+  if (!db) {
+    return { total: 0, usersCount: 0, activeSubscriptions: 0, catalogHours: 0, recent: [], videos: [] };
+  }
   const { data } = await db
     .from('videos')
     .select('*, federations(short_name)')
     .order('created_at', { ascending: false });
   const rows = data ?? [];
+
+  // Conteggi REALI da Supabase (head:true → solo il count, nessuna riga).
+  const [{ count: usersCount }, { count: activeSubscriptions }] = await Promise.all([
+    db.from('profiles').select('id', { count: 'exact', head: true }),
+    db.from('subscriptions').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+  ]);
+  // Ore di catalogo: somma delle durate dei video / 3600.
+  const catalogSeconds = rows.reduce((acc, v) => acc + (v.duration_seconds ?? 0), 0);
+
   const thumbOf = (v: (typeof rows)[number]) =>
     v.thumbnail_card_url || (v.cloudflare_uid ? getThumbnailUrl(v.cloudflare_uid) : '');
   return {
     total: rows.length,
+    usersCount: usersCount ?? 0,
+    activeSubscriptions: activeSubscriptions ?? 0,
+    catalogHours: Math.round(catalogSeconds / 3600),
     recent: rows.slice(0, 5).map((v) => ({
       id: v.id,
       title: v.title || '(senza titolo)',

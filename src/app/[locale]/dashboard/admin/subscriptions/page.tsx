@@ -2,8 +2,15 @@ import { setRequestLocale } from 'next-intl/server';
 import { getSubscriptionsOverview } from '@/lib/admin/actions';
 import { requireAdminPage } from '@/lib/supabase/guard';
 import { DemoPill } from '@/components/account/DemoPill';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 
-// REAL: subscriptions table. MOCK: MRR/revenue calc (Stripe pending).
+// Spiegazioni MRR/Churn (placeholder finché non c'è l'integrazione Stripe).
+const MRR_TIP =
+  'Monthly Recurring Revenue — ricavo mensile ricorrente dagli abbonamenti attivi. Dato disponibile con l’integrazione dei pagamenti (Stripe).';
+const CHURN_TIP =
+  'Tasso di abbandono — percentuale di abbonati che disdicono in un periodo. Dato disponibile con l’integrazione dei pagamenti (Stripe).';
+
+// REAL: subscriptions table. MOCK: MRR e Churn (Stripe pending).
 export default async function AdminSubscriptionsPage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   await requireAdminPage(params.locale);
@@ -14,10 +21,11 @@ export default async function AdminSubscriptionsPage({ params }: { params: { loc
   const mrr = (ov.active * mockPremiumPrice).toFixed(2);
   const churn = ov.total > 0 ? Math.round((ov.cancelled / ov.total) * 100) : 0;
 
+  // Churn e MRR restano MOCK/proxy finché non c'è Stripe (DEMO + tooltip).
   const stats = [
-    { label: 'Abbonati attivi', value: String(ov.active), demo: false },
-    { label: 'Churn', value: `${churn}%`, demo: false },
-    { label: 'MRR (stima)', value: `${mrr} €`, demo: true },
+    { label: 'Abbonati attivi', value: String(ov.active), demo: false, tip: null as string | null },
+    { label: 'Churn', value: `${churn}%`, demo: true, tip: CHURN_TIP },
+    { label: 'MRR (stima)', value: `${mrr} €`, demo: true, tip: MRR_TIP },
   ];
 
   return (
@@ -29,6 +37,7 @@ export default async function AdminSubscriptionsPage({ params }: { params: { loc
           <div key={s.label} className="rounded-xl border border-white/[0.08] bg-[#1C1C1C] p-6">
             <p className="font-condensed text-[11px] uppercase tracking-wide text-[#888888]">
               {s.label}
+              {s.tip ? <InfoTooltip text={s.tip} /> : null}
               {s.demo ? <DemoPill /> : null}
             </p>
             <p className="mt-2 font-condensed text-4xl font-black text-white">{s.value}</p>

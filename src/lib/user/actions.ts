@@ -50,6 +50,8 @@ export async function getMyWatchHistory(): Promise<WatchHistoryItem[]> {
     .from('watch_history')
     .select('watched_seconds,completed,last_watched_at,videos(id,title,thumbnail_card_url,cloudflare_uid,duration_seconds)')
     .eq('user_id', user.id)
+    // Esclude i video rimossi dall'utente con la X: scompaiono anche dalla cronologia.
+    .eq('dismissed', false)
     .order('last_watched_at', { ascending: false });
   return (data ?? [])
     .filter((r) => r.videos)

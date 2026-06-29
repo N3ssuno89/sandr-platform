@@ -12,26 +12,28 @@ export const revalidate = 0;
 export default async function AdminHomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
 
-  const { total, recent, videos } = await getAdminDashboard();
+  const { total, usersCount, activeSubscriptions, catalogHours, recent, videos } =
+    await getAdminDashboard();
 
+  // Tutti REALI da Supabase. Niente delta "+%" finché non c'è uno storico vero
+  // (es. confronto col mese precedente): meglio nessun valore che uno finto.
   const stats = [
-    { label: 'Video totali', value: total > 0 ? String(total) : '0', trend: '+12%' },
-    { label: 'Utenti attivi', value: '1.247', trend: '+8%' },
-    { label: 'Abbonamenti attivi', value: '89', trend: '+5%' },
-    { label: 'Ore streammate', value: '4.320', trend: '+18%' },
+    { label: 'Video totali', value: String(total) },
+    { label: 'Utenti registrati', value: String(usersCount) },
+    { label: 'Abbonamenti attivi', value: String(activeSubscriptions) },
+    { label: 'Ore di catalogo', value: String(catalogHours) },
   ];
 
   return (
     <div>
       <h1 className="font-condensed text-3xl font-extrabold uppercase text-white">Dashboard</h1>
 
-      {/* Stat cards */}
+      {/* Stat cards — dati reali da Supabase */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="rounded-xl border border-white/[0.08] bg-[#1C1C1C] p-6">
             <p className="font-condensed text-[11px] uppercase tracking-wide text-[#888888]">{s.label}</p>
             <p className="mt-2 font-condensed text-4xl font-black text-white">{s.value}</p>
-            <p className="mt-1 text-xs font-bold text-emerald-400">{s.trend}</p>
           </div>
         ))}
       </div>
