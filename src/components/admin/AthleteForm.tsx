@@ -28,6 +28,8 @@ export function AthleteForm({
   const [ranking, setRanking] = useState(athlete?.ranking?.toString() ?? '');
   const [seasonPoints, setSeasonPoints] = useState(athlete?.season_points?.toString() ?? '');
   const [photoUrl, setPhotoUrl] = useState(athlete?.photo_url ?? '');
+  // birth_date dal DB è 'YYYY-MM-DD' (date): l'input date usa lo stesso formato.
+  const [birthDate, setBirthDate] = useState(athlete?.birth_date ?? '');
   const [isFeatured, setIsFeatured] = useState(athlete?.is_featured ?? false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -61,6 +63,7 @@ export function AthleteForm({
       ranking: ranking ? Number(ranking) : undefined,
       season_points: seasonPoints ? Number(seasonPoints) : undefined,
       is_featured: isFeatured,
+      birth_date: birthDate || undefined,
     };
     const res = athlete ? await updateAthlete(athlete.id, input) : await createAthlete(input);
     if (!res.ok) {
@@ -112,6 +115,13 @@ export function AthleteForm({
           <div>
             <label className={labelCls}>Codice nazione</label>
             <input value={nationCode} onChange={(e) => setNationCode(e.target.value)} maxLength={3} placeholder="IT, USA, NO" className={inputCls} />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={labelCls}>Data di nascita</label>
+            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className={inputCls} />
           </div>
         </div>
 

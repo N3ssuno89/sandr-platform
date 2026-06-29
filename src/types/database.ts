@@ -195,6 +195,7 @@ export interface Database {
           ranking: number | null;
           season_points: number | null;
           is_featured: boolean;
+          birth_date: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -211,6 +212,7 @@ export interface Database {
           ranking?: number | null;
           season_points?: number | null;
           is_featured?: boolean;
+          birth_date?: string | null;
           created_at?: string;
           updated_at?: string;
         };

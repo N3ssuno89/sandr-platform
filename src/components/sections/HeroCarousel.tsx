@@ -15,9 +15,6 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const t = useTranslations('AuthHome');
   const [index, setIndex] = useState(0);
 
-  // Debug: verifica che la prop featuredVideos arrivi al client.
-  console.log('[hero] featuredVideos:', featuredVideos?.length ?? 0);
-
   // Video reali in evidenza se presenti (length > 0), altrimenti slide mock.
   // NON deve mai cadere sul mock quando ci sono video in evidenza.
   const slides = featuredVideos && featuredVideos.length > 0 ? featuredVideos : mockSlides;
@@ -40,21 +37,21 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
 
   return (
     <section className="relative h-[500px] w-full overflow-hidden bg-[#1C1C1C]">
-      {/* Sfondo: immagine reale (brightness 0.4) o gradiente di fallback */}
+      {/* Sfondo: immagine reale (vivida, nessun oscuramento globale) o gradiente
+          di fallback. La leggibilità del testo è data dal solo gradiente in basso. */}
       {bg ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={bg}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ filter: 'brightness(0.4)' }}
-        />
+        <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
       )}
+      {/* Gradiente solo in basso (dove stanno titolo/CTA): immagine luminosa sopra. */}
       <div
         className="absolute inset-0"
-        style={{ background: 'linear-gradient(to top, rgba(20,20,20,0.95), transparent 60%)' }}
+        style={{
+          background:
+            'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
+        }}
       />
 
       {/* Info overlay in basso a sinistra */}

@@ -32,6 +32,7 @@ export type AthleteFull = {
   ranking: number | null;
   season_points: number | null;
   is_featured: boolean;
+  birth_date: string | null;
 };
 
 export type AthleteInput = {
@@ -45,6 +46,7 @@ export type AthleteInput = {
   ranking?: number;
   season_points?: number;
   is_featured?: boolean;
+  birth_date?: string;
 };
 
 // Riga federazione completa (gestione admin).

@@ -1,9 +1,8 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { ScrollRow } from '@/components/ui/section-row';
 import { AthleteCard } from '@/components/cards/AthleteCard';
 import { PhotoFill } from '@/components/ui/PhotoFill';
-import { ReminderButton } from '@/components/sections/ReminderButton';
+import { AthleteVideoRows } from '@/components/sections/AthleteVideoRows';
 import { getAthleteById, mockAthletes } from '@/lib/mock-athletes';
 import {
   supabaseReadable,
@@ -11,18 +10,16 @@ import {
   getOtherAthletes,
   getPublicFederations,
   getSportsMap,
-  getAthleteUpcomingEvents,
-  getAthleteRecentMatches,
 } from '@/lib/public/queries';
+import { getAthleteVideos } from '@/lib/videos/actions';
 import { toAthleteCard } from '@/lib/public/map';
 import type { Athlete } from '@/types/athlete';
+import type { ContentItem } from '@/types/tags';
 
-// Pagina profilo atleta. REAL da Supabase (atleti, eventi via federazione,
-// match completati). MOCK FALLBACK: solo se Supabase non è configurato (dev).
-// AREA CRITICA (CLAUDE.md): dati Supabase pubblici.
+// Profilo atleta v2: info utili e CERTE (niente stats di competizione inventate)
+// + i video in cui è taggato, in righe per tipo come la home. REAL da Supabase;
+// MOCK FALLBACK solo se Supabase non è configurato (dev mode).
 
-type UpcomingVM = { id: string; title: string; circuit: string; dateLabel: string; location: string };
-type MatchVM = { id: string; label: string; result: 'W' | 'L'; date: string; videoId: string | null };
 type AthleteVM = {
   id: string;
   name: string;
@@ -33,14 +30,22 @@ type AthleteVM = {
   sport: string;
   bio: string;
   ranking?: number;
-  matchesPlayed: number;
-  wins: number;
-  winRate: number;
-  seasonPoints: number;
-  upcoming: UpcomingVM[];
-  matches: MatchVM[];
+  age: number | null;
+  videos: ContentItem[];
   others: Athlete[];
 };
+
+// Età dagli anni compiuti a partire da birth_date ('YYYY-MM-DD'). null se assente.
+function calcAge(birth: string | null): number | null {
+  if (!birth) return null;
+  const b = new Date(birth);
+  if (Number.isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age -= 1;
+  return age >= 0 && age < 120 ? age : null;
+}
 
 export default async function AthletePage({ params }: { params: { locale: string; id: string } }) {
   setRequestLocale(params.locale);
@@ -55,13 +60,6 @@ export default async function AthletePage({ params }: { params: { locale: string
     );
   }
 
-  const statBoxes = [
-    { label: t('stats.matches'), value: String(vm.matchesPlayed) },
-    { label: t('stats.wins'), value: String(vm.wins) },
-    { label: t('stats.winRate'), value: `${vm.winRate}%` },
-    { label: t('stats.seasonPoints'), value: vm.seasonPoints.toLocaleString() },
-  ];
-
   return (
     <div className="bg-[#141414]">
       <div className="mx-auto max-w-[1200px] px-4 py-12">
@@ -72,89 +70,58 @@ export default async function AthletePage({ params }: { params: { locale: string
           </div>
 
           <div className="flex-1">
+            {/* Ranking mondiale (solo se valorizzato) — oro */}
             {vm.ranking ? (
               <span className="inline-block rounded-full border border-[#F0A800]/40 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#F0A800]">
-                {t('ranking')} #{vm.ranking}
+                {t('worldRanking')} #{vm.ranking}
               </span>
             ) : null}
 
-            <h1 className="mt-3 font-condensed text-5xl font-black uppercase leading-none text-white md:text-6xl">{vm.name}</h1>
-            <p className="mt-2 text-sm text-[#888888]">{vm.nationFlag} · {vm.nation}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-sandr-text">{vm.sport}</span>
-              <span className="rounded-full bg-sandr-orange px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">{vm.circuit}</span>
-            </div>
-            {vm.bio ? <p className="mt-4 max-w-2xl text-[15px] text-[#C0BDB8]">{vm.bio}</p> : null}
+            <h1 className="mt-3 font-condensed text-5xl font-black uppercase leading-none text-white md:text-6xl">
+              {vm.name}
+            </h1>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {statBoxes.map((s) => (
-                <div key={s.label} className="rounded-lg bg-[#1C1C1C] p-4 text-center">
-                  <p className="font-condensed text-[11px] uppercase tracking-wide text-[#888888]">{s.label}</p>
-                  <p className="mt-1 font-condensed text-[28px] font-extrabold text-white">{s.value}</p>
-                </div>
-              ))}
+            {/* Nazione + età */}
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#C0BDB8]">
+              {vm.nation ? (
+                <span>
+                  {vm.nationFlag ? <span className="font-bold text-white">{vm.nationFlag}</span> : null}
+                  {vm.nationFlag ? ' · ' : ''}
+                  {vm.nation}
+                </span>
+              ) : null}
+              {vm.age !== null ? (
+                <>
+                  {vm.nation ? <span className="text-[#555555]">•</span> : null}
+                  <span>{t('age', { age: vm.age })}</span>
+                </>
+              ) : null}
             </div>
+
+            {/* Sport + federazione */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-sandr-text">
+                {vm.sport}
+              </span>
+              {vm.circuit && vm.circuit !== '—' ? (
+                <span className="rounded-full bg-sandr-orange px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
+                  {vm.circuit}
+                </span>
+              ) : null}
+            </div>
+
+            {vm.bio ? <p className="mt-4 max-w-2xl text-[15px] text-[#C0BDB8]">{vm.bio}</p> : null}
           </div>
         </section>
 
-        {/* ===== Eventi + Match ===== */}
-        <section className="mt-12 grid gap-8 md:grid-cols-2">
-          {/* Prossimi eventi (REAL via federazione) */}
-          <div>
-            <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide text-white">{t('upcoming')}</h2>
-            {vm.upcoming.length > 0 ? (
-              <ul className="mt-4 space-y-3">
-                {vm.upcoming.map((e) => (
-                  <li key={e.id} className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-[#1C1C1C] p-4">
-                    <div>
-                      {e.dateLabel ? (
-                        <span className="inline-block rounded bg-sandr-orange px-2 py-0.5 text-[11px] font-bold uppercase text-black">{e.dateLabel}</span>
-                      ) : null}
-                      <p className="mt-2 font-condensed text-[15px] font-bold uppercase tracking-wide text-white">{e.title}</p>
-                      <p className="text-[13px] text-[#888888]">{e.circuit} · {e.location}</p>
-                    </div>
-                    <ReminderButton />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-[#888888]">Nessun evento in programma</p>
-            )}
-          </div>
-
-          {/* Match recenti (REAL completati) */}
-          <div>
-            <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide text-white">{t('recent')}</h2>
-            {vm.matches.length > 0 ? (
-              <ul className="mt-4 space-y-3">
-                {vm.matches.map((m) => (
-                  <li key={m.id} className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-[#1C1C1C] p-4">
-                    <div className="flex items-center gap-3">
-                      <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${m.result === 'W' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-                        {m.result}
-                      </span>
-                      <div>
-                        <p className="font-condensed text-[15px] font-bold uppercase tracking-wide text-white">{m.label}</p>
-                        <p className="text-[13px] text-[#888888]">{m.date}</p>
-                      </div>
-                    </div>
-                    {m.videoId ? (
-                      <Link href={`/vod/${m.videoId}`} className="shrink-0 text-[13px] font-semibold uppercase tracking-wide text-sandr-orange hover:text-sandr-text">
-                        {t('watchReplay')}
-                      </Link>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-[#888888]">Nessun match recente</p>
-            )}
-          </div>
+        {/* ===== Video taggati (righe per tipo, come la home) ===== */}
+        <section className="mt-14">
+          <AthleteVideoRows videos={vm.videos} />
         </section>
 
         {/* ===== Altri atleti ===== */}
         {vm.others.length > 0 ? (
-          <section className="mt-12">
+          <section className="mt-14">
             <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide text-white">{t('others')}</h2>
             <ScrollRow>
               {vm.others.map((a) => (
@@ -186,12 +153,8 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
       sport: a.sport,
       bio: a.bio,
       ranking: a.stats.ranking,
-      matchesPlayed: a.stats.matchesPlayed,
-      wins: a.stats.wins,
-      winRate: a.stats.winRate,
-      seasonPoints: a.stats.seasonPoints,
-      upcoming: a.upcomingEvents.map((e) => ({ id: e.id, title: e.title, circuit: e.circuit, dateLabel: e.date, location: e.location })),
-      matches: a.recentMatches.map((m) => ({ id: m.id, label: m.title, result: m.result, date: m.date, videoId: m.id })),
+      age: null,
+      videos: [],
       others: mockAthletes.filter((x) => x.id !== a.id).slice(0, 4),
     };
   }
@@ -199,20 +162,16 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
   const athlete = await getPublicAthlete(id);
   if (!athlete) return null;
 
-  const [federations, sportsMap, upcoming, matches, otherRows] = await Promise.all([
+  const [federations, sportsMap, videos, otherRows] = await Promise.all([
     getPublicFederations(),
     getSportsMap(),
-    getAthleteUpcomingEvents(athlete.federation_id),
-    getAthleteRecentMatches(athlete.id),
+    getAthleteVideos(athlete.id),
     getOtherAthletes(athlete.id, 6),
   ]);
 
   const fedShort = (fid: string | null) => federations.find((f) => f.id === fid)?.short_name ?? '—';
   const sportName = (sid: string | null) => sportsMap.get(sid ?? '') ?? 'Beach Volley';
   const circuit = fedShort(athlete.federation_id);
-
-  const wins = matches.filter((m) => m.result === 'W').length;
-  const played = matches.length;
 
   return {
     id: athlete.id,
@@ -224,12 +183,8 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
     sport: sportName(athlete.sport_id),
     bio: athlete.bio ?? '',
     ranking: athlete.ranking ?? undefined,
-    matchesPlayed: played,
-    wins,
-    winRate: played > 0 ? Math.round((wins / played) * 100) : 0,
-    seasonPoints: athlete.season_points ?? 0,
-    upcoming: upcoming.map((e) => ({ id: e.id, title: e.title, circuit, dateLabel: e.dateRange, location: e.location })),
-    matches: matches.map((m) => ({ id: m.id, label: `${m.teamA} vs ${m.teamB}`, result: m.result, date: m.date, videoId: m.videoId })),
+    age: calcAge(athlete.birth_date),
+    videos,
     others: otherRows.map((o) => toAthleteCard(o, sportName(o.sport_id), fedShort(o.federation_id))),
   };
 }
