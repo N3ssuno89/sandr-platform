@@ -70,20 +70,15 @@ function fmtDate(iso: string | null): string {
 // READ — display (sito) e admin
 // =====================================================================
 
-// Tutti i video 'ready' in formato ContentItem per il frontend. Tag/circuito/
-// tipo arrivano dal DB (source of truth), non più dai meta Cloudflare.
-export async function getVideosForDisplay(): Promise<ContentItem[]> {
-  const db = getReadClient();
-  if (!db) return [];
-
-  const { data: vids } = await db
-    .from('videos')
-    .select('*, sports(name), federations(short_name)')
-    .eq('status', 'ready')
-    .order('created_at', { ascending: false });
+// Righe video (con sports/federations embedded) → ContentItem[]. Recupera tag e
+// atleti per gli id passati e costruisce le card. Helper condiviso tra la lista
+// generale e i video per atleta (mantiene la mappatura in un solo punto).
+async function buildContentItems(
+  db: SupabaseClient<Database>,
+  vids: Array<Record<string, unknown>>,
+): Promise<ContentItem[]> {
   if (!vids || vids.length === 0) return [];
-
-  const ids = vids.map((v) => v.id);
+  const ids = vids.map((v) => v.id as string);
   const { data: tagRows } = await db.from('video_tags').select('video_id,tag').in('video_id', ids);
   const { data: vaRows } = await db
     .from('video_athletes')
@@ -106,7 +101,23 @@ export async function getVideosForDisplay(): Promise<ContentItem[]> {
     }
   });
 
-  return vids.map((v) => {
+  return vids.map((raw) => {
+    const v = raw as {
+      id: string;
+      title: string;
+      type: string | null;
+      sports: { name: string } | null;
+      federations: { short_name: string | null } | null;
+      thumbnail_card_url: string | null;
+      thumbnail_featured_url: string | null;
+      cloudflare_uid: string | null;
+      duration_seconds: number | null;
+      access_level: 'free' | 'premium' | 'ppv';
+      is_live: boolean;
+      is_featured: boolean;
+      published_at: string | null;
+      created_at: string;
+    };
     const circuit = (v.federations?.short_name ?? undefined) as CircuitTag | undefined;
     const sport = (v.sports?.name ?? 'Beach Volley') as SportTag;
     const type = mapType(v.type);
@@ -137,6 +148,43 @@ export async function getVideosForDisplay(): Promise<ContentItem[]> {
       ],
     } satisfies ContentItem;
   });
+}
+
+// Tutti i video 'ready' in formato ContentItem per il frontend. Tag/circuito/
+// tipo arrivano dal DB (source of truth), non più dai meta Cloudflare.
+export async function getVideosForDisplay(): Promise<ContentItem[]> {
+  const db = getReadClient();
+  if (!db) return [];
+
+  const { data: vids } = await db
+    .from('videos')
+    .select('*, sports(name), federations(short_name)')
+    .eq('status', 'ready')
+    .order('created_at', { ascending: false });
+  return buildContentItems(db, vids ?? []);
+}
+
+// Video in cui un atleta è taggato (via video_athletes), in formato ContentItem.
+// Ordinati per pubblicazione più recente. Per il profilo atleta (righe per tipo).
+export async function getAthleteVideos(athleteId: string): Promise<ContentItem[]> {
+  const db = getReadClient();
+  if (!db) return [];
+
+  const { data: links } = await db
+    .from('video_athletes')
+    .select('video_id')
+    .eq('athlete_id', athleteId);
+  const ids = (links ?? []).map((r) => r.video_id);
+  if (ids.length === 0) return [];
+
+  const { data: vids } = await db
+    .from('videos')
+    .select('*, sports(name), federations(short_name)')
+    .in('id', ids)
+    .eq('status', 'ready')
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false });
+  return buildContentItems(db, vids ?? []);
 }
 
 export async function getVideoForPlayer(id: string): Promise<PlayerVideo | null> {

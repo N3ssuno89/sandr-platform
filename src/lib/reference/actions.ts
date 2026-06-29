@@ -16,7 +16,7 @@ import type {
   DeleteResult,
 } from './types';
 
-const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points,is_featured';
+const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points,is_featured,birth_date';
 const FEDERATION_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
 
 // Invalida la cache delle rotte che mostrano atleti/federazioni dopo una
@@ -187,6 +187,7 @@ export async function createAthlete(input: AthleteInput): Promise<ActionResult<A
       ranking: input.ranking ?? null,
       season_points: input.season_points ?? null,
       is_featured: input.is_featured ?? false,
+      birth_date: input.birth_date || null,
     })
     .select('id,full_name,nation,sport_id,federation_id')
     .single();
@@ -213,6 +214,7 @@ export async function updateAthlete(id: string, input: AthleteInput): Promise<De
       ranking: input.ranking ?? null,
       season_points: input.season_points ?? null,
       is_featured: input.is_featured ?? false,
+      birth_date: input.birth_date || null,
     })
     .eq('id', id);
   if (error) return { ok: false, error: error.message };
