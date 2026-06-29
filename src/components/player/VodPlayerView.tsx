@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { StreamPlayer } from '@/components/player/StreamPlayer';
+import { TrackingPlayer } from '@/components/player/TrackingPlayer';
 import { Paywall } from '@/components/player/Paywall';
 import { VodCard } from '@/components/cards/VodCard';
 import { PhotoFill } from '@/components/ui/PhotoFill';
@@ -30,17 +30,20 @@ export type OtherVideo = {
 };
 
 export type AccessView = { allowed: boolean; reason: AccessReason; ppvPrice?: number | null };
+export type TrackingInfo = { videoId: string; loggedIn: boolean; resumeSeconds: number };
 
 export function VodPlayerView({
   video,
   others,
   athletes,
   access,
+  tracking,
 }: {
   video: PlayerVideoView;
   others: OtherVideo[];
   athletes: VideoAthlete[];
   access: AccessView;
+  tracking: TrackingInfo;
 }) {
   const t = useTranslations('Vod');
   const [tab, setTab] = useState<'info' | 'athletes' | 'other'>('info');
@@ -58,7 +61,13 @@ export function VodPlayerView({
           {/* Accesso consentito → player Cloudflare. Negato → paywall (il
               cloudflare_uid NON viene mai passato al player: gating server-side). */}
           {access.allowed ? (
-            <StreamPlayer videoId={video.cloudflareUid} title={video.title} />
+            <TrackingPlayer
+              cloudflareUid={video.cloudflareUid}
+              videoId={tracking.videoId}
+              title={video.title}
+              loggedIn={tracking.loggedIn}
+              resumeSeconds={tracking.resumeSeconds}
+            />
           ) : (
             <Paywall reason={access.reason} ppvPrice={access.ppvPrice} />
           )}
