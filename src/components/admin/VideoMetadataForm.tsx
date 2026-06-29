@@ -83,9 +83,18 @@ export function VideoMetadataForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState(false);
+  // Numero di upload copertina in corso: blocca il salvataggio finché gli URL
+  // non sono pronti (evita di salvare thumbnail_*_url vuoti).
+  const [thumbsBusy, setThumbsBusy] = useState(0);
+  const onThumbBusy = (b: boolean) => setThumbsBusy((n) => Math.max(0, n + (b ? 1 : -1)));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Non salvare mentre una copertina è in upload: l'URL non è ancora pronto.
+    if (thumbsBusy > 0) {
+      setError('Attendi il completamento del caricamento delle copertine.');
+      return;
+    }
     setSaving(true);
     setError(null);
     const res = await saveVideo({
@@ -139,8 +148,8 @@ export function VideoMetadataForm({
 
         {/* Copertine → Supabase Storage */}
         <div className="mb-4 flex flex-wrap gap-6">
-          <ThumbnailUpload label="Copertina card" hint="righe a scorrimento (16:9)" width={160} height={90} kind="card" value={thumbCard} onUploaded={setThumbCard} />
-          <ThumbnailUpload label="Copertina in evidenza" hint="hero (21:9)" width={320} height={137} kind="featured" value={thumbFeatured} onUploaded={setThumbFeatured} />
+          <ThumbnailUpload label="Copertina card" hint="righe a scorrimento (16:9)" width={160} height={90} kind="card" value={thumbCard} onUploaded={setThumbCard} onBusyChange={onThumbBusy} />
+          <ThumbnailUpload label="Copertina in evidenza" hint="hero (21:9)" width={320} height={137} kind="featured" value={thumbFeatured} onUploaded={setThumbFeatured} onBusyChange={onThumbBusy} />
         </div>
 
         {/* LIVELLO 1 — Federazione + Sport (dropdown con "aggiungi nuovo") */}
@@ -258,10 +267,10 @@ export function VideoMetadataForm({
 
       <button
         type="submit"
-        disabled={saving}
+        disabled={saving || thumbsBusy > 0}
         className="w-full rounded-lg bg-sandr-orange px-5 py-3 font-condensed font-bold uppercase tracking-wide text-black disabled:opacity-60"
       >
-        {saving ? 'Salvataggio…' : 'Salva su Supabase'}
+        {thumbsBusy > 0 ? 'Caricamento copertine…' : saving ? 'Salvataggio…' : 'Salva su Supabase'}
       </button>
 
       {toast && (
@@ -283,6 +292,7 @@ function ThumbnailUpload({
   kind,
   value,
   onUploaded,
+  onBusyChange,
 }: {
   label: string;
   hint: string;
@@ -291,11 +301,17 @@ function ThumbnailUpload({
   kind: 'card' | 'featured';
   value?: string;
   onUploaded: (url: string) => void;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(value || null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  function setBusyState(b: boolean) {
+    setBusy(b);
+    onBusyChange?.(b);
+  }
 
   async function handleFile(file: File) {
     setErr(null);
@@ -306,7 +322,7 @@ function ThumbnailUpload({
       return;
     }
     setPreview(URL.createObjectURL(file));
-    setBusy(true);
+    setBusyState(true);
     try {
       const body = new FormData();
       body.append('file', file);
@@ -314,6 +330,7 @@ function ThumbnailUpload({
       body.append('prefix', kind);
       const res = await uploadToBucket(body);
       if (res.ok) {
+        console.log('uploaded thumbnail url:', kind, res.data.url);
         setPreview(res.data.url);
         onUploaded(res.data.url);
       } else {
@@ -333,7 +350,7 @@ function ThumbnailUpload({
       setErr(`Errore: ${e instanceof Error ? e.message : 'sconosciuto'}`);
       setPreview(value || null);
     } finally {
-      setBusy(false);
+      setBusyState(false);
     }
   }
 

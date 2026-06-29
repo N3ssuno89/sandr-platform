@@ -117,6 +117,7 @@ export async function createFederation(input: FederationInput): Promise<ActionRe
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
 
+  console.log('saving federation with logo_url:', input.logo_url ?? null);
   const { data, error } = await ctx.admin
     .from('federations')
     .insert({
@@ -140,6 +141,7 @@ export async function createFederation(input: FederationInput): Promise<ActionRe
 export async function updateFederation(id: string, input: FederationInput): Promise<DeleteResult> {
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
+  console.log('saving federation with logo_url:', input.logo_url ?? null);
   const { error } = await ctx.admin
     .from('federations')
     .update({
@@ -171,6 +173,7 @@ export async function createAthlete(input: AthleteInput): Promise<ActionResult<A
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
 
+  console.log('saving athlete with photo_url:', input.photo_url ?? null);
   const { data, error } = await ctx.admin
     .from('athletes')
     .insert({
@@ -196,6 +199,7 @@ export async function createAthlete(input: AthleteInput): Promise<ActionResult<A
 export async function updateAthlete(id: string, input: AthleteInput): Promise<DeleteResult> {
   const ctx = await getAdminContext();
   if (!ctx.ok) return { ok: false, error: ctx.error };
+  console.log('saving athlete with photo_url:', input.photo_url ?? null);
   const { error } = await ctx.admin
     .from('athletes')
     .update({
