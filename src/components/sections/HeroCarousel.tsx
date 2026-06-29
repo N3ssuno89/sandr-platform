@@ -23,9 +23,9 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [slides.length]);
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
 
-  // Auto-avanzamento ogni 7 secondi (più lento, meno frenetico).
+  // Auto-avanzamento ogni 6 secondi.
   useEffect(() => {
-    const id = setInterval(next, 7000);
+    const id = setInterval(next, 6000);
     return () => clearInterval(id);
   }, [next]);
 

@@ -102,7 +102,10 @@ export type AdminFeaturedVideo = {
 
 // Dati aggregati per la dashboard admin (tutto da Supabase, source of truth).
 export type AdminDashboard = {
-  total: number;
+  total: number; // video totali
+  usersCount: number; // righe profiles
+  activeSubscriptions: number; // subscriptions con status='active'
+  catalogHours: number; // somma duration_seconds / 3600 (ore di catalogo)
   recent: AdminRecentVideo[];
   videos: AdminFeaturedVideo[];
 };

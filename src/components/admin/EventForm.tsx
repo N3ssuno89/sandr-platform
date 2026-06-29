@@ -7,7 +7,20 @@ import type { EventRow } from '@/lib/events/types';
 import type { SportRef, FederationRef } from '@/lib/reference/types';
 import { cardCls, labelCls, inputCls, orangeBtn, redBtn } from '@/components/admin/styles';
 
-const STAGES = ['Finale', 'Semifinale', 'Quarti', 'Regular Season', 'Wild Card'];
+const STAGES = [
+  'Qualifica 1',
+  'Qualifica 2',
+  'Pool',
+  'Pool Vincenti',
+  'Pool Perdenti',
+  'Round of 12',
+  'Ottavi',
+  'Quarti',
+  'Semifinale',
+  'Finale',
+  'Regular Season',
+  'Wild Card',
+];
 const NAZIONI = ['Italia', 'USA', 'Norvegia', 'International', 'Europe', 'Brasile', 'Germania', 'Francia', 'Spagna'];
 
 export function EventForm({

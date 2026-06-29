@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useRouter } from '@/i18n/routing';
 import { deleteVideo } from '@/lib/videos/actions';
 
@@ -17,12 +17,40 @@ export type VideoRow = {
 
 const COLS = 'grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] items-center gap-3 px-4';
 
+const selectCls =
+  'rounded-lg border border-white/[0.08] bg-[#1C1C1C] px-3 py-3 text-sm text-white focus:border-[#F04E00] focus:outline-none';
+
+// Valori distinti (non vuoti, ordinati) per popolare i dropdown dei filtri.
+function distinctValues(rows: VideoRow[], pick: (r: VideoRow) => string | undefined): string[] {
+  return Array.from(new Set(rows.map(pick).filter((x): x is string => !!x))).sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
 export function VideoManager({ videos }: { videos: VideoRow[] }) {
   const router = useRouter();
   const [rows, setRows] = useState<VideoRow[]>(videos);
   const [q, setQ] = useState('');
+  const [circuit, setCircuit] = useState('');
+  const [type, setType] = useState('');
+  const [sport, setSport] = useState('');
+  const [status, setStatus] = useState(''); // '' | 'ready' | 'processing'
 
-  const visible = rows.filter((r) => r.name.toLowerCase().includes(q.toLowerCase()));
+  // Opzioni dei filtri ricavate dai dati (valori distinti presenti).
+  const circuits = useMemo(() => distinctValues(rows, (r) => r.circuit), [rows]);
+  const types = useMemo(() => distinctValues(rows, (r) => r.type), [rows]);
+  const sports = useMemo(() => distinctValues(rows, (r) => r.sport), [rows]);
+
+  // Filtri combinati in AND con la ricerca per titolo.
+  const visible = rows.filter((r) => {
+    if (q && !r.name.toLowerCase().includes(q.toLowerCase())) return false;
+    if (circuit && r.circuit !== circuit) return false;
+    if (type && r.type !== type) return false;
+    if (sport && r.sport !== sport) return false;
+    if (status === 'ready' && !r.ready) return false;
+    if (status === 'processing' && r.ready) return false;
+    return true;
+  });
 
   // Elimina su Supabase (server action, verifica admin), poi aggiorna la lista.
   const remove = async (uid: string) => {
@@ -59,6 +87,29 @@ export function VideoManager({ videos }: { videos: VideoRow[] }) {
           Aggiungi video
         </Link>
       </div>
+
+      {/* Filtri (combinano in AND con la ricerca) */}
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <select value={circuit} onChange={(e) => setCircuit(e.target.value)} className={selectCls}>
+          <option value="">Tutti i circuiti</option>
+          {circuits.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <select value={type} onChange={(e) => setType(e.target.value)} className={selectCls}>
+          <option value="">Tutti i tipi</option>
+          {types.map((tp) => <option key={tp} value={tp}>{tp}</option>)}
+        </select>
+        <select value={sport} onChange={(e) => setSport(e.target.value)} className={selectCls}>
+          <option value="">Tutti gli sport</option>
+          {sports.map((sp) => <option key={sp} value={sp}>{sp}</option>)}
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className={selectCls}>
+          <option value="">Tutti gli stati</option>
+          <option value="ready">Pronto</option>
+          <option value="processing">In elaborazione</option>
+        </select>
+      </div>
+
+      <p className="mt-3 text-sm text-[#888888]">{visible.length} video</p>
 
       {visible.length > 0 ? (
         <div className="mt-6 overflow-x-auto rounded-xl border border-white/[0.08] bg-[#1C1C1C]">
