@@ -9,6 +9,7 @@ import {
   createSport,
   addContentTypeEnum,
 } from '@/lib/reference/actions';
+import { uploadToBucket } from '@/lib/storage/actions';
 import type { SportRef, FederationRef, AthleteRef } from '@/lib/reference/types';
 import type { VideoEditData } from '@/lib/videos/types';
 
@@ -293,22 +294,35 @@ function ThumbnailUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(value || null);
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   async function handleFile(file: File) {
     setPreview(URL.createObjectURL(file));
     setBusy(true);
+    setErr(null);
     try {
       const body = new FormData();
       body.append('file', file);
-      body.append('type', kind);
-      const res = await fetch('/api/storage/upload-thumbnail', { method: 'POST', body });
-      const data = await res.json();
-      if (data.url) {
-        setPreview(data.url);
-        onUploaded(data.url);
+      body.append('bucket', 'video-thumbnails');
+      body.append('prefix', kind);
+      const res = await uploadToBucket(body);
+      if (res.ok) {
+        setPreview(res.data.url);
+        onUploaded(res.data.url);
+      } else {
+        // Errore non più silenzioso.
+        setErr(
+          res.error === 'forbidden' || res.error === 'unauthorized'
+            ? 'Solo un admin può caricare le copertine.'
+            : res.error === 'not-configured'
+              ? 'Supabase non configurato in questo ambiente.'
+              : `Errore: ${res.error}`,
+        );
+        setPreview(value || null);
       }
-    } catch {
-      // Demo: anteprima locale resta.
+    } catch (e) {
+      setErr(`Errore: ${e instanceof Error ? e.message : 'sconosciuto'}`);
+      setPreview(value || null);
     } finally {
       setBusy(false);
     }
@@ -346,6 +360,11 @@ function ThumbnailUpload({
         />
       </div>
       <p className="mt-1 max-w-[320px] text-[10px] text-[#555555]">{hint}</p>
+      {err ? (
+        <p className="mt-1 max-w-[320px] rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[10px] text-red-300">
+          {err}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -17,11 +17,17 @@ export type AccessVideo = {
   type: string | null; // content_type enum DB (es. 'highlights')
 };
 
-export type AccessUser = { id: string } | null;
+export type AccessUser = { id: string; role?: string | null } | null;
 export type AccessSubscription = { plan: string; status: string } | null;
 
-export type AccessReason = 'free' | 'needs-premium' | 'needs-purchase' | 'allowed';
+export type AccessReason = 'free' | 'needs-premium' | 'needs-purchase' | 'allowed' | 'admin';
 export type AccessResult = { allowed: boolean; reason: AccessReason };
+
+// Ruoli con accesso completo a TUTTI i contenuti (bypass paywall).
+// admin: sempre. broadcaster: per ora (sviluppo) tutto il catalogo.
+export function hasFullAccessRole(role: string | null | undefined): boolean {
+  return role === 'admin' || role === 'broadcaster';
+}
 
 // Abbonamento Premium considerato valido se piano premium e stato attivo.
 export function hasActivePremium(subscription: AccessSubscription): boolean {
@@ -37,6 +43,8 @@ export function canAccessVideo(
   subscription: AccessSubscription,
   ppvPurchased = false,
 ): AccessResult {
+  // Admin / broadcaster → bypass di OGNI paywall (accesso completo).
+  if (hasFullAccessRole(user?.role)) return { allowed: true, reason: 'admin' };
   // Contenuto free → sempre visibile.
   if (video.accessLevel === 'free') return { allowed: true, reason: 'free' };
   // Highlights → sempre liberi (free highlights), a prescindere dal livello.

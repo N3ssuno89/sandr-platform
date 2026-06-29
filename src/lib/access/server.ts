@@ -1,7 +1,7 @@
 import 'server-only';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
-import { canAccessVideo, type AccessVideo, type AccessResult } from './check';
+import { canAccessVideo, hasFullAccessRole, type AccessVideo, type AccessResult } from './check';
 
 // =====================================================================
 // SANDR — Risoluzione accesso SERVER-SIDE (AREA CRITICA, CLAUDE.md).
@@ -28,6 +28,11 @@ export async function checkVideoAccess(video: AccessVideo, videoId: string): Pro
 
   if (!user) return canAccessVideo(video, null, null, false);
 
+  // Ruolo dell'utente: admin/broadcaster hanno accesso completo (bypass paywall).
+  const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).maybeSingle();
+  const role = profile?.role ?? null;
+  if (hasFullAccessRole(role)) return canAccessVideo(video, { id: user.id, role }, null, false);
+
   // Abbonamento attivo dell'utente (premium se presente e attivo).
   const { data: sub } = await sb
     .from('subscriptions')
@@ -49,5 +54,5 @@ export async function checkVideoAccess(video: AccessVideo, videoId: string): Pro
       !!purchase && (!purchase.valid_until || new Date(purchase.valid_until) > new Date());
   }
 
-  return canAccessVideo(video, { id: user.id }, sub ?? null, ppvPurchased);
+  return canAccessVideo(video, { id: user.id, role }, sub ?? null, ppvPurchased);
 }

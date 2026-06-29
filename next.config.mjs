@@ -16,6 +16,11 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Gli upload immagine (foto atleti, loghi, copertine) passano per le server
+    // action: alza il limite del body oltre il default di 1MB.
+    serverActions: { bodySizeLimit: '8mb' },
+  },
   images: {
     remotePatterns: [
       // Cloudflare Stream thumbnails
