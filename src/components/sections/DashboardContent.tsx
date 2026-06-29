@@ -50,7 +50,11 @@ export function DashboardContent({
   const isMock = !hasRealVideos;
   const source: ContentItem[] = hasRealVideos ? real : mockContent;
 
-  const circuitRow = (circuit: CircuitTag) => source.filter((c) => c.circuit === circuit);
+  // Righe per federazione = SOLO le partite (type 'replay', etichettato "Partite"
+  // nella UI) di quel circuito. Interviste/highlights restano nelle righe
+  // tematiche dedicate, quindi non vengono duplicati qui.
+  const circuitRow = (circuit: CircuitTag) =>
+    source.filter((c) => c.circuit === circuit && c.type === 'replay');
   const typeRow = (type: ContentItem['type']) => source.filter((c) => c.type === type);
 
   // Righe video (definite singolarmente per poterle disporre nell'ordine
