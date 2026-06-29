@@ -36,12 +36,15 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const href = usingFeatured ? `/vod/${slide.id}` : `/live/${slide.id}`;
 
   return (
-    <section className="relative h-[500px] w-full overflow-hidden bg-[#1C1C1C]">
-      {/* Sfondo: immagine reale (vivida, nessun oscuramento globale) o gradiente
-          di fallback. La leggibilità del testo è data dal solo gradiente in basso. */}
+    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[440px] lg:h-auto lg:aspect-[21/9] lg:max-h-[600px]">
+      {/* Le copertine "in evidenza" sono 21:9: da lg in su il contenitore è 21:9
+          (aspect-[21/9], max 600px) così l'immagine non viene tagliata in
+          verticale. Su mobile/tablet un'altezza fissa più alta (crop accettabile,
+          centrato) per leggibilità. Immagine vivida (nessun oscuramento globale):
+          la leggibilità del testo è data dal solo gradiente in basso. */}
       {bg ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
       )}
@@ -50,7 +53,7 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
+            'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 45%, transparent 70%)',
         }}
       />
 
