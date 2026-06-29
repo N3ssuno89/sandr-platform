@@ -23,32 +23,42 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [slides.length]);
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
 
-  // Auto-avanzamento ogni 5 secondi.
+  // Auto-avanzamento ogni 7 secondi (più lento, meno frenetico).
   useEffect(() => {
-    const id = setInterval(next, 5000);
+    const id = setInterval(next, 7000);
     return () => clearInterval(id);
   }, [next]);
 
   // Clamp: la sorgente può cambiare numero di slide tra i render.
   const active = index % slides.length;
   const slide = slides[active];
-  const bg = slide.thumbnailFeatured || slide.thumbnail;
   const href = usingFeatured ? `/vod/${slide.id}` : `/live/${slide.id}`;
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[60vh] min-h-[420px] md:h-[70vh] md:min-h-[520px] md:max-h-[820px]">
+    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[64vh] min-h-[440px] md:h-[78vh] md:min-h-[560px] md:max-h-[900px]">
       {/* OPTION B (modello DAZN): altezza fissa alta, immagine SEMPRE a tutta
           larghezza/altezza con object-cover + object-center → riempie il
           contenitore senza barre nere, ritagliando dal centro ciò che eccede.
-          Niente aspect-ratio (che, con max-height, restringeva la larghezza e
-          creava le barre laterali). Immagine vivida: il testo è leggibile grazie
-          al solo gradiente in basso. Il soggetto delle copertine va centrato. */}
-      {bg ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
-      )}
+          Immagine vivida: il testo è leggibile grazie al solo gradiente in basso.
+          Le slide sono impilate con crossfade morbido (opacity) al cambio. */}
+      {slides.map((s, i) => {
+        const sbg = s.thumbnailFeatured || s.thumbnail;
+        return (
+          <div
+            key={s.id}
+            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+            style={{ opacity: i === active ? 1 : 0 }}
+            aria-hidden={i === active ? undefined : true}
+          >
+            {sbg ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={sbg} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
+            )}
+          </div>
+        );
+      })}
       {/* Gradiente solo in basso (dove stanno titolo/CTA): immagine luminosa sopra. */}
       <div
         className="absolute inset-0"

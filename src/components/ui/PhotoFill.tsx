@@ -12,7 +12,9 @@ function initials(name: string): string {
 
 // Riempe il contenitore relativo (absolute inset-0) con la foto atleta presa da
 // Supabase Storage (photo_url, URL pubblico completo). Se la foto manca o va in
-// errore, mostra un placeholder scuro con le iniziali (TASK 3).
+// errore, mostra un placeholder scuro con le iniziali.
+// Crop dall'ALTO (object-top): le foto di persone vengono ritagliate dal basso,
+// così la testa non viene mai tagliata (diverso dall'hero video, crop centrato).
 export function PhotoFill({ src, name }: { src?: string | null; name: string }) {
   const [errored, setErrored] = useState(false);
   const show = !!src && !errored;
@@ -24,7 +26,7 @@ export function PhotoFill({ src, name }: { src?: string | null; name: string }) 
         src={src as string}
         alt={name}
         onError={() => setErrored(true)}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-top"
       />
     );
   }

@@ -41,6 +41,7 @@ export async function getContinueWatching(limit = 12): Promise<ContinueItem[]> {
       )
       .eq('user_id', user.id)
       .eq('completed', false)
+      .eq('dismissed', false)
       .order('last_watched_at', { ascending: false })
       .limit(limit);
 

@@ -1,6 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getMyWatchHistory } from '@/lib/user/actions';
+import { RemoveContinueButton } from '@/components/sections/RemoveContinueButton';
 
 // REAL: watch_history (utente loggato), join videos.
 export default async function WatchHistoryPage({ params }: { params: { locale: string } }) {
@@ -29,6 +30,8 @@ export default async function WatchHistoryPage({ params }: { params: { locale: s
                 <Link href={`/vod/${it.videoId}`} className="shrink-0 text-[12px] font-semibold uppercase text-sandr-orange hover:text-white">
                   Riprendi
                 </Link>
+                {/* Rimuovi da "Continua a guardare" (resta in cronologia). */}
+                <RemoveContinueButton videoId={it.videoId} className="shrink-0" />
               </div>
             );
           })}

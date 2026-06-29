@@ -75,7 +75,7 @@
     "videosTitle": "Video recenti",
     "videosHighlights": "Highlights",
     "videosInterviews": "Interviste",
-    "videosReplay": "Replay",
+    "videosReplay": "Partite",
     "videosBehind": "Dietro le quinte",
     "noVideos": "Nessun video disponibile per questo atleta",
     "notFound": "Atleta non trovato",
@@ -108,14 +108,14 @@
     "empty": "Nessun contenuto disponibile.",
     "counts": {
       "live": "Live",
-      "replay": "Replay",
+      "replay": "Partite",
       "interviews": "Interviste",
       "highlights": "Highlights"
     },
     "tabs": {
       "home": "Home",
       "live": "Live",
-      "replay": "Replay",
+      "replay": "Partite",
       "interviews": "Interviste",
       "athletes": "Atleti",
       "highlights": "Highlights"

@@ -75,7 +75,7 @@
     "videosTitle": "Recent videos",
     "videosHighlights": "Highlights",
     "videosInterviews": "Interviews",
-    "videosReplay": "Replay",
+    "videosReplay": "Matches",
     "videosBehind": "Behind the scenes",
     "noVideos": "No videos available for this athlete",
     "notFound": "Athlete not found",
@@ -108,14 +108,14 @@
     "empty": "No content available.",
     "counts": {
       "live": "Live",
-      "replay": "Replay",
+      "replay": "Matches",
       "interviews": "Interviews",
       "highlights": "Highlights"
     },
     "tabs": {
       "home": "Home",
       "live": "Live",
-      "replay": "Replay",
+      "replay": "Matches",
       "interviews": "Interviews",
       "athletes": "Athletes",
       "highlights": "Highlights"
