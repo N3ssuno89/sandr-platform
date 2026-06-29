@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
 import { getAdminContext, getReadClient } from '@/lib/supabase/guard';
@@ -17,6 +18,20 @@ import type {
 
 const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points';
 const FEDERATION_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
+
+// Invalida la cache delle rotte che mostrano atleti/federazioni dopo una
+// scrittura (forma '/[locale]/...' type 'page' per coprire tutte le locale).
+function revalidateAthletePaths() {
+  revalidatePath('/[locale]/dashboard/admin/athletes', 'page');
+  revalidatePath('/[locale]/athletes', 'page');
+  revalidatePath('/[locale]/dashboard/home', 'page');
+}
+
+function revalidateFederationPaths() {
+  revalidatePath('/[locale]/dashboard/admin/federations', 'page');
+  revalidatePath('/[locale]/dashboard/admin/events', 'page');
+  revalidatePath('/[locale]/dashboard/home', 'page');
+}
 
 // slug semplice da nome (lowercase, trattini).
 function slugify(s: string): string {
@@ -116,6 +131,7 @@ export async function createFederation(input: FederationInput): Promise<ActionRe
     .single();
 
   if (error || !data) return { ok: false, error: error?.message ?? 'insert-failed' };
+  revalidateFederationPaths();
   return { ok: true, data };
 }
 
@@ -136,6 +152,7 @@ export async function updateFederation(id: string, input: FederationInput): Prom
     })
     .eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateFederationPaths();
   return { ok: true };
 }
 
@@ -144,6 +161,7 @@ export async function deleteFederation(id: string): Promise<DeleteResult> {
   if (!ctx.ok) return { ok: false, error: ctx.error };
   const { error } = await ctx.admin.from('federations').delete().eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateFederationPaths();
   return { ok: true };
 }
 
@@ -168,6 +186,7 @@ export async function createAthlete(input: AthleteInput): Promise<ActionResult<A
     .single();
 
   if (error || !data) return { ok: false, error: error?.message ?? 'insert-failed' };
+  revalidateAthletePaths();
   return { ok: true, data };
 }
 
@@ -189,6 +208,7 @@ export async function updateAthlete(id: string, input: AthleteInput): Promise<De
     })
     .eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateAthletePaths();
   return { ok: true };
 }
 
@@ -197,6 +217,7 @@ export async function deleteAthlete(id: string): Promise<DeleteResult> {
   if (!ctx.ok) return { ok: false, error: ctx.error };
   const { error } = await ctx.admin.from('athletes').delete().eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateAthletePaths();
   return { ok: true };
 }
 
@@ -212,6 +233,8 @@ export async function createSport(input: { name: string }): Promise<ActionResult
     .single();
 
   if (error || !data) return { ok: false, error: error?.message ?? 'insert-failed' };
+  revalidateAthletePaths();
+  revalidateFederationPaths();
   return { ok: true, data };
 }
 

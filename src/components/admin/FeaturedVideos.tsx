@@ -1,46 +1,41 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from '@/i18n/routing';
+import { setVideoFeatured } from '@/lib/videos/actions';
+import type { AdminFeaturedVideo } from '@/lib/videos/types';
 
-export type AdminVideo = {
-  uid: string;
-  title: string;
-  circuit: string;
-  thumb: string;
-  featured: boolean;
-};
-
-// Sezione "Video in evidenza" del pannello admin. Gestisce localmente lo stato
-// featured e persiste via /api/stream/update-meta.
-// NOTA review umana: in produzione l'update deve fare merge dei meta esistenti
-// (qui inviamo solo `featured`, sufficiente per la demo).
-export function FeaturedVideos({ videos }: { videos: AdminVideo[] }) {
-  const [featuredUids, setFeaturedUids] = useState<string[]>(
-    videos.filter((v) => v.featured).map((v) => v.uid),
-  );
+// Sezione "Video in evidenza" del pannello admin. Persiste is_featured su
+// SUPABASE (source of truth) via la server action setVideoFeatured, che a sua
+// volta invalida la cache di home (hero) e dashboard. router.refresh() ricarica
+// i dati lato server così la lista resta coerente col DB.
+export function FeaturedVideos({ videos }: { videos: AdminFeaturedVideo[] }) {
+  const router = useRouter();
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const featured = videos.filter((v) => featuredUids.includes(v.uid)).slice(0, 3);
-  const selectable = videos.filter((v) => !featuredUids.includes(v.uid));
+  const featured = videos.filter((v) => v.featured).slice(0, 3);
+  const selectable = videos.filter((v) => !v.featured);
 
-  function persist(uid: string, value: boolean) {
-    // Best-effort: in demo (no creds) la route risponde 'not-configured'.
-    fetch('/api/stream/update-meta', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid, meta: { featured: value ? 'true' : '' } }),
-    }).catch(() => {});
-  }
-
-  const addFeatured = (uid: string) => {
-    setFeaturedUids((prev) => [...prev, uid]);
-    persist(uid, true);
+  async function toggle(id: string, value: boolean) {
+    setBusyId(id);
+    setError(null);
+    const res = await setVideoFeatured(id, value);
+    setBusyId(null);
     setModalOpen(false);
-  };
-  const removeFeatured = (uid: string) => {
-    setFeaturedUids((prev) => prev.filter((u) => u !== uid));
-    persist(uid, false);
-  };
+    if (!res.ok) {
+      setError(
+        res.error === 'forbidden' || res.error === 'unauthorized'
+          ? 'Solo un admin può modificare i video in evidenza.'
+          : res.error === 'not-configured'
+            ? 'Supabase non configurato in questo ambiente.'
+            : `Errore: ${res.error}`,
+      );
+      return;
+    }
+    router.refresh();
+  }
 
   return (
     <section className="mt-10">
@@ -55,11 +50,15 @@ export function FeaturedVideos({ videos }: { videos: AdminVideo[] }) {
         </button>
       </div>
 
+      {error ? (
+        <p className="mt-3 rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>
+      ) : null}
+
       <div className="mt-4 space-y-3">
         {featured.length > 0 ? (
           featured.map((v) => (
             <div
-              key={v.uid}
+              key={v.id}
               className="flex items-center gap-4 rounded-xl border border-white/[0.08] bg-[#1C1C1C] px-4 py-3"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,8 +69,9 @@ export function FeaturedVideos({ videos }: { videos: AdminVideo[] }) {
               </span>
               <button
                 type="button"
-                onClick={() => removeFeatured(v.uid)}
-                className="text-xs font-semibold uppercase text-[#888888] hover:text-red-400"
+                disabled={busyId === v.id}
+                onClick={() => toggle(v.id, false)}
+                className="text-xs font-semibold uppercase text-[#888888] hover:text-red-400 disabled:opacity-60"
               >
                 Rimuovi da evidenza
               </button>
@@ -109,10 +109,11 @@ export function FeaturedVideos({ videos }: { videos: AdminVideo[] }) {
               <div className="space-y-2">
                 {selectable.map((v) => (
                   <button
-                    key={v.uid}
+                    key={v.id}
                     type="button"
-                    onClick={() => addFeatured(v.uid)}
-                    className="flex w-full items-center gap-3 rounded-lg border border-white/[0.06] bg-[#1C1C1C] px-3 py-2 text-left hover:border-sandr-orange/50"
+                    disabled={busyId === v.id}
+                    onClick={() => toggle(v.id, true)}
+                    className="flex w-full items-center gap-3 rounded-lg border border-white/[0.06] bg-[#1C1C1C] px-3 py-2 text-left hover:border-sandr-orange/50 disabled:opacity-60"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={v.thumb} alt="" className="h-9 w-16 rounded object-cover" />

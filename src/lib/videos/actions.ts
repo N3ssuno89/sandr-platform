@@ -1,14 +1,32 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { getThumbnailUrl } from '@/lib/cloudflare-stream';
 import { getAdminContext, getReadClient } from '@/lib/supabase/guard';
 import type { CircuitTag, ContentItem, ContentType, SportTag } from '@/types/tags';
 import type { ActionResult } from '@/lib/reference/types';
-import type { VideoFormPayload, VideoEditData, PlayerVideo, AdminVideoRow } from './types';
+import type {
+  VideoFormPayload,
+  VideoEditResult,
+  VideoEditFailReason,
+  PlayerVideo,
+  AdminVideoRow,
+  AdminDashboard,
+} from './types';
 
 type ContentTypeEnum = Database['public']['Enums']['content_type'];
+
+// Invalida la cache di tutte le rotte che mostrano i video dopo una scrittura.
+// I percorsi usano la forma letterale '/[locale]/...' con type 'page' così da
+// invalidare ogni variante locale (it/en) della stessa rotta dinamica.
+function revalidateVideoPaths() {
+  revalidatePath('/[locale]/dashboard/admin/videos', 'page');
+  revalidatePath('/[locale]/dashboard/admin', 'page');
+  revalidatePath('/[locale]/dashboard/home', 'page');
+  revalidatePath('/[locale]/vod', 'page');
+}
 
 // content_type (enum DB) -> ContentType interno (frontend).
 function mapType(t: string | null): ContentType {
@@ -156,32 +174,84 @@ export async function getVideosForAdmin(): Promise<AdminVideoRow[]> {
   }));
 }
 
-// Dati per pre-compilare il form in modifica (admin).
-export async function getVideoForEdit(id: string): Promise<VideoEditData | null> {
+// Dati per pre-compilare il form in modifica (admin). Restituisce un esito
+// discriminato così che la pagina distingua "non configurato" / "non admin" /
+// "video inesistente" e mostri il messaggio giusto. Log server-side per capire
+// quale condizione scatta (diagnosi del falso "Video non trovato").
+// IMPORTANTE: il lookup è per `videos.id` (UUID Supabase), NON cloudflare_uid.
+export async function getVideoForEdit(id: string): Promise<VideoEditResult> {
   const ctx = await getAdminContext();
-  if (!ctx.ok) return null;
-  const { data: v } = await ctx.admin.from('videos').select('*').eq('id', id).maybeSingle();
-  if (!v) return null;
+  if (!ctx.ok) {
+    console.error(`[getVideoForEdit] admin context KO (${ctx.error}) per video ${id}`);
+    // ctx.error è 'not-configured' | 'unauthorized' | 'forbidden' (sottoinsieme).
+    return { ok: false, reason: ctx.error as VideoEditFailReason };
+  }
+  const { data: v, error } = await ctx.admin
+    .from('videos')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) {
+    console.error(`[getVideoForEdit] query KO per video ${id}: ${error.message}`);
+    return { ok: false, reason: 'not-found' };
+  }
+  if (!v) {
+    console.warn(`[getVideoForEdit] nessuna riga videos per id ${id}`);
+    return { ok: false, reason: 'not-found' };
+  }
   const { data: vaRows } = await ctx.admin
     .from('video_athletes')
     .select('athlete_id')
     .eq('video_id', id);
   const { data: tagRows } = await ctx.admin.from('video_tags').select('tag').eq('video_id', id);
   return {
-    id: v.id,
-    cloudflareUid: v.cloudflare_uid,
-    title: v.title,
-    description: v.description,
-    type: v.type,
-    sportId: v.sport_id,
-    federationId: v.federation_id,
-    thumbnailCardUrl: v.thumbnail_card_url,
-    thumbnailFeaturedUrl: v.thumbnail_featured_url,
-    accessLevel: v.access_level,
-    isFeatured: v.is_featured,
-    isLive: v.is_live,
-    athleteIds: (vaRows ?? []).map((r) => r.athlete_id),
-    tags: (tagRows ?? []).map((r) => r.tag),
+    ok: true,
+    data: {
+      id: v.id,
+      cloudflareUid: v.cloudflare_uid,
+      title: v.title,
+      description: v.description,
+      type: v.type,
+      sportId: v.sport_id,
+      federationId: v.federation_id,
+      thumbnailCardUrl: v.thumbnail_card_url,
+      thumbnailFeaturedUrl: v.thumbnail_featured_url,
+      accessLevel: v.access_level,
+      isFeatured: v.is_featured,
+      isLive: v.is_live,
+      athleteIds: (vaRows ?? []).map((r) => r.athlete_id),
+      tags: (tagRows ?? []).map((r) => r.tag),
+    },
+  };
+}
+
+// Dati per la dashboard admin: tutto da SUPABASE (source of truth), non più dai
+// meta Cloudflare. Title prende il fallback "(senza titolo)" se vuoto.
+export async function getAdminDashboard(): Promise<AdminDashboard> {
+  const db = getReadClient();
+  if (!db) return { total: 0, recent: [], videos: [] };
+  const { data } = await db
+    .from('videos')
+    .select('*, federations(short_name)')
+    .order('created_at', { ascending: false });
+  const rows = data ?? [];
+  const thumbOf = (v: (typeof rows)[number]) =>
+    v.thumbnail_card_url || (v.cloudflare_uid ? getThumbnailUrl(v.cloudflare_uid) : '');
+  return {
+    total: rows.length,
+    recent: rows.slice(0, 5).map((v) => ({
+      id: v.id,
+      title: v.title || '(senza titolo)',
+      thumb: thumbOf(v),
+      ready: v.status === 'ready',
+    })),
+    videos: rows.map((v) => ({
+      id: v.id,
+      title: v.title || '(senza titolo)',
+      circuit: v.federations?.short_name ?? '—',
+      thumb: thumbOf(v),
+      featured: v.is_featured,
+    })),
   };
 }
 
@@ -231,6 +301,10 @@ export async function saveVideo(payload: VideoFormPayload): Promise<ActionResult
   await linkAthletes(admin, videoId, payload.athleteIds);
   await replaceTags(admin, videoId, payload.tags);
 
+  // Invalida la cache: la lista admin, la dashboard, la home e la VOD devono
+  // riflettere subito titolo/tag/featured aggiornati (no dati stale).
+  revalidateVideoPaths();
+
   return { ok: true, data: { id: videoId } };
 }
 
@@ -254,6 +328,18 @@ export async function deleteVideo(id: string): Promise<ActionResult<null>> {
   // video_athletes / video_tags hanno ON DELETE CASCADE.
   const { error } = await ctx.admin.from('videos').delete().eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateVideoPaths();
+  return { ok: true, data: null };
+}
+
+// Toggle "in evidenza": scrive is_featured su Supabase e invalida subito la
+// cache di home (hero) e dashboard admin. AREA CRITICA: admin-gated.
+export async function setVideoFeatured(id: string, value: boolean): Promise<ActionResult<null>> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin.from('videos').update({ is_featured: value }).eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  revalidateVideoPaths();
   return { ok: true, data: null };
 }
 
