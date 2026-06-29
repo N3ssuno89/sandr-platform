@@ -4,6 +4,10 @@ import { VodCard } from '@/components/cards/VodCard';
 import { getVideosForDisplay } from '@/lib/videos/actions';
 import { mockContent } from '@/lib/mock-content';
 
+// Dati sempre freschi: nessuna cache (la libreria deve riflettere subito le scritture).
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Libreria VOD. I video arrivano da SUPABASE (getVideosForDisplay). MOCK
 // FALLBACK: solo quando Supabase non ha video (dev mode).
 type CardItem = {

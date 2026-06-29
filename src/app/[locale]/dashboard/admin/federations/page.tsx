@@ -7,6 +7,10 @@ import { orangeBtn } from '@/components/admin/styles';
 
 const COLS = 'grid grid-cols-[40px_2fr_1fr_1fr_1fr_120px] items-center gap-3 px-4';
 
+// Dati sempre freschi: nessuna cache (la lista deve riflettere subito le scritture).
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // REAL: federations table (Supabase).
 export default async function AdminFederationsPage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);

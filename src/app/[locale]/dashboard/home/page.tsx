@@ -7,6 +7,11 @@ import { toAthleteCard, toFederationCard } from '@/lib/public/map';
 import type { Athlete } from '@/types/athlete';
 import type { Federation } from '@/types/federation';
 
+// Dati sempre freschi: nessuna cache (hero "in evidenza" e righe video devono
+// riflettere subito le scritture admin).
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Homepage autenticata (stile DAZN post-login). Video/atleti/circuiti da
 // SUPABASE (source of truth). Build-safe: liste vuote → mock (dev mode).
 export default async function AuthHomePage({ params }: { params: { locale: string } }) {

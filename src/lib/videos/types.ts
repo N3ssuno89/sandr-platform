@@ -60,3 +60,35 @@ export type VideoEditData = {
   athleteIds: string[];
   tags: string[];
 };
+
+// Esito del caricamento del video da modificare: distingue i motivi del
+// fallimento (Supabase non configurato / non admin / video inesistente) così
+// che la pagina mostri il messaggio corretto invece di un errore generico.
+export type VideoEditFailReason = 'not-configured' | 'unauthorized' | 'forbidden' | 'not-found';
+export type VideoEditResult =
+  | { ok: true; data: VideoEditData }
+  | { ok: false; reason: VideoEditFailReason };
+
+// Riga video per la lista "Video recenti" della dashboard admin (da Supabase).
+export type AdminRecentVideo = {
+  id: string;
+  title: string;
+  thumb: string;
+  ready: boolean;
+};
+
+// Riga video per la sezione "Video in evidenza" della dashboard admin.
+export type AdminFeaturedVideo = {
+  id: string;
+  title: string;
+  circuit: string;
+  thumb: string;
+  featured: boolean;
+};
+
+// Dati aggregati per la dashboard admin (tutto da Supabase, source of truth).
+export type AdminDashboard = {
+  total: number;
+  recent: AdminRecentVideo[];
+  videos: AdminFeaturedVideo[];
+};

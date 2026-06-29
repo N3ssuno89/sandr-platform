@@ -1,8 +1,14 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { getAdminContext, getReadClient } from '@/lib/supabase/guard';
 import type { ActionResult, DeleteResult } from '@/lib/reference/types';
 import type { EventRow, EventInput } from './types';
+
+// Invalida la cache delle rotte che mostrano gli eventi dopo una scrittura.
+function revalidateEventPaths() {
+  revalidatePath('/[locale]/dashboard/admin/events', 'page');
+}
 
 const COLS = 'id,title,slug,federation_id,sport_id,location,nation,start_date,end_date,stage';
 
@@ -48,6 +54,7 @@ export async function createEvent(input: EventInput): Promise<ActionResult<{ id:
   if (!ctx.ok) return { ok: false, error: ctx.error };
   const { data, error } = await ctx.admin.from('events').insert(toRow(input)).select('id').single();
   if (error || !data) return { ok: false, error: error?.message ?? 'insert-failed' };
+  revalidateEventPaths();
   return { ok: true, data: { id: data.id } };
 }
 
@@ -56,6 +63,7 @@ export async function updateEvent(id: string, input: EventInput): Promise<Delete
   if (!ctx.ok) return { ok: false, error: ctx.error };
   const { error } = await ctx.admin.from('events').update(toRow(input)).eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateEventPaths();
   return { ok: true };
 }
 
@@ -64,5 +72,6 @@ export async function deleteEvent(id: string): Promise<DeleteResult> {
   if (!ctx.ok) return { ok: false, error: ctx.error };
   const { error } = await ctx.admin.from('events').delete().eq('id', id);
   if (error) return { ok: false, error: error.message };
+  revalidateEventPaths();
   return { ok: true };
 }
