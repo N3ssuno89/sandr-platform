@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { labelCls } from '@/components/admin/styles';
 import { uploadToBucket } from '@/lib/storage/actions';
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/lib/storage/limits';
 
 // Mappa gli errori della server action in messaggi leggibili (rosso).
 function mapUploadError(e: string): string {
@@ -17,6 +18,8 @@ function mapUploadError(e: string): string {
     case 'bad-file':
     case 'empty-file':
       return 'File non valido o vuoto.';
+    case 'file-too-large':
+      return `File troppo grande (max ${MAX_UPLOAD_MB}MB). Comprimi o ridimensiona l'immagine.`;
     default:
       return `Errore upload: ${e}`;
   }
@@ -43,9 +46,15 @@ export function ImageUpload({
   const [error, setError] = useState<string | null>(null);
 
   async function handleFile(file: File) {
+    setError(null);
+    // Guard lato client: oltre il limite il POST verrebbe rifiutato con 500
+    // PRIMA di raggiungere la server action. Blocchiamo qui con un messaggio.
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError(mapUploadError('file-too-large'));
+      return;
+    }
     setPreview(URL.createObjectURL(file));
     setBusy(true);
-    setError(null);
     try {
       const body = new FormData();
       body.append('file', file);
