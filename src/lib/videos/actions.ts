@@ -287,6 +287,7 @@ export async function getVideoForEdit(id: string): Promise<VideoEditResult> {
       accessLevel: v.access_level,
       isFeatured: v.is_featured,
       isLive: v.is_live,
+      qualityLevel: v.quality_level,
       athleteIds: (vaRows ?? []).map((r) => r.athlete_id),
       tags: (tagRows ?? []).map((r) => r.tag),
     },
@@ -348,6 +349,7 @@ export async function saveVideo(payload: VideoFormPayload): Promise<ActionResult
     ppv_price: payload.ppvPrice ?? null,
     is_featured: payload.isFeatured,
     is_live: payload.isLive,
+    quality_level: payload.qualityLevel ?? 'medium',
     status: 'ready' as const,
   };
 

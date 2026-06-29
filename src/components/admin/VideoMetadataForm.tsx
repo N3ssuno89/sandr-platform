@@ -75,6 +75,9 @@ export function VideoMetadataForm({
   const [access, setAccess] = useState<AccessLevel>((defaultValues?.accessLevel as AccessLevel) ?? 'free');
   const [isFeatured, setIsFeatured] = useState(defaultValues?.isFeatured ?? false);
   const [isLive, setIsLive] = useState(defaultValues?.isLive ?? false);
+  const [quality, setQuality] = useState<'low' | 'medium' | 'high'>(
+    (defaultValues?.qualityLevel as 'low' | 'medium' | 'high') ?? 'medium',
+  );
   const [thumbCard, setThumbCard] = useState(defaultValues?.thumbnailCardUrl ?? '');
   const [thumbFeatured, setThumbFeatured] = useState(defaultValues?.thumbnailFeaturedUrl ?? '');
   const [athleteIds, setAthleteIds] = useState<string[]>(defaultValues?.athleteIds ?? []);
@@ -110,6 +113,7 @@ export function VideoMetadataForm({
       accessLevel: access,
       isFeatured,
       isLive,
+      qualityLevel: quality,
       athleteIds,
       tags,
     });
@@ -246,6 +250,16 @@ export function VideoMetadataForm({
           >
             {isLive ? 'Live' : 'Segna come live'}
           </button>
+        </div>
+
+        {/* Qualità contenuto (editoriale, impostata dall'admin) */}
+        <div className="mb-4">
+          <label className={labelCls}>Qualità contenuto</label>
+          <select value={quality} onChange={(e) => setQuality(e.target.value as 'low' | 'medium' | 'high')} className={inputCls}>
+            <option value="low">Bassa</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+          </select>
         </div>
 
         {/* Descrizione */}
