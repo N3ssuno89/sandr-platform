@@ -32,6 +32,12 @@ export function AuthForm() {
   const [confirmSent, setConfirmSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Consensi (signup). Privacy+Termini OBBLIGATORI; gli altri opzionali.
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [consentMarketing, setConsentMarketing] = useState(false);
+  const [consentProfiling, setConsentProfiling] = useState(false);
+  const [consentThirdParty, setConsentThirdParty] = useState(false);
+
   // Mappa i messaggi di errore Supabase su copy in italiano/inglese.
   function mapError(message: string): string {
     const m = message.toLowerCase();
@@ -49,19 +55,32 @@ export function AuthForm() {
       return;
     }
 
+    // Consenso obbligatorio Privacy + Termini: blocca la registrazione.
+    if (mode === 'signup' && !acceptTerms) {
+      setError(t('consentRequiredError'));
+      return;
+    }
+
     setLoading(true);
     const supabase = createClient();
 
     try {
       if (mode === 'signup') {
         // signUp con conferma email: redirect alla callback locale-aware.
-        // La riga in `profiles` è creata dal trigger DB handle_new_user()
-        // (nessuna creazione duplicata lato app).
+        // La riga in `profiles` è creata dal trigger DB handle_new_user(), che
+        // persiste anche i consensi passati qui nei metadata (+ timestamp).
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { full_name: fullName },
+            data: {
+              full_name: fullName,
+              consent_privacy: acceptTerms,
+              terms_accepted: acceptTerms,
+              consent_marketing: consentMarketing,
+              consent_profiling: consentProfiling,
+              consent_third_party: consentThirdParty,
+            },
             emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
           },
         });
@@ -200,6 +219,35 @@ export function AuthForm() {
           </button>
         </div>
 
+        {/* Consensi (solo registrazione) */}
+        {mode === 'signup' ? (
+          <div className="space-y-2.5 pt-1">
+            <ConsentCheckbox checked={acceptTerms} onChange={setAcceptTerms}>
+              {t.rich('consentRequired', {
+                privacy: (chunks) => (
+                  <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="text-[#F04E00] hover:underline">
+                    {chunks}
+                  </a>
+                ),
+                terms: (chunks) => (
+                  <a href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className="text-[#F04E00] hover:underline">
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </ConsentCheckbox>
+            <ConsentCheckbox checked={consentMarketing} onChange={setConsentMarketing}>
+              {t('consentMarketing')}
+            </ConsentCheckbox>
+            <ConsentCheckbox checked={consentProfiling} onChange={setConsentProfiling}>
+              {t('consentProfiling')}
+            </ConsentCheckbox>
+            <ConsentCheckbox checked={consentThirdParty} onChange={setConsentThirdParty}>
+              {t('consentThirdParty')}
+            </ConsentCheckbox>
+          </div>
+        ) : null}
+
         {error ? (
           <p className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
             {error}
@@ -221,6 +269,31 @@ export function AuthForm() {
         </button>
       </form>
     </div>
+  );
+}
+
+// Checkbox di consenso: piccola, label Barlow 400 12px #C0BDB8 (link arancioni).
+function ConsentCheckbox({
+  checked,
+  onChange,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2.5">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 accent-[#F04E00]"
+      />
+      <span className="font-condensed text-[12px] font-normal leading-snug text-[#C0BDB8]">
+        {children}
+      </span>
+    </label>
   );
 }
 

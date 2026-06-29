@@ -15,6 +15,7 @@ export type VideoFormPayload = {
   ppvPrice?: number;
   isFeatured: boolean;
   isLive: boolean;
+  qualityLevel?: 'low' | 'medium' | 'high';
   athleteIds: string[];
   tags: string[];
 };
@@ -69,6 +70,7 @@ export type VideoEditData = {
   accessLevel: string;
   isFeatured: boolean;
   isLive: boolean;
+  qualityLevel: string;
   athleteIds: string[];
   tags: string[];
 };

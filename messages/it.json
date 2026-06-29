@@ -1,4 +1,24 @@
 {
+  "CookieBanner": {
+    "text": "Utilizziamo cookie tecnici necessari e, previo consenso, cookie analitici e di profilazione.",
+    "acceptAll": "Accetta tutti",
+    "onlyNecessary": "Solo necessari",
+    "customize": "Personalizza",
+    "save": "Salva preferenze",
+    "close": "Chiudi",
+    "title": "Preferenze cookie",
+    "privacyLink": "Privacy Policy",
+    "cookieLink": "Cookie Policy",
+    "necessary": "Necessari",
+    "necessaryDesc": "Indispensabili al funzionamento del sito (autenticazione, sessione, sicurezza).",
+    "necessaryAlways": "Sempre attivi",
+    "analytics": "Analitici",
+    "analyticsDesc": "Statistiche aggregate per migliorare la piattaforma.",
+    "profiling": "Profilazione",
+    "profilingDesc": "Contenuti e suggerimenti personalizzati in base agli interessi.",
+    "marketing": "Marketing",
+    "marketingDesc": "Comunicazioni promozionali pertinenti, anche di terze parti."
+  },
   "Common": {
     "appName": "SANDR",
     "tagline": "Built for the arena. Not the stands.",
@@ -24,8 +44,9 @@
     "about": "Chi siamo",
     "press": "Press",
     "contact": "Contatti",
-    "terms": "Termini",
-    "privacy": "Privacy",
+    "terms": "Termini di Servizio",
+    "privacy": "Privacy Policy",
+    "cookie": "Cookie Policy",
     "ageGate": "18+",
     "rights": "Tutti i diritti riservati."
   },
@@ -276,7 +297,12 @@
     "errCallback": "Conferma email non riuscita. Riprova ad accedere.",
     "haveAccount": "Hai già un account?",
     "noAccount": "Non hai un account?",
-    "notConfigured": "Autenticazione non configurata in questo ambiente."
+    "notConfigured": "Autenticazione non configurata in questo ambiente.",
+    "consentRequired": "Ho letto e accetto la <privacy>Privacy Policy</privacy> e i <terms>Termini di Servizio</terms>",
+    "consentRequiredError": "Devi accettare la Privacy Policy e i Termini di Servizio per registrarti.",
+    "consentMarketing": "Acconsento a ricevere comunicazioni marketing e promozionali via email",
+    "consentProfiling": "Acconsento alla profilazione per ricevere contenuti personalizzati e suggerimenti",
+    "consentThirdParty": "Acconsento alla condivisione dei miei dati con partner selezionati"
   },
   "Home": {
     "hero": {

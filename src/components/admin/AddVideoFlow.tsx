@@ -72,6 +72,7 @@ export function AddVideoFlow({
               accessLevel: 'free',
               isFeatured: false,
               isLive: false,
+              qualityLevel: 'medium',
               athleteIds: [],
               tags: [],
             }}

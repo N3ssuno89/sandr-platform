@@ -7,6 +7,7 @@ import { routing, type Locale } from '@/i18n/routing';
 import { siteConfig } from '@/config/site';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { CookieBanner } from '@/components/legal/CookieBanner';
 import '../globals.css';
 
 // Font SANDR (vedi CLAUDE.md): Archivo Black / Barlow Condensed per le headline,
@@ -64,6 +65,7 @@ export default async function LocaleLayout({
             <main className="flex-1 pt-20">{children}</main>
             <Footer />
           </div>
+          <CookieBanner />
         </NextIntlClientProvider>
       </body>
     </html>

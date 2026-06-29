@@ -26,6 +26,13 @@ export function Footer() {
           />
           <p className="mt-2 text-[13px] text-[#888888]">{tc('tagline')}</p>
           <p className="text-[12px] text-[#888888]">@sandr.tv</p>
+
+          {/* Link legali */}
+          <nav className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+            <Link href="/privacy" className="text-[#888888] hover:text-sandr-orange">{tf('privacy')}</Link>
+            <Link href="/terms" className="text-[#888888] hover:text-sandr-orange">{tf('terms')}</Link>
+            <Link href="/cookie-policy" className="text-[#888888] hover:text-sandr-orange">{tf('cookie')}</Link>
+          </nav>
         </div>
 
         {/* Blocco destro */}
