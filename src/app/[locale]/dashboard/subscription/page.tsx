@@ -47,6 +47,7 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
 
   let subscription: SubscriptionRow | null = null;
   let purchases: PpvRow[] = [];
+  let role: string | null = null;
 
   // REAL: stato abbonamento e storico PPV dell'utente loggato (Supabase).
   if (supaConfigured) {
@@ -55,6 +56,13 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+      role = profile?.role ?? null;
+
       const { data: sub } = await supabase
         .from('subscriptions')
         .select('*')
@@ -73,6 +81,8 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
     }
   }
 
+  // Admin: accesso completo, niente prompt di upgrade.
+  const isAdmin = role === 'admin';
   const isActive = subscription?.status === 'active';
   const planName = isActive ? (subscription?.plan === 'premium' ? 'PREMIUM' : 'FREE') : 'FREE';
 
@@ -86,6 +96,19 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
     <div className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="font-condensed text-3xl font-extrabold uppercase text-white">Abbonamento</h1>
 
+      {isAdmin ? (
+        /* Admin: accesso completo, nessun prompt di upgrade. */
+        <div className={`mt-6 ${cardCls} border-[#F04E00]/30 bg-[#F04E00]/[0.06]`}>
+          <p className={labelCls}>Account amministratore — accesso completo</p>
+          <p className="mt-2 font-condensed text-2xl font-black uppercase text-white">
+            Hai accesso completo come amministratore
+          </p>
+          <p className="mt-2 text-sm text-[#C0BDB8]">
+            Come amministratore puoi guardare tutti i contenuti (free, premium e PPV) senza abbonamento.
+          </p>
+        </div>
+      ) : (
+        <>
       {/* Stato abbonamento corrente — REAL (Supabase) */}
       <div className={`mt-6 ${cardCls}`}>
         <p className={labelCls}>Piano attuale</p>
@@ -141,6 +164,8 @@ export default async function SubscriptionPage({ params }: { params: { locale: s
           </div>
         ))}
       </div>
+        </>
+      )}
 
       {/* Storico acquisti PPV — REAL: ppv_purchases from Supabase */}
       <h2 className="mt-10 font-condensed text-xl font-bold uppercase text-white">Storico acquisti PPV</h2>
