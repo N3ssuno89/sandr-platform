@@ -16,7 +16,7 @@ import type {
   DeleteResult,
 } from './types';
 
-const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points';
+const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points,is_featured';
 const FEDERATION_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
 
 // Invalida la cache delle rotte che mostrano atleti/federazioni dopo una
@@ -25,6 +25,8 @@ function revalidateAthletePaths() {
   revalidatePath('/[locale]/dashboard/admin/athletes', 'page');
   revalidatePath('/[locale]/athletes', 'page');
   revalidatePath('/[locale]/dashboard/home', 'page');
+  // Landing pubblica: riga "Atleti in evidenza" (is_featured).
+  revalidatePath('/[locale]', 'page');
 }
 
 function revalidateFederationPaths() {
@@ -181,6 +183,7 @@ export async function createAthlete(input: AthleteInput): Promise<ActionResult<A
       bio: input.bio || null,
       ranking: input.ranking ?? null,
       season_points: input.season_points ?? null,
+      is_featured: input.is_featured ?? false,
     })
     .select('id,full_name,nation,sport_id,federation_id')
     .single();
@@ -205,8 +208,19 @@ export async function updateAthlete(id: string, input: AthleteInput): Promise<De
       bio: input.bio || null,
       ranking: input.ranking ?? null,
       season_points: input.season_points ?? null,
+      is_featured: input.is_featured ?? false,
     })
     .eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  revalidateAthletePaths();
+  return { ok: true };
+}
+
+// Toggle rapido "in evidenza" dalla lista admin atleti.
+export async function setAthleteFeatured(id: string, value: boolean): Promise<DeleteResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { error } = await ctx.admin.from('athletes').update({ is_featured: value }).eq('id', id);
   if (error) return { ok: false, error: error.message };
   revalidateAthletePaths();
   return { ok: true };

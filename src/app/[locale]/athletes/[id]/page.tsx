@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { ScrollRow } from '@/components/ui/section-row';
 import { AthleteCard } from '@/components/cards/AthleteCard';
+import { PhotoFill } from '@/components/ui/PhotoFill';
 import { ReminderButton } from '@/components/sections/ReminderButton';
 import { getAthleteById, mockAthletes } from '@/lib/mock-athletes';
 import {
@@ -66,8 +67,9 @@ export default async function AthletePage({ params }: { params: { locale: string
       <div className="mx-auto max-w-[1200px] px-4 py-12">
         {/* ===== Hero ===== */}
         <section className="flex flex-col gap-8 md:flex-row">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={vm.photo} alt={vm.name} className="h-[300px] w-[300px] shrink-0 rounded-xl object-cover" />
+          <div className="relative h-[300px] w-[300px] shrink-0 overflow-hidden rounded-xl">
+            <PhotoFill src={vm.photo} name={vm.name} />
+          </div>
 
           <div className="flex-1">
             {vm.ranking ? (
@@ -217,7 +219,7 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
     name: athlete.full_name,
     nation: athlete.nation ?? '',
     nationFlag: athlete.nation_code ?? '',
-    photo: athlete.photo_url ?? '/logo.png',
+    photo: athlete.photo_url ?? '',
     circuit,
     sport: sportName(athlete.sport_id),
     bio: athlete.bio ?? '',

@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { HeroCarousel } from '@/components/sections/HeroCarousel';
 import { DashboardContent } from '@/components/sections/DashboardContent';
 import { getVideosForDisplay } from '@/lib/videos/actions';
-import { supabaseReadable, getPublicAthletes, getPublicFederations, getSportsMap } from '@/lib/public/queries';
+import { supabaseReadable, getPublicAthletes, getFeaturedAthletes, getPublicFederations, getSportsMap } from '@/lib/public/queries';
 import { toAthleteCard, toFederationCard } from '@/lib/public/map';
 import type { Athlete } from '@/types/athlete';
 import type { Federation } from '@/types/federation';
@@ -28,11 +28,15 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   let athletes: Athlete[] | undefined;
   let federations: Federation[] | undefined;
   if (supabaseReadable()) {
-    const [aRows, fRows, sportsMap] = await Promise.all([
+    const [featuredRows, allRows, fRows, sportsMap] = await Promise.all([
+      getFeaturedAthletes(),
       getPublicAthletes(),
       getPublicFederations(),
       getSportsMap(),
     ]);
+    // "Atleti in evidenza": solo is_featured = true. Fallback a tutti se nessuno
+    // è in evidenza (così la riga non resta vuota in dev).
+    const aRows = featuredRows.length > 0 ? featuredRows : allRows;
     if (aRows.length > 0) {
       athletes = aRows.map((a) =>
         toAthleteCard(

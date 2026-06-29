@@ -4,7 +4,7 @@ import { getThumbnailUrl } from '@/lib/cloudflare-stream';
 import type { AthleteFull, FederationFull, SportRef } from '@/lib/reference/types';
 import type { ContentItem, CircuitTag, ContentType, SportTag } from '@/types/tags';
 
-const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points';
+const ATHLETE_COLS = 'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points,is_featured';
 const FED_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
 
 // true se Supabase è leggibile (per decidere mock fallback a monte).
@@ -30,6 +30,19 @@ export async function getPublicAthletes(): Promise<AthleteFull[]> {
   const db = getReadClient();
   if (!db) return [];
   const { data } = await db.from('athletes').select(ATHLETE_COLS).order('ranking', { ascending: true });
+  return (data as AthleteFull[] | null) ?? [];
+}
+
+// Atleti in evidenza (is_featured = true) per la riga "Atleti in evidenza"
+// (home autenticata + landing). Vuoto se nessuno è in evidenza.
+export async function getFeaturedAthletes(): Promise<AthleteFull[]> {
+  const db = getReadClient();
+  if (!db) return [];
+  const { data } = await db
+    .from('athletes')
+    .select(ATHLETE_COLS)
+    .eq('is_featured', true)
+    .order('full_name');
   return (data as AthleteFull[] | null) ?? [];
 }
 

@@ -7,8 +7,8 @@ export interface VodCardProps {
   title: string;
   date: string;
   duration: string;
-  // Accesso al contenuto: determina il badge PREMIUM / FREE.
-  access: 'free' | 'premium';
+  // Accesso al contenuto: determina il badge FREE / PREMIUM / PPV.
+  access: 'free' | 'premium' | 'ppv';
   // Avanzamento di visione 0..1: se presente mostra la barra "continua a guardare".
   progress?: number;
   // Larghezza fissa della card (px). Default 220.
@@ -19,8 +19,16 @@ export interface VodCardProps {
   isMock?: boolean;
 }
 
+// Badge accesso: FREE verde, PREMIUM arancione SANDR, PPV oro. Sempre visibile
+// così l'utente conosce il livello prima di cliccare (TASK 4b).
+const ACCESS_BADGE: Record<VodCardProps['access'], { label: string; cls: string }> = {
+  free: { label: 'Free', cls: 'bg-emerald-500/90 text-black' },
+  premium: { label: 'Premium', cls: 'bg-sandr-orange text-black' },
+  ppv: { label: 'PPV', cls: 'bg-[#F0A800] text-black' },
+};
+
 export function VodCard({ title, date, duration, access, progress, cardWidth, thumbnailUrl, isMock }: VodCardProps) {
-  const isPremium = access === 'premium';
+  const badge = ACCESS_BADGE[access] ?? ACCESS_BADGE.free;
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
   // Mostra la thumbnail solo se disponibile e non in errore; altrimenti
@@ -56,9 +64,9 @@ export function VodCard({ title, date, duration, access, progress, cardWidth, th
         <span
           className={`absolute left-3 rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
             isMock ? 'top-10' : 'top-3'
-          } ${isPremium ? 'bg-sandr-orange text-black' : 'bg-white/10 text-sandr-text'}`}
+          } ${badge.cls}`}
         >
-          {isPremium ? 'Premium' : 'Free'}
+          {badge.label}
         </span>
         {/* Badge durata */}
         <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs text-sandr-text">

@@ -29,6 +29,18 @@ export type PlayerVideo = {
   publishedAt: string | null;
   createdAt: string;
   thumbnailCardUrl: string | null;
+  // Livello/tipo per il controllo accesso server-side (free/premium/ppv).
+  accessLevel: 'free' | 'premium' | 'ppv';
+  type: string | null;
+  ppvPrice: number | null;
+};
+
+// Atleta taggato su un video (tab "Atleti" del player). Click → /athletes/[id].
+export type VideoAthlete = {
+  id: string;
+  name: string;
+  nation: string | null;
+  photo: string | null;
 };
 
 // Riga per la lista del pannello admin.

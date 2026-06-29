@@ -423,6 +423,7 @@
       "notAvailable": "Video non disponibile",
       "otherVideos": "Altri video",
       "noOther": "Nessun altro video disponibile",
+      "noAthletes": "Nessun atleta taggato per questo video",
       "tabs": { "info": "Info", "athletes": "Atleti", "other": "Altri video" },
       "info": {
         "duration": "Durata",

@@ -10,7 +10,8 @@ export function toAthleteCard(a: AthleteFull, sportName: string, circuit: string
     name: a.full_name,
     nation: a.nation ?? '',
     nationFlag: a.nation_code ?? '',
-    photo: a.photo_url ?? '/logo.png',
+    // Vuoto se assente: PhotoFill mostra il placeholder con iniziali.
+    photo: a.photo_url ?? '',
     circuit: circuit || '—',
     sport: sportName || 'Beach Volley',
     bio: a.bio ?? '',
