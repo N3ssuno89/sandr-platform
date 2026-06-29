@@ -3,6 +3,7 @@ import { VodPlayerView, type OtherVideo } from '@/components/player/VodPlayerVie
 import { getVideoForPlayer, getVideoAthletes, getVideosForDisplay } from '@/lib/videos/actions';
 import { checkVideoAccess } from '@/lib/access/server';
 import { badgeTier } from '@/lib/access/check';
+import { getViewerWatchState } from '@/lib/tracking/queries';
 
 function fmtDuration(seconds: number | null): string {
   if (!seconds || seconds < 0) return '';
@@ -22,7 +23,7 @@ function fmtDate(iso: string | null): string {
 }
 
 // Pagina VOD player. Legge il video da SUPABASE (id Supabase), passa il
-// cloudflare_uid allo StreamPlayer. Rotta dinamica.
+// cloudflare_uid al TrackingPlayer (player + tracking visione). Rotta dinamica.
 export default async function VodDetailPage({
   params,
 }: {
@@ -48,9 +49,11 @@ export default async function VodDetailPage({
     params.id,
   );
 
-  const [all, athletes] = await Promise.all([
+  const [all, athletes, watchState] = await Promise.all([
     getVideosForDisplay(),
     getVideoAthletes(params.id),
+    // Stato di visione: solo se l'accesso è consentito (altrimenti niente player).
+    access.allowed ? getViewerWatchState(params.id) : Promise.resolve({ loggedIn: false, resumeSeconds: 0 }),
   ]);
   const others: OtherVideo[] = all
     .filter((v) => v.id !== params.id)
@@ -76,6 +79,7 @@ export default async function VodDetailPage({
       others={others}
       athletes={athletes}
       access={{ allowed: access.allowed, reason: access.reason, ppvPrice: pv.ppvPrice }}
+      tracking={{ videoId: params.id, loggedIn: watchState.loggedIn, resumeSeconds: watchState.resumeSeconds }}
     />
   );
 }

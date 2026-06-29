@@ -1,5 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { HeroCarousel } from '@/components/sections/HeroCarousel';
+import { ContinueWatchingRow } from '@/components/sections/ContinueWatchingRow';
 import { DashboardContent } from '@/components/sections/DashboardContent';
 import { getVideosForDisplay } from '@/lib/videos/actions';
 import { supabaseReadable, getPublicAthletes, getFeaturedAthletes, getPublicFederations, getSportsMap } from '@/lib/public/queries';
@@ -54,6 +55,8 @@ export default async function AuthHomePage({ params }: { params: { locale: strin
   return (
     <>
       <HeroCarousel featuredVideos={featuredVideos} />
+      {/* "Continua a guardare": dalla watch_history dell'utente (vuota → nascosta). */}
+      <ContinueWatchingRow />
       <DashboardContent realVideos={realVideos} athletes={athletes} federations={federations} />
     </>
   );

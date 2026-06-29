@@ -790,6 +790,32 @@ export interface Database {
           },
         ];
       };
+      analytics_events: {
+        Row: {
+          id: string;
+          created_at: string;
+          user_id: string | null;
+          session_id: string | null;
+          type: string;
+          video_id: string | null;
+          athlete_id: string | null;
+          federation_id: string | null;
+          payload: Json;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          type: string;
+          video_id?: string | null;
+          athlete_id?: string | null;
+          federation_id?: string | null;
+          payload?: Json;
+        };
+        Update: Partial<Database['public']['Tables']['analytics_events']['Insert']>;
+        Relationships: [];
+      };
       platform_settings: {
         Row: {
           key: string;
@@ -878,6 +904,11 @@ export interface Database {
       // RPC admin (migration 0002): estende un enum whitelisted (content_type).
       admin_add_enum_value: {
         Args: { enum_name: string; new_value: string };
+        Returns: undefined;
+      };
+      // RPC (migration 0010): incremento atomico di videos.view_count.
+      increment_video_view: {
+        Args: { p_video_id: string };
         Returns: undefined;
       };
     };
