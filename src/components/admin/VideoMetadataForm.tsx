@@ -10,6 +10,7 @@ import {
   addContentTypeEnum,
 } from '@/lib/reference/actions';
 import { uploadToBucket } from '@/lib/storage/actions';
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/lib/storage/limits';
 import type { SportRef, FederationRef, AthleteRef } from '@/lib/reference/types';
 import type { VideoEditData } from '@/lib/videos/types';
 
@@ -297,9 +298,15 @@ function ThumbnailUpload({
   const [err, setErr] = useState<string | null>(null);
 
   async function handleFile(file: File) {
+    setErr(null);
+    // Guard lato client: oltre il limite il POST verrebbe rifiutato con 500
+    // PRIMA di raggiungere la server action.
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setErr(`File troppo grande (max ${MAX_UPLOAD_MB}MB). Comprimi o ridimensiona l'immagine.`);
+      return;
+    }
     setPreview(URL.createObjectURL(file));
     setBusy(true);
-    setErr(null);
     try {
       const body = new FormData();
       body.append('file', file);
@@ -316,7 +323,9 @@ function ThumbnailUpload({
             ? 'Solo un admin può caricare le copertine.'
             : res.error === 'not-configured'
               ? 'Supabase non configurato in questo ambiente.'
-              : `Errore: ${res.error}`,
+              : res.error === 'file-too-large'
+                ? `File troppo grande (max ${MAX_UPLOAD_MB}MB). Comprimi o ridimensiona l'immagine.`
+                : `Errore: ${res.error}`,
         );
         setPreview(value || null);
       }
