@@ -145,6 +145,9 @@
   "Landing": {
     "circuitsAll": "All",
     "interviews": "Exclusive interviews",
+    "featured": "Featured",
+    "highlights": "Highlights",
+    "viewAllVod": "View all",
     "hero": {
       "eyebrow": "Sand sports network",
       "headline1": "Every match.",
@@ -167,7 +170,8 @@
     "livePreview": {
       "title": "Live now",
       "viewAll": "See all live",
-      "gate": "Sign in to watch live"
+      "gate": "Sign in to watch live",
+      "empty": "No live content right now"
     },
     "why": {
       "label": "Why choose SANDR",

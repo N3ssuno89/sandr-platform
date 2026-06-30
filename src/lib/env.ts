@@ -10,7 +10,8 @@ function required(name: string, value: string | undefined): string {
 }
 
 export const env = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  // Fallback al dominio HTTPS reale, mai un http:// hardcoded.
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sandr.tv',
 
   supabase: {
     url: () => required('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL),
