@@ -61,7 +61,7 @@ export function LiveEventCard({ title, teamA, teamB, sport, href, ctaLabel, card
           squadre 1 riga (line-clamp) → tutte le card della riga uguali (BUG 4). */}
       <div className="flex flex-1 flex-col p-4">
         <span className="text-xs font-semibold uppercase tracking-wide text-sandr-orange">{sport}</span>
-        <h3 className="mt-1 line-clamp-2 min-h-[2.8rem] font-condensed text-lg uppercase leading-tight tracking-wide text-sandr-text">
+        <h3 className="mt-1 line-clamp-2 min-h-[2.8rem] font-condensed text-base uppercase leading-tight tracking-wide text-sandr-text">
           {title}
         </h3>
         <p className="mt-1 line-clamp-1 text-sm text-sandr-muted">

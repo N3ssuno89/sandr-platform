@@ -93,10 +93,10 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
         <span className="inline-block w-fit rounded bg-sandr-orange px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-black sm:text-xs">
           {slide.circuit}
         </span>
-        <h2 className="mt-3 line-clamp-3 max-w-2xl font-condensed text-3xl font-extrabold uppercase leading-tight text-white sm:text-4xl md:text-6xl">
+        <h2 className="mt-3 line-clamp-3 max-w-2xl font-condensed text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl md:text-4xl">
           {slide.title}
         </h2>
-        {slide.teams ? <p className="mt-2 line-clamp-1 text-sm text-[#C0BDB8] sm:text-base">{slide.teams}</p> : null}
+        {slide.teams ? <p className="mt-2 line-clamp-1 text-xs text-[#C0BDB8] sm:text-sm">{slide.teams}</p> : null}
         <Link
           href={href}
           className="mt-4 w-fit rounded-lg bg-sandr-orange px-6 py-2.5 font-condensed text-sm font-bold uppercase tracking-wide text-black sm:mt-5 sm:px-7 sm:py-3 sm:text-base"
