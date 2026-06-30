@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { LivePreviewSection } from '@/components/sections/LivePreviewSection';
 import { LandingPricing } from '@/components/sections/LandingPricing';
-import { FeatureTabs } from '@/components/sections/FeatureTabs';
+import { FeatureShowcase } from '@/components/sections/FeatureShowcase';
 import { LandingFeaturedAthletes } from '@/components/sections/LandingFeaturedAthletes';
 
 // Nomi propri dei circuiti (non tradotti). "Tutti" arriva da i18n.
@@ -178,7 +178,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
           autenticata (/dashboard/home). */}
 
       {/* ===== SECTION 7 — Showcase tabs (client) ===== */}
-      <FeatureTabs />
+      <FeatureShowcase />
 
       {/* ===== SECTION 8 — Final CTA ===== */}
       <section className="bg-sandr-orange px-4 py-20 text-center">

@@ -169,7 +169,8 @@
       "viewAll": "See all live",
       "viewAllVod": "View all",
       "gate": "Sign in to watch live",
-      "empty": "No live content right now"
+      "empty": "No live content right now",
+      "showcaseNote": "Preview — live content coming soon"
     },
     "why": {
       "label": "Why choose SANDR",

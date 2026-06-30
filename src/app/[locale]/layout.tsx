@@ -28,11 +28,22 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  // metadataBase forza la risoluzione di canonical/OpenGraph sull'HTTPS reale.
+  // Senza, Next usa il default http://localhost:3000 → URL http nei <meta> della
+  // pagina statica = mixed content ("connessione non sicura").
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.name,
     template: `%s · ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  openGraph: {
+    type: 'website',
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: '/',
+  },
 };
 
 export function generateStaticParams() {

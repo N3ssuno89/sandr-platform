@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-// Showcase interattivo a tab (presentazionale). I pannelli mostrano mock
-// statici: nessun dato reale.
+// Showcase interattivo a tab. Le illustrazioni usano IMMAGINI REALI della
+// piattaforma (copertine video + foto atleti) passate via prop `media`. Se non
+// ci sono immagini reali (Supabase vuoto/non configurato) si ricade su un
+// gradiente elegante, mai un box vuoto che sembra finto.
 type Tab = { key: string; label: string; title: string; desc: string };
 
-export function FeatureTabs() {
+export type FeatureMedia = { thumbnails: string[]; athletePhotos: string[] };
+
+export function FeatureTabs({ media }: { media: FeatureMedia }) {
   const t = useTranslations('Landing.showcase');
   const tabs = t.raw('tabs') as Tab[];
   const [active, setActive] = useState(0);
@@ -47,20 +51,37 @@ export function FeatureTabs() {
             <h3 className="font-condensed text-2xl font-bold uppercase tracking-wide text-white">{tab.title}</h3>
             <p className="mt-3 text-[#C0BDB8]">{tab.desc}</p>
           </div>
-          <TabMock kind={tab.key} />
+          <TabVisual kind={tab.key} media={media} />
         </div>
       </div>
     </section>
   );
 }
 
-// Mock visivi per ogni tab (placeholder, niente dati reali).
-function TabMock({ kind }: { kind: string }) {
+// Riquadro immagine reale con fallback a gradiente (mai vuoto/finto).
+function Cover({ src, className = '' }: { src?: string; className?: string }) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt="" className={`h-full w-full object-cover ${className}`} />
+    );
+  }
+  return <div className={`h-full w-full bg-gradient-to-br from-white/10 to-transparent ${className}`} />;
+}
+
+// Illustrazioni dei tab con copertine/foto reali della piattaforma.
+function TabVisual({ kind, media }: { kind: string; media: FeatureMedia }) {
+  const { thumbnails, athletePhotos } = media;
+  // Per multiview/replay usiamo le copertine video; in mancanza, foto atleti.
+  const covers = thumbnails.length > 0 ? thumbnails : athletePhotos;
+
   if (kind === 'multiview') {
     return (
       <div className="grid grid-cols-2 gap-3">
-        {['a', 'b', 'c', 'd'].map((k) => (
-          <div key={k} className="aspect-video rounded-lg bg-gradient-to-br from-white/10 to-transparent" />
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="aspect-video overflow-hidden rounded-lg">
+            <Cover src={covers[i]} />
+          </div>
         ))}
       </div>
     );
@@ -69,9 +90,11 @@ function TabMock({ kind }: { kind: string }) {
   if (kind === 'replay') {
     return (
       <div className="flex gap-3">
-        {['a', 'b', 'c'].map((k) => (
-          <div key={k} className="w-1/3 overflow-hidden rounded-lg border border-white/10">
-            <div className="aspect-video bg-gradient-to-br from-white/10 to-transparent" />
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="w-1/3 overflow-hidden rounded-lg border border-white/10">
+            <div className="aspect-video overflow-hidden">
+              <Cover src={covers[i]} />
+            </div>
             <div className="space-y-1 p-2">
               <div className="h-2 w-3/4 rounded bg-white/15" />
               <div className="h-2 w-1/2 rounded bg-white/10" />
@@ -90,35 +113,45 @@ function TabMock({ kind }: { kind: string }) {
       { label: 'Errori', a: 7, b: 9 },
     ];
     return (
-      <div className="overflow-hidden rounded-lg border border-white/10">
-        <div className="grid grid-cols-3 bg-white/5 px-4 py-2 text-xs uppercase tracking-wide text-sandr-muted">
-          <span>Stat</span>
-          <span className="text-right">A</span>
-          <span className="text-right">B</span>
+      <div className="flex gap-3">
+        {/* Foto atleta reale accanto alla tabella statistiche */}
+        <div className="hidden w-1/3 shrink-0 overflow-hidden rounded-lg sm:block" style={{ aspectRatio: '3 / 4' }}>
+          <Cover src={athletePhotos[0] ?? covers[0]} className="object-top" />
         </div>
-        {rows.map((r) => (
-          <div key={r.label} className="grid grid-cols-3 px-4 py-2 text-sm text-[#C0BDB8]">
-            <span>{r.label}</span>
-            <span className="text-right text-white">{r.a}</span>
-            <span className="text-right text-white">{r.b}</span>
+        <div className="flex-1 overflow-hidden rounded-lg border border-white/10">
+          <div className="grid grid-cols-3 bg-white/5 px-4 py-2 text-xs uppercase tracking-wide text-sandr-muted">
+            <span>Stat</span>
+            <span className="text-right">A</span>
+            <span className="text-right">B</span>
           </div>
-        ))}
+          {rows.map((r) => (
+            <div key={r.label} className="grid grid-cols-3 px-4 py-2 text-sm text-[#C0BDB8]">
+              <span>{r.label}</span>
+              <span className="text-right text-white">{r.a}</span>
+              <span className="text-right text-white">{r.b}</span>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
-  // community
+  // community — bolle chat con avatar atleti reali
   const bubbles = ['Che punto!', 'Mol / Sørum imbattibili', 'Set point…', 'Pronostico: 2-0'];
   return (
     <div className="space-y-2">
       {bubbles.map((m, i) => (
-        <div
-          key={m}
-          className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-            i % 2 ? 'ml-auto bg-sandr-orange/20 text-white' : 'bg-white/10 text-[#C0BDB8]'
-          }`}
-        >
-          {m}
+        <div key={m} className={`flex items-center gap-2 ${i % 2 ? 'flex-row-reverse' : ''}`}>
+          <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full">
+            <Cover src={athletePhotos[i % Math.max(athletePhotos.length, 1)]} className="object-top" />
+          </span>
+          <div
+            className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
+              i % 2 ? 'bg-sandr-orange/20 text-white' : 'bg-white/10 text-[#C0BDB8]'
+            }`}
+          >
+            {m}
+          </div>
         </div>
       ))}
     </div>

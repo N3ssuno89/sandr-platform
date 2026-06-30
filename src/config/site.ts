@@ -5,7 +5,9 @@ export const siteConfig = {
   domain: 'sandr.tv',
   description: 'Media network e piattaforma streaming per beach volley e sand sports.',
   tagline: 'Built for the arena. Not the stands.',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  // URL pubblico: da env (https://sandr.tv in produzione). Fallback al dominio
+  // HTTPS reale, mai un http:// hardcoded (evita mixed content nei meta tag).
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sandr.tv',
 } as const;
 
 // Rotte che richiedono autenticazione (vedi src/middleware.ts).

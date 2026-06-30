@@ -169,7 +169,8 @@
       "viewAll": "Vedi tutti i live",
       "viewAllVod": "Vedi tutti",
       "gate": "Accedi per guardare in diretta",
-      "empty": "Nessun contenuto live al momento"
+      "empty": "Nessun contenuto live al momento",
+      "showcaseNote": "Anteprima — i contenuti live saranno disponibili a breve"
     },
     "why": {
       "label": "Perché scegliere SANDR",
