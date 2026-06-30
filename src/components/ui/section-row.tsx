@@ -14,7 +14,7 @@ export function RowHeader({
 }) {
   return (
     <div className="mb-5 flex items-center justify-between gap-4">
-      <h2 className="flex items-center gap-3 font-condensed text-2xl font-bold uppercase tracking-wide text-sandr-text">
+      <h2 className="flex items-center gap-3 font-condensed text-xl font-bold uppercase tracking-wide text-sandr-text">
         {live ? (
           <span className="relative flex h-2.5 w-2.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />

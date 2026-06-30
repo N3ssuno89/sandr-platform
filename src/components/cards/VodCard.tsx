@@ -87,7 +87,7 @@ export function VodCard({ title, date, duration, access, progress, cardWidth, th
           con altezza minima riservata, così card con titoli corti/lunghi nella
           stessa riga restano della stessa altezza (BUG 4). */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 min-h-[2.8rem] font-condensed text-lg uppercase leading-tight tracking-wide text-sandr-text">
+        <h3 className="line-clamp-2 min-h-[2.8rem] font-condensed text-base uppercase leading-tight tracking-wide text-sandr-text">
           {title}
         </h3>
         <p className="mt-1 text-sm text-sandr-muted">{date}</p>

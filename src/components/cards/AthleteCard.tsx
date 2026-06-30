@@ -32,7 +32,7 @@ export function AthleteCard({ athlete, cardWidth }: { athlete: Athlete; cardWidt
         <p className="font-condensed font-bold uppercase text-sandr-orange" style={{ fontSize: '10px', letterSpacing: '2px' }}>
           {athlete.nationFlag}
         </p>
-        <p className="font-condensed text-base font-extrabold uppercase leading-[1.1] text-white">
+        <p className="font-condensed text-sm font-extrabold uppercase leading-[1.1] text-white">
           {athlete.name}
         </p>
         <span className="mt-1 inline-block rounded-full bg-sandr-orange px-1.5 py-0.5 text-[9px] font-bold uppercase text-black">
