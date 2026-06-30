@@ -21,8 +21,16 @@ export async function LivePreviewSection() {
   const usingMock = !supabaseReadable(); // dev mode: nessuna credenziale Supabase
   const source: ContentItem[] = usingMock ? mockContent : real;
 
-  const liveItems = source.filter((c) => c.type === 'live').slice(0, 6);
   const interviewItems = source.filter((c) => c.type === 'interview').slice(0, 6);
+
+  // LIVE: i video live REALI sono cliccabili (vanno al player). Se NON ce ne sono
+  // ancora, mostriamo card mock SOLO come vetrina visiva, NON cliccabili (niente
+  // href né CTA), così nessuno finisce su un player live vuoto/rotto.
+  const realLiveItems = real.filter((c) => c.type === 'live').slice(0, 6);
+  const hasRealLive = realLiveItems.length > 0;
+  const liveCards = hasRealLive
+    ? realLiveItems
+    : mockContent.filter((c) => c.type === 'live').slice(0, 3);
 
   return (
     <>
@@ -30,22 +38,26 @@ export async function LivePreviewSection() {
       <section className="bg-[#141414] px-4 pb-12">
         <div className="mx-auto max-w-6xl">
           <RowHeader title={t('livePreview.title')} href="/live" viewAll={t('livePreview.viewAll')} live />
-          {liveItems.length > 0 ? (
+          {!hasRealLive ? (
+            <p className="mb-4 text-[13px] uppercase tracking-wide text-[#888888]">{t('livePreview.showcaseNote')}</p>
+          ) : null}
+          {liveCards.length > 0 ? (
             <ScrollRow>
-              {liveItems.map((item) => {
+              {liveCards.map((item) => {
                 const [teamA, teamB] = (item.teams ?? '').split(' vs ');
                 return (
                   <div key={item.id} className="shrink-0 snap-start">
-                    {/* Pubblico in demo: la card porta al player live (paywall lì). */}
+                    {/* Reale → cliccabile (player + paywall). Mock → solo vetrina,
+                        nessun href/CTA: cursor default, nessuna navigazione. */}
                     <LiveEventCard
                       title={item.title}
                       teamA={teamA ?? ''}
                       teamB={teamB ?? ''}
                       sport={item.sport}
-                      href={`/live/${item.id}`}
-                      ctaLabel={tc('watch')}
+                      href={hasRealLive ? `/live/${item.id}` : undefined}
+                      ctaLabel={hasRealLive ? tc('watch') : undefined}
                       cardWidth={320}
-                      isMock={usingMock}
+                      isMock={!hasRealLive}
                     />
                   </div>
                 );
