@@ -327,6 +327,7 @@ export interface Database {
           event_id: string | null;
           thumbnail_card_url: string | null;
           thumbnail_featured_url: string | null;
+          thumbnail_mobile_url: string | null;
           duration_seconds: number | null;
           access_level: Database['public']['Enums']['access_level'];
           ppv_price: number | null;
@@ -351,6 +352,7 @@ export interface Database {
           event_id?: string | null;
           thumbnail_card_url?: string | null;
           thumbnail_featured_url?: string | null;
+          thumbnail_mobile_url?: string | null;
           duration_seconds?: number | null;
           access_level?: Database['public']['Enums']['access_level'];
           ppv_price?: number | null;

@@ -80,6 +80,7 @@ export function VideoMetadataForm({
   );
   const [thumbCard, setThumbCard] = useState(defaultValues?.thumbnailCardUrl ?? '');
   const [thumbFeatured, setThumbFeatured] = useState(defaultValues?.thumbnailFeaturedUrl ?? '');
+  const [thumbMobile, setThumbMobile] = useState(defaultValues?.thumbnailMobileUrl ?? '');
   const [athleteIds, setAthleteIds] = useState<string[]>(defaultValues?.athleteIds ?? []);
   const [tags, setTags] = useState<string[]>(defaultValues?.tags ?? []);
 
@@ -110,6 +111,7 @@ export function VideoMetadataForm({
       federationId: federationId || undefined,
       thumbnailCardUrl: thumbCard || undefined,
       thumbnailFeaturedUrl: thumbFeatured || undefined,
+      thumbnailMobileUrl: thumbMobile || undefined,
       accessLevel: access,
       isFeatured,
       isLive,
@@ -150,11 +152,16 @@ export function VideoMetadataForm({
           />
         </div>
 
-        {/* Copertine → Supabase Storage */}
-        <div className="mb-4 flex flex-wrap gap-6">
-          <ThumbnailUpload label="Copertina card" hint="righe a scorrimento (16:9)" width={160} height={90} kind="card" value={thumbCard} onUploaded={setThumbCard} onBusyChange={onThumbBusy} />
-          <ThumbnailUpload label="Copertina in evidenza" hint="hero (21:9)" width={320} height={137} kind="featured" value={thumbFeatured} onUploaded={setThumbFeatured} onBusyChange={onThumbBusy} />
+        {/* Copertine → Supabase Storage. Tre slot con dropzone "sagomate" che
+            rispecchiano l'aspect ratio richiesto (16:9 card/desktop, 4:5 mobile). */}
+        <div className="mb-2 flex flex-wrap items-start gap-6">
+          <ThumbnailUpload label="Copertina card" hint="16:9 — righe" width={160} height={90} kind="card" value={thumbCard} onUploaded={setThumbCard} onBusyChange={onThumbBusy} />
+          <ThumbnailUpload label="Copertina hero desktop" hint="16:9 — 1920×1080px" width={240} height={135} kind="featured" value={thumbFeatured} onUploaded={setThumbFeatured} onBusyChange={onThumbBusy} />
+          <ThumbnailUpload label="Copertina hero mobile" hint="4:5 — 1080×1350px" width={135} height={169} kind="mobile" value={thumbMobile} onUploaded={setThumbMobile} onBusyChange={onThumbBusy} />
         </div>
+        <p className="mb-4 text-[11px] text-[#888888]">
+          Per i contenuti in evidenza carica entrambe le copertine hero (desktop 16:9 e mobile 4:5).
+        </p>
 
         {/* LIVELLO 1 — Federazione + Sport (dropdown con "aggiungi nuovo") */}
         <div className="mb-4 grid gap-4 sm:grid-cols-2">
@@ -312,7 +319,7 @@ function ThumbnailUpload({
   hint: string;
   width: number;
   height: number;
-  kind: 'card' | 'featured';
+  kind: 'card' | 'featured' | 'mobile';
   value?: string;
   onUploaded: (url: string) => void;
   onBusyChange?: (busy: boolean) => void;

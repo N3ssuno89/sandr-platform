@@ -112,6 +112,7 @@ async function buildContentItems(
       federations: { short_name: string | null } | null;
       thumbnail_card_url: string | null;
       thumbnail_featured_url: string | null;
+      thumbnail_mobile_url: string | null;
       cloudflare_uid: string | null;
       duration_seconds: number | null;
       access_level: 'free' | 'premium' | 'ppv';
@@ -136,6 +137,7 @@ async function buildContentItems(
       thumbnail:
         v.thumbnail_card_url || (v.cloudflare_uid ? getThumbnailUrl(v.cloudflare_uid) : undefined),
       thumbnailFeatured: v.thumbnail_featured_url ?? undefined,
+      thumbnailMobile: v.thumbnail_mobile_url ?? undefined,
       duration: fmtDuration(v.duration_seconds),
       isPremium: v.access_level === 'premium',
       access: v.access_level,
@@ -286,6 +288,7 @@ export async function getVideoForEdit(id: string): Promise<VideoEditResult> {
       federationId: v.federation_id,
       thumbnailCardUrl: v.thumbnail_card_url,
       thumbnailFeaturedUrl: v.thumbnail_featured_url,
+      thumbnailMobileUrl: v.thumbnail_mobile_url,
       accessLevel: v.access_level,
       isFeatured: v.is_featured,
       isLive: v.is_live,
@@ -360,6 +363,7 @@ export async function saveVideo(payload: VideoFormPayload): Promise<ActionResult
     event_id: payload.eventId || null,
     thumbnail_card_url: payload.thumbnailCardUrl || null,
     thumbnail_featured_url: payload.thumbnailFeaturedUrl || null,
+    thumbnail_mobile_url: payload.thumbnailMobileUrl || null,
     duration_seconds: payload.durationSeconds ?? null,
     access_level: payload.accessLevel,
     ppv_price: payload.ppvPrice ?? null,
@@ -372,6 +376,7 @@ export async function saveVideo(payload: VideoFormPayload): Promise<ActionResult
   console.log('saving video with thumbnails:', {
     card: row.thumbnail_card_url,
     featured: row.thumbnail_featured_url,
+    mobile: row.thumbnail_mobile_url,
   });
 
   let videoId: string;

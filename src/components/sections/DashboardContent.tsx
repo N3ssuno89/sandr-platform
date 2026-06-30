@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { RowHeader, ScrollRow } from '@/components/ui/section-row';
+import { HERO_GUTTER } from '@/lib/layout';
 import { LiveEventCard } from '@/components/cards/LiveEventCard';
 import { VodCard } from '@/components/cards/VodCard';
 import { AthleteCard } from '@/components/cards/AthleteCard';
@@ -105,7 +106,7 @@ export function DashboardContent({
 
   // Sezione video: card o messaggio (solo in modalità dati reali se vuota).
   const renderVideoRow = (row: Row) => (
-    <section key={row.id} className="mx-auto max-w-6xl px-4">
+    <section key={row.id} className={HERO_GUTTER}>
       <RowHeader title={row.title} href={row.href} viewAll={t('viewAll')} live={row.live} />
       {row.items.length > 0 ? (
         <ScrollRow>
@@ -125,7 +126,7 @@ export function DashboardContent({
     <div className="space-y-12 py-12">
       {/* Banner modalità demo (mock fallback) */}
       {isMock ? (
-        <div className="mx-auto max-w-6xl px-4">
+        <div className={HERO_GUTTER}>
           <p className="rounded-lg border border-[#F04E00]/30 bg-[#F04E00]/10 py-2 text-center text-[13px] text-[#F04E00]">
             Modalità demo — stai vedendo contenuti di esempio. Carica video reali dal pannello admin.
           </p>
@@ -136,7 +137,7 @@ export function DashboardContent({
       {renderVideoRow(liveRow)}
 
       {/* 2 — I circuiti (federazioni) */}
-      <section className="mx-auto max-w-6xl px-4">
+      <section className={HERO_GUTTER}>
         <RowHeader title={tFed('indexTitle')} href="/federations" viewAll={t('viewAll')} />
         <ScrollRow>
           {federationList.map((f) => (
@@ -151,7 +152,7 @@ export function DashboardContent({
       {renderVideoRow(highlightsRow)}
 
       {/* 4 — Atleti in evidenza */}
-      <section className="mx-auto max-w-6xl px-4">
+      <section className={HERO_GUTTER}>
         <RowHeader title={tA('featuredRow')} href="/athletes" viewAll={t('viewAll')} />
         <ScrollRow>
           {athleteList.map((a) => (

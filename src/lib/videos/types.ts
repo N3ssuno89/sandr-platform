@@ -10,6 +10,7 @@ export type VideoFormPayload = {
   eventId?: string;
   thumbnailCardUrl?: string;
   thumbnailFeaturedUrl?: string;
+  thumbnailMobileUrl?: string;
   durationSeconds?: number;
   accessLevel: 'free' | 'premium' | 'ppv';
   ppvPrice?: number;
@@ -67,6 +68,7 @@ export type VideoEditData = {
   federationId: string | null;
   thumbnailCardUrl: string | null;
   thumbnailFeaturedUrl: string | null;
+  thumbnailMobileUrl: string | null;
   accessLevel: string;
   isFeatured: boolean;
   isLive: boolean;

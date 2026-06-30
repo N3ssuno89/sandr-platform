@@ -69,6 +69,7 @@ export function AddVideoFlow({
               federationId: null,
               thumbnailCardUrl: null,
               thumbnailFeaturedUrl: null,
+              thumbnailMobileUrl: null,
               accessLevel: 'free',
               isFeatured: false,
               isLive: false,
