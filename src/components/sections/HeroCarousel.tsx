@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { mockContent } from '@/lib/mock-content';
+import { HERO_GUTTER } from '@/lib/layout';
 import type { ContentItem } from '@/types/tags';
 
 // Slide mock di fallback: live, replay (Beach Pro Tour finale), intervista.
@@ -35,15 +36,16 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
   const href = usingFeatured ? `/vod/${slide.id}` : `/live/${slide.id}`;
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#1C1C1C] h-[440px] sm:h-[480px] md:h-[78vh] md:min-h-[560px] md:max-h-[900px]">
-      {/* OPTION B (modello DAZN): immagine SEMPRE a tutta larghezza/altezza con
-          object-cover + object-center → riempie il contenitore senza barre nere,
-          ritagliando dal centro (soggetto centrato visibile). Su MOBILE usiamo
-          un'altezza FISSA (440/480px) invece di 64vh: i vh su telefoni alti
-          gonfiavano l'hero a ~590px in verticale, tagliando troppo l'immagine
-          21:9 in orizzontale. Crossfade morbido (opacity) tra le slide. */}
+    <section className="relative w-full overflow-hidden bg-[#1C1C1C] aspect-[4/5] md:aspect-auto md:h-[78vh] md:min-h-[560px] md:max-h-[900px]">
+      {/* DOPPIA COPERTINA (modello Netflix): su MOBILE serviamo una cover
+          verticale 4:5 (thumbnail_mobile_url), su DESKTOP la cover 16:9
+          (thumbnail_featured_url). L'immagine è SEMPRE a tutta larghezza/altezza
+          con object-cover + object-center → riempie il contenitore senza barre
+          nere e a tutta larghezza schermo (full-bleed). Crossfade morbido. */}
       {slides.map((s, i) => {
-        const sbg = s.thumbnailFeatured || s.thumbnail;
+        const desktopBg = s.thumbnailFeatured || s.thumbnail;
+        // Fallback mobile: cover mobile dedicata → cover desktop ritagliata 4:5 → card.
+        const mobileBg = s.thumbnailMobile || s.thumbnailFeatured || s.thumbnail;
         return (
           <div
             key={s.id}
@@ -51,31 +53,47 @@ export function HeroCarousel({ featuredVideos }: { featuredVideos?: ContentItem[
             style={{ opacity: i === active ? 1 : 0 }}
             aria-hidden={i === active ? undefined : true}
           >
-            {sbg ? (
+            {/* Mobile (4:5) */}
+            {mobileBg ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={sbg} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+              <img src={mobileBg} alt="" className="absolute inset-0 h-full w-full object-cover object-center md:hidden" />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424]" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424] md:hidden" />
+            )}
+            {/* Desktop (16:9) */}
+            {desktopBg ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={desktopBg} alt="" className="absolute inset-0 hidden h-full w-full object-cover object-center md:block" />
+            ) : (
+              <div className="absolute inset-0 hidden bg-gradient-to-tr from-[#141414] via-[#1C1C1C] to-[#242424] md:block" />
             )}
           </div>
         );
       })}
-      {/* Gradiente solo in basso (dove stanno titolo/CTA): immagine luminosa
-          sopra. Un po' più esteso/intenso per la leggibilità sui piccoli schermi. */}
+      {/* Gradiente in basso (dove stanno titolo/CTA). Più esteso su mobile (4:5,
+          più alto) per garantire la leggibilità del testo sul fondo. */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 md:hidden"
         style={{
           background:
-            'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 45%, transparent 72%)',
+            'linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.55) 38%, transparent 70%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden md:block"
+        style={{
+          background:
+            'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 42%, transparent 68%)',
         }}
       />
 
-      {/* Info overlay in basso a sinistra */}
-      <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-12 md:pb-16">
+      {/* Info overlay: allineato a SINISTRA dello schermo (stesso gutter delle
+          righe sotto), in basso. NON centrato, NON fluttuante al centro. */}
+      <div className={`relative flex h-full flex-col justify-end pb-10 md:pb-16 ${HERO_GUTTER}`}>
         <span className="inline-block w-fit rounded bg-sandr-orange px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-black sm:text-xs">
           {slide.circuit}
         </span>
-        <h2 className="mt-3 line-clamp-3 max-w-2xl font-condensed text-2xl font-extrabold uppercase leading-tight text-white sm:text-4xl md:text-5xl">
+        <h2 className="mt-3 line-clamp-3 max-w-2xl font-condensed text-3xl font-extrabold uppercase leading-tight text-white sm:text-4xl md:text-6xl">
           {slide.title}
         </h2>
         {slide.teams ? <p className="mt-2 line-clamp-1 text-sm text-[#C0BDB8] sm:text-base">{slide.teams}</p> : null}

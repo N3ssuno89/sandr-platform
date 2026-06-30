@@ -39,8 +39,10 @@ export interface ContentItem {
   nations: NationTag[];
   event?: EventTag;
   thumbnail?: string;
-  // Copertina dedicata "in evidenza" (21:9), usata nell'hero carousel.
+  // Copertina dedicata "in evidenza" (16:9 desktop), usata nell'hero carousel.
   thumbnailFeatured?: string;
+  // Copertina hero per MOBILE (4:5 verticale). Fallback a thumbnailFeatured.
+  thumbnailMobile?: string;
   duration?: string;
   viewerCount?: number;
   isLive?: boolean;
