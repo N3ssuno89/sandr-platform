@@ -27,6 +27,8 @@ function revalidateVideoPaths() {
   revalidatePath('/[locale]/dashboard/admin', 'page');
   revalidatePath('/[locale]/dashboard/home', 'page');
   revalidatePath('/[locale]/vod', 'page');
+  // Landing pubblica: anteprime live/interviste reali (LivePreviewSection).
+  revalidatePath('/[locale]', 'page');
 }
 
 // content_type (enum DB) -> ContentType interno (frontend).

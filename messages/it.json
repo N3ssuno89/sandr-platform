@@ -167,7 +167,9 @@
     "livePreview": {
       "title": "Live ora",
       "viewAll": "Vedi tutti i live",
-      "gate": "Accedi per guardare in diretta"
+      "viewAllVod": "Vedi tutti",
+      "gate": "Accedi per guardare in diretta",
+      "empty": "Nessun contenuto live al momento"
     },
     "why": {
       "label": "Perché scegliere SANDR",
