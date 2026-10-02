@@ -156,3 +156,47 @@ export async function getPairById(id: string): Promise<Pair | null> {
 export async function getAthleteById(id: string): Promise<Athlete | null> {
   return (await getAthletes()).find((a) => a.id === id) ?? null;
 }
+
+// =====================================================================
+// View-model: Console speaker (staff/admin)
+// =====================================================================
+export interface SpeakerConsoleVM {
+  matchId: string;
+  title: string; // "Coppia A vs Coppia B"
+  editionName: string;
+  courtName: string;
+  status: string;
+  scheduledAt: string;
+  speakers: { name: string; location: string }[];
+  stream: { status: string; audio: string; hasCommentary: boolean } | null;
+}
+
+export async function getSpeakerConsole(matchId: string): Promise<SpeakerConsoleVM | null> {
+  const matches = await getMatches();
+  const m = matches.find((x) => x.id === matchId);
+  if (!m) return null;
+
+  const [pairs, editions, courts, speakers, stream] = await Promise.all([
+    getPairs(),
+    getEditions(),
+    getCourts(),
+    getSpeakersForMatch(matchId),
+    getLiveStreamForMatch(matchId),
+  ]);
+  const pairName = new Map(pairs.map((p) => [p.id, p.name]));
+  const edName = new Map(editions.map((e) => [e.id, e.name]));
+  const courtName = new Map(courts.map((c) => [c.id, c.name]));
+
+  return {
+    matchId: m.id,
+    title: `${pairName.get(m.pairAId) ?? '—'} vs ${pairName.get(m.pairBId) ?? '—'}`,
+    editionName: edName.get(m.editionId) ?? '',
+    courtName: courtName.get(m.courtId) ?? '',
+    status: m.status,
+    scheduledAt: m.scheduledAt,
+    speakers: speakers.map((s) => ({ name: s.name, location: s.location })),
+    stream: stream
+      ? { status: stream.status, audio: stream.audio, hasCommentary: stream.hasCommentary }
+      : null,
+  };
+}

@@ -228,6 +228,22 @@
     "notAvailable": "Content not available",
     "signInToWatch": "Sign in to watch"
   },
+  "Speaker": {
+    "title": "Speaker console",
+    "reserved": "Staff only area",
+    "signIn": "Sign in",
+    "notFound": "Match not found",
+    "edition": "Edition",
+    "court": "Court",
+    "status": "Status",
+    "speakers": "Speakers",
+    "noSpeakers": "No speaker assigned",
+    "stream": "Live stream",
+    "noStream": "No live stream linked",
+    "controlsNote": "Demo controls (not operational until the live backend is connected)",
+    "mic": "Microphone",
+    "notes": "Notes"
+  },
   "Login": {
     "headline": "Welcome back.",
     "subline": "Sign in to watch all beach volleyball live.",

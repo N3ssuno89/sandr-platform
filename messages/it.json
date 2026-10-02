@@ -228,6 +228,22 @@
     "notAvailable": "Contenuto non disponibile",
     "signInToWatch": "Accedi per guardare"
   },
+  "Speaker": {
+    "title": "Console speaker",
+    "reserved": "Area riservata allo staff",
+    "signIn": "Accedi",
+    "notFound": "Partita non trovata",
+    "edition": "Edizione",
+    "court": "Campo",
+    "status": "Stato",
+    "speakers": "Speaker",
+    "noSpeakers": "Nessuno speaker assegnato",
+    "stream": "Diretta",
+    "noStream": "Nessuna diretta collegata",
+    "controlsNote": "Controlli dimostrativi (non operativi finché il backend dirette non è collegato)",
+    "mic": "Microfono",
+    "notes": "Note"
+  },
   "Login": {
     "headline": "Bentornato.",
     "subline": "Accedi per guardare tutto il beach volley in diretta.",
