@@ -45,6 +45,21 @@ export interface LivePlayableVM {
   cloudflareUid: string | null; // null se non accessibile o inesistente
   allowed: boolean;
   demo: boolean;
+  // Contesto partita (dal catalogo video, quando disponibile).
+  teams: string | null;
+  circuit: string | null;
+  sport: string | null;
+  event: string | null;
+  access: 'free' | 'premium' | 'ppv';
+}
+
+// Card di una diretta correlata ("altri campi / altre dirette").
+export interface RelatedLiveVM {
+  id: string;
+  title: string | null;
+  subtitle: string | null;
+  free: boolean;
+  thumbnail?: string;
 }
 
 // Spec dei contenuti dimostrativi per volto (ordine = quello mostrato).
@@ -155,11 +170,37 @@ export async function getLivePlayable(id: string): Promise<LivePlayableVM | null
   const pv = await getVideoForPlayer(id);
   if (!pv) return null;
   const access = await checkVideoAccess({ accessLevel: pv.accessLevel, type: pv.type }, id);
+
+  // Contesto partita dal catalogo (teams/circuito/sport/evento), se presente.
+  const all = await getVideosForDisplay();
+  const item = all.find((v) => v.id === id) ?? null;
+
   return {
     title: pv.title,
-    subtitle: null,
+    subtitle: item?.teams ?? null,
     cloudflareUid: access.allowed ? pv.cloudflareUid : null,
     allowed: access.allowed,
     demo: DEMO_CONTENT,
+    teams: item?.teams ?? null,
+    circuit: item?.circuit ?? null,
+    sport: item?.sport ?? null,
+    event: item?.event ?? null,
+    access: (pv.accessLevel as 'free' | 'premium' | 'ppv') ?? 'free',
   };
+}
+
+// Altre dirette (per "altri campi"): dirette REALI del catalogo diverse da id.
+// Se non ce ne sono e DEMO_CONTENT è acceso, usa le card demo del volto PRO.
+export async function getRelatedLive(excludeId: string, face: Face = 'pro'): Promise<RelatedLiveVM[]> {
+  const cards = await getLiveCards(face);
+  return cards
+    .filter((c) => c.id !== excludeId && c.playable)
+    .slice(0, 6)
+    .map((c) => ({
+      id: c.id,
+      title: c.title,
+      subtitle: c.subtitle,
+      free: c.free,
+      thumbnail: c.thumbnail,
+    }));
 }
