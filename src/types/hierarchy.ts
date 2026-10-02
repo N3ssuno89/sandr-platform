@@ -61,16 +61,21 @@ export interface GeoPoint {
 // Regole di diritti/visibilità a livello edizione. Il default d'accesso guida
 // i contenuti dell'edizione (può essere sovrascritto sul singolo video);
 // geoblock è una lista di codici nazione bloccati (null = nessun blocco).
+// resultsOnly: edizione per cui abbiamo solo i risultati (nessuna diretta,
+// nessun video) — es. tornei FIVB/Beach Pro Tour.
 export interface EditionRights {
   defaultAccess: 'free' | 'premium' | 'ppv';
   visibility: 'public' | 'unlisted' | 'private';
   geoblock: string[] | null;
+  resultsOnly: boolean;
 }
 
 // ----- Edizione = singola occorrenza di una serie --------------------
 export interface Edition extends ExternalOrigin {
   id: string;
-  seriesId: string;
+  // Serie di appartenenza. null per edizioni importate da fonti esterne non
+  // ancora collegate a una serie (es. riga `events` reale senza serie).
+  seriesId: string | null;
   name: string; // es. "Bibione 2025"
   startDate: string; // ISO date (YYYY-MM-DD)
   endDate: string; // ISO date
@@ -133,15 +138,17 @@ export interface Match extends ExternalOrigin {
 }
 
 // ----- Postazione = telefono app o regia esterna ---------------------
-// AREA CRITICA (CLAUDE.md): la chiave di trasmissione reale vive SOLO
-// server-side / nel backend dirette. Qui è un placeholder mock.
+// SICUREZZA (CLAUDE.md): nessuna chiave di trasmissione nel frontend. Le chiavi
+// (RTMP/SRT) esistono SOLO nel backend delle dirette. Il frontend conosce solo
+// identità, tipo, etichetta e stato operativo della postazione.
 export type StationType = 'phone_app' | 'external_rtmp_srt';
+export type StationStatus = 'online' | 'in onda' | 'in riconnessione' | 'offline';
 
 export interface Station {
   id: string;
   label: string;
   type: StationType;
-  streamKey: string; // placeholder mock, mai una chiave reale
+  status: StationStatus;
 }
 
 // ----- Assegnazione = postazione su un campo per una finestra oraria --
@@ -170,6 +177,26 @@ export interface MatchSpeaker {
   speakerId: string;
 }
 
+// ----- LiveStream = diretta di una partita/campo ---------------------
+// Lato spettatore: cosa serve per riprodurre e descrivere una diretta. L'url
+// HLS è di delivery (pubblico/firmato a monte), mai una chiave di ingest.
+export type LiveStreamStatus = 'programmata' | 'in onda' | 'terminata';
+// Traccia audio: "commento" (con speaker) o "campo" (solo suono ambientale).
+export type LiveStreamAudio = 'commento' | 'campo';
+
+export interface LiveStream {
+  id: string;
+  // Una diretta è legata a una partita; prima che la partita sia nota può
+  // essere legata solo al campo (l'operatore sceglie il campo). Uno dei due.
+  matchId: string | null;
+  courtId: string | null;
+  hlsUrl: string; // url di delivery HLS
+  status: LiveStreamStatus;
+  audio: LiveStreamAudio;
+  estimatedLatencySeconds: number; // latenza stimata
+  hasCommentary: boolean; // true se c'è commento (speaker)
+}
+
 // Raccolta tipizzata dell'intero dataset gerarchico (shape del mock).
 export interface HierarchyData {
   federations: Federation[];
@@ -184,4 +211,5 @@ export interface HierarchyData {
   assignments: Assignment[];
   speakers: Speaker[];
   matchSpeakers: MatchSpeaker[];
+  liveStreams: LiveStream[];
 }
