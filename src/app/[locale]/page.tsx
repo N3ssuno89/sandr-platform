@@ -2,10 +2,15 @@ import { setRequestLocale } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
 import { LandingContent } from '@/components/sections/LandingContent';
-import { ProHome } from '@/components/home/ProHome';
+import { AuthHome } from '@/components/home/AuthHome';
 
-// "/" è auth-aware: gli utenti LOGGATI vedono la home PRO, gli anonimi la landing
-// pulita. La lettura della sessione (cookie) rende la rotta dinamica.
+// Home loggata (video in evidenza/righe) sempre fresca: nessuna cache.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// "/" è auth-aware: gli utenti LOGGATI vedono la home PRO completa (stile DAZN,
+// stessa di /dashboard/home), gli anonimi la landing pulita. La lettura della
+// sessione (cookie) rende la rotta dinamica.
 async function getSessionUser() {
   if (!isSupabaseConfiguredServer()) return null;
   const sb = createClient();
@@ -18,5 +23,5 @@ async function getSessionUser() {
 export default async function HomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   const user = await getSessionUser();
-  return user ? <ProHome /> : <LandingContent />;
+  return user ? <AuthHome /> : <LandingContent />;
 }
