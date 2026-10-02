@@ -126,16 +126,16 @@ export function SiteHeader({ face }: { face: Face }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
-          {/* Cerca (solo PRO): pulsante rotondo 44px, placeholder */}
+          {/* Cerca (solo PRO): pulsante rotondo 44px → /search */}
           {face === 'pro' ? (
-            <button
-              type="button"
+            <Link
+              href="/search"
               aria-label={t('search')}
               className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors hover:border-[color:var(--face-accent)] sm:flex"
               style={{ borderColor: 'var(--face-border)', color: 'var(--face-muted)' }}
             >
               <SearchIcon />
-            </button>
+            </Link>
           ) : null}
 
           {/* Selettore volto — sempre visibile (anche su telefono) */}
