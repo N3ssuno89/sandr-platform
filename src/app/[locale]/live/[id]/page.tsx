@@ -2,6 +2,8 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getLivePlayable, getRelatedLive } from '@/lib/data';
 import { StreamPlayer } from '@/components/player/StreamPlayer';
+import { Thumb } from '@/components/ui/Thumb';
+import { LiveBadge } from '@/components/ui/Badges';
 
 // Pagina diretta completa: /live/[matchId] (id = video reale del catalogo).
 // Il gating è applicato SERVER-SIDE in getLivePlayable (l'uid arriva al client
@@ -138,20 +140,13 @@ export default async function LivePlayerPage({
               <Link
                 key={r.id}
                 href={`/live/${r.id}`}
-                className="group overflow-hidden rounded-xl border border-[color:var(--face-border)]"
+                className="group overflow-hidden rounded-xl border border-[color:var(--face-border)] transition-colors hover:border-[color:var(--face-accent)]"
                 style={{ backgroundColor: 'var(--face-surface)' }}
               >
-                <div
-                  className="relative aspect-video"
-                  style={{ backgroundColor: 'var(--face-img)' }}
-                >
-                  {r.thumbnail ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={r.thumbnail} alt="" className="h-full w-full object-cover" />
-                  ) : null}
-                  <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
-                    <span className="h-1 w-1 rounded-full bg-white" />
-                    {t('liveBadge')}
+                <div className="relative">
+                  <Thumb src={r.thumbnail} />
+                  <span className="absolute left-2 top-2">
+                    <LiveBadge label={t('liveBadge')} small />
                   </span>
                 </div>
                 <div className="p-3">

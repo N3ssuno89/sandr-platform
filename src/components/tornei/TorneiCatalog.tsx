@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getTournaments } from '@/lib/data';
+import { LiveBadge } from '@/components/ui/Badges';
 import type { Face } from '@/config/faces';
 
 // Catalogo tornei condiviso dai due volti. Mostra SOLO le edizioni del volto
@@ -45,12 +46,7 @@ export async function TorneiCatalog({ face }: { face: Face }) {
                     style={{ backgroundColor: 'var(--face-surface)', borderColor: 'var(--face-border)' }}
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      {e.liveCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded bg-red-600 px-2 py-0.5 font-barlow text-[10px] font-bold uppercase tracking-wide text-white">
-                          <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                          {t('liveNow')}
-                        </span>
-                      ) : null}
+                      {e.liveCount > 0 ? <LiveBadge label={t('liveNow')} /> : null}
                       <span className="rounded bg-[color:var(--face-accent)] px-2 py-0.5 font-barlow text-[10px] font-bold uppercase tracking-wide text-white">
                         {e.face === 'open' ? t('faceOpen') : t('facePro')}
                       </span>

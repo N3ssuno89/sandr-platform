@@ -114,15 +114,24 @@ export function SiteHeader({ face }: { face: Face }) {
 
         {/* Menu desktop */}
         <nav className="ml-6 hidden items-center gap-6 lg:flex">
-          {nav.map((n) => (
-            <Link
-              key={`${n.href}-${n.label}`}
-              href={n.href}
-              className="font-barlow text-[15px] font-semibold text-[color:var(--face-muted)] transition-colors hover:text-[color:var(--face-fg)]"
-            >
-              {n.label}
-            </Link>
-          ))}
+          {nav.map((n) => {
+            const active = n.href === meta.home ? pathname === n.href : pathname.startsWith(n.href);
+            return (
+              <Link
+                key={`${n.href}-${n.label}`}
+                href={n.href}
+                aria-current={active ? 'page' : undefined}
+                className={`font-barlow text-[15px] font-semibold transition-colors hover:text-[color:var(--face-fg)] ${
+                  active ? 'text-[color:var(--face-fg)]' : 'text-[color:var(--face-muted)]'
+                }`}
+              >
+                {n.label}
+                {active ? (
+                  <span className="mt-0.5 block h-0.5 w-full rounded-full bg-[color:var(--face-accent)]" />
+                ) : null}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex items-center gap-3">

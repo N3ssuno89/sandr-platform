@@ -20,6 +20,19 @@
   h3 {
     @apply font-display;
   }
+
+  /* Focus visibile e coerente su tutti gli elementi interattivi (accessibilità).
+     Usa l'accento del volto attivo. */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--face-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 @layer utilities {
@@ -30,5 +43,57 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Puntino "in diretta" pulsante. */
+  .live-dot {
+    animation: sandr-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes sandr-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.35;
+      transform: scale(0.7);
+    }
+  }
+
+  /* Skeleton di caricamento (shimmer). Usa i token del volto. */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--face-chip, #242424);
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    animation: sandr-shimmer 1.5s infinite;
+  }
+  @keyframes sandr-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Rispetta la preferenza di movimento ridotto. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }

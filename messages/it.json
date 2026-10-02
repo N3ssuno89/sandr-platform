@@ -292,7 +292,11 @@
     "noResults": "Nessun risultato per \"{q}\".",
     "videos": "Video",
     "athletes": "Atleti",
-    "tournaments": "Tornei"
+    "tournaments": "Tornei",
+    "badgeLive": "In diretta",
+    "free": "Gratis",
+    "premium": "Premium",
+    "ppv": "PPV"
   },
   "OpenNear": {
     "title": "Vicino a te",
@@ -336,7 +340,8 @@
     "detailLive": "In diretta ora",
     "detailScheduled": "In programma",
     "detailResults": "Risultati",
-    "noMatchesDetail": "Nessuna partita disponibile per questo torneo."
+    "noMatchesDetail": "Nessuna partita disponibile per questo torneo.",
+    "backToList": "Tutti i tornei"
   },
   "Login": {
     "headline": "Bentornato.",
