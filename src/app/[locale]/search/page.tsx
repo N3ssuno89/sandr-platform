@@ -6,6 +6,8 @@ import { supabaseReadable, getPublicAthletes, getPublicFederations, getSportsMap
 import { toAthleteCard } from '@/lib/public/map';
 import { mockAthletes } from '@/lib/mock-athletes';
 import { AthleteCard } from '@/components/cards/AthleteCard';
+import { Thumb } from '@/components/ui/Thumb';
+import { AccessBadge, LiveBadge } from '@/components/ui/Badges';
 import type { Athlete } from '@/types/athlete';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +16,10 @@ export const dynamic = 'force-dynamic';
 // filtra e mostra i risultati. Volto PRO (chrome globale).
 function norm(s: string): string {
   return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+function accessLabel(access: 'free' | 'premium' | 'ppv', t: (k: string) => string): string {
+  return access === 'premium' ? t('premium') : access === 'ppv' ? t('ppv') : t('free');
 }
 
 export default async function SearchPage({
@@ -112,12 +118,18 @@ export default async function SearchPage({
                   <Link
                     key={v.id}
                     href={v.type === 'live' ? `/live/${v.id}` : `/vod/${v.id}`}
-                    className="overflow-hidden rounded-xl border border-[color:var(--face-border)]"
+                    className="group overflow-hidden rounded-xl border border-[color:var(--face-border)] transition-colors hover:border-[color:var(--face-accent)]"
                     style={{ backgroundColor: 'var(--face-surface)' }}
                   >
-                    <div className="relative aspect-video" style={{ backgroundColor: 'var(--face-img)' }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      {v.thumbnail ? <img src={v.thumbnail} alt="" className="h-full w-full object-cover" /> : null}
+                    <div className="relative">
+                      <Thumb src={v.thumbnail} label={v.circuit} />
+                      <span className="absolute left-2 top-2">
+                        {v.type === 'live' ? (
+                          <LiveBadge label={t('badgeLive')} small />
+                        ) : (
+                          <AccessBadge access={v.access ?? 'free'} label={accessLabel(v.access ?? 'free', t)} small />
+                        )}
+                      </span>
                     </div>
                     <div className="p-3">
                       <p className="truncate font-barlow text-sm font-semibold">{v.title}</p>

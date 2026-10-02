@@ -292,7 +292,11 @@
     "noResults": "No results for \"{q}\".",
     "videos": "Videos",
     "athletes": "Athletes",
-    "tournaments": "Tournaments"
+    "tournaments": "Tournaments",
+    "badgeLive": "Live",
+    "free": "Free",
+    "premium": "Premium",
+    "ppv": "PPV"
   },
   "OpenNear": {
     "title": "Near you",
@@ -332,6 +336,7 @@
     "detailScheduled": "Scheduled",
     "detailResults": "Results",
     "noMatchesDetail": "No matches available for this tournament.",
+    "backToList": "All tournaments",
     "title": "Tournaments",
     "empty": "No tournaments available right now.",
     "resultsOnly": "Results only",

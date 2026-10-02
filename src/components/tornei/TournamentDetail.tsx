@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { getTournamentDetail, type TournamentMatchVM } from '@/lib/data';
+import { LiveBadge } from '@/components/ui/Badges';
+import { ScoreSets } from '@/components/ui/ScoreSets';
 
 // Dettaglio torneo (edizione): anagrafica + partite raggruppate per stato
 // (in diretta / in programma / risultati). Tematizzato via variabili CSS del
@@ -13,14 +15,17 @@ export async function TournamentDetail({ editionId }: { editionId: string }) {
 
   return (
     <div className="mx-auto max-w-[1360px] px-4 py-10 md:px-10">
+      {/* Link indietro al catalogo */}
+      <Link
+        href={d.face === 'open' ? '/open/tornei' : '/tornei'}
+        className="inline-flex items-center gap-1 font-barlow text-sm text-[color:var(--face-muted)] transition-colors hover:text-[color:var(--face-fg)]"
+      >
+        <span aria-hidden>‹</span> {t('backToList')}
+      </Link>
+
       {/* Intestazione */}
-      <div className="flex flex-wrap items-center gap-2">
-        {d.live.length > 0 ? (
-          <span className="inline-flex items-center gap-1 rounded bg-red-600 px-2 py-0.5 font-barlow text-[10px] font-bold uppercase tracking-wide text-white">
-            <span className="h-1.5 w-1.5 rounded-full bg-white" />
-            {t('liveNow')}
-          </span>
-        ) : null}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        {d.live.length > 0 ? <LiveBadge label={t('liveNow')} /> : null}
         <span className="rounded bg-[color:var(--face-accent)] px-2 py-0.5 font-barlow text-[10px] font-bold uppercase tracking-wide text-white">
           {d.face === 'open' ? t('faceOpen') : t('facePro')}
         </span>
@@ -75,32 +80,33 @@ function MatchSection({
         {matches.map((m) => {
           const row = (
             <div
-              className="flex items-center justify-between gap-3 border-b px-4 py-3 last:border-0"
+              className="grid grid-cols-[1fr_auto] items-center gap-3 border-b px-4 py-3 last:border-0 sm:grid-cols-[1fr_auto_1fr]"
               style={{ borderColor: 'var(--face-border)' }}
             >
-              <div className="min-w-0">
-                <p className="truncate font-barlow text-sm font-semibold">{m.title}</p>
-                <p className="truncate font-barlow text-xs text-[color:var(--face-muted)]">
+              {/* Team A */}
+              <p className="truncate text-right font-barlow text-sm font-semibold sm:text-right">{m.teamA}</p>
+              {/* Centro: punteggio / vs / live */}
+              <div className="flex min-w-[6rem] flex-col items-center justify-center">
+                {live ? (
+                  <LiveBadge label={t('liveNow')} small />
+                ) : m.score ? (
+                  <ScoreSets score={m.score} />
+                ) : (
+                  <span className="font-barlow text-xs font-bold uppercase text-[color:var(--face-muted)]">vs</span>
+                )}
+                <span className="mt-1 font-barlow text-[11px] text-[color:var(--face-muted)]">
                   {m.courtName}
                   {m.time ? ` · ${m.time}` : ''}
-                </p>
+                </span>
               </div>
-              <div className="shrink-0 text-right">
-                {live ? (
-                  <span className="inline-flex items-center gap-1 rounded bg-red-600 px-2 py-0.5 font-barlow text-[10px] font-bold uppercase tracking-wide text-white">
-                    <span className="h-1 w-1 rounded-full bg-white" />
-                    {t('liveNow')}
-                  </span>
-                ) : m.score ? (
-                  <span className="font-barlow text-sm font-semibold">{m.score}</span>
-                ) : null}
-              </div>
+              {/* Team B (sotto su mobile) */}
+              <p className="col-span-2 truncate font-barlow text-sm font-semibold sm:col-span-1 sm:text-left">{m.teamB}</p>
             </div>
           );
           // Le partite in diretta linkano al player (/live/[matchId]); il gating
           // è applicato server-side nella pagina diretta.
           return live ? (
-            <Link key={m.id} href={`/live/${m.id}`} className="block hover:bg-[color:var(--face-chip)]">
+            <Link key={m.id} href={`/live/${m.id}`} className="block transition-colors hover:bg-[color:var(--face-chip)]">
               {row}
             </Link>
           ) : (

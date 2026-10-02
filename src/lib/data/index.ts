@@ -283,6 +283,8 @@ export async function getTournaments(): Promise<TournamentGroupVM[]> {
 export interface TournamentMatchVM {
   id: string;
   title: string; // "Coppia A vs Coppia B"
+  teamA: string;
+  teamB: string;
   courtName: string;
   time: string; // orario (HH:MM) o data
   score: string; // "21-18  19-21" o ''
@@ -330,6 +332,8 @@ export async function getTournamentDetail(editionId: string): Promise<Tournament
   const toVM = (m: Match): TournamentMatchVM => ({
     id: m.id,
     title: `${pairName.get(m.pairAId) ?? '—'} vs ${pairName.get(m.pairBId) ?? '—'}`,
+    teamA: pairName.get(m.pairAId) ?? '—',
+    teamB: pairName.get(m.pairBId) ?? '—',
     courtName: courtName.get(m.courtId) ?? '',
     time: m.scheduledAt.length >= 16 ? m.scheduledAt.slice(11, 16) : m.scheduledAt.slice(0, 10),
     score: m.sets.map((x) => `${x.a}-${x.b}`).join('  '),
