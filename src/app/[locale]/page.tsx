@@ -3,19 +3,15 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { LivePreviewSection } from '@/components/sections/LivePreviewSection';
 import { LandingPricing } from '@/components/sections/LandingPricing';
-import { FeatureShowcase } from '@/components/sections/FeatureShowcase';
 import { LandingFeaturedAthletes } from '@/components/sections/LandingFeaturedAthletes';
 
-// Nomi propri dei circuiti (non tradotti). "Tutti" arriva da i18n.
+// Nomi propri dei circuiti SANDR (non tradotti). "Tutti" arriva da i18n.
+// Nota: i circuiti internazionali FIVB (Beach Pro Tour, AVP, CEV, Mondiali) NON
+// sono contenuti SANDR e non vengono elencati qui.
 const circuitNames = [
-  'BPT Futures',
-  'BPT Challenge',
-  'BPT Elite',
   'AIBVC Tour',
   'FIPAV',
   'Campionato Italiano',
-  'AVP',
-  'Beach Pro Tour',
   'King & Queen',
   'Marathon',
   'Beach Tennis',
@@ -23,7 +19,7 @@ const circuitNames = [
 ];
 
 type CoverageCard = { tag: string; title: string; items: string[]; desc: string; sport: string };
-type WhyFeature = { title: string; desc: string; disclaimer?: string };
+type WhyFeature = { title: string; desc: string };
 
 export default function HomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
@@ -149,8 +145,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
           </h2>
           <p className="mt-3 max-w-2xl text-base text-[#C0BDB8]">{t('why.subline')}</p>
 
-          {/* Tutte le card hanno lo stesso stile: betting è una feature tra le
-              altre, non enfatizzata (CLAUDE.md: niente emoji). */}
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.06] bg-[#242424] p-6">
@@ -159,10 +153,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
                   {f.title}
                 </h3>
                 <p className="mt-2 text-sm text-sandr-muted">{f.desc}</p>
-                {/* Disclaimer solo sulla card betting (compliance, CLAUDE.md). */}
-                {f.disclaimer ? (
-                  <p className="mt-3 text-[9px] text-[#555555]">{f.disclaimer}</p>
-                ) : null}
               </div>
             ))}
           </div>
@@ -172,15 +162,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       {/* ===== SECTION 6 — Pricing (client) ===== */}
       <LandingPricing />
 
-      {/* La BettingPartnerSection standalone è stata rimossa dalla landing per
-          non far dominare il betting nel messaging: ora è una sola feature card
-          nella sezione "Perché SANDR". Il componente resta usato nella home
-          autenticata (/dashboard/home). */}
-
-      {/* ===== SECTION 7 — Showcase tabs (client) ===== */}
-      <FeatureShowcase />
-
-      {/* ===== SECTION 8 — Final CTA ===== */}
+      {/* ===== SECTION 7 — Final CTA ===== */}
       <section className="bg-sandr-orange px-4 py-20 text-center">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-condensed text-[48px] font-black uppercase leading-[0.95] tracking-[-2px] text-black md:text-[72px]">

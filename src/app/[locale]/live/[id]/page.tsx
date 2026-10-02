@@ -5,56 +5,20 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { mockContent } from '@/lib/mock-content';
 
-type ChatMessage = { id: number; user: string; time: string; text: string };
-
-const SEED_CHAT: ChatMessage[] = [
-  { id: 1, user: 'beachfan_88', time: '15:02', text: 'Che punto!' },
-  { id: 2, user: 'marco_vb', time: '15:03', text: 'Vai Lupo!' },
-  { id: 3, user: 'sand_queen', time: '15:04', text: 'Incredibile difesa' },
-  { id: 4, user: 'norge_fan', time: '15:05', text: 'Mol is unstoppable' },
-  { id: 5, user: 'lella_92', time: '15:06', text: 'Che muro!' },
-  { id: 6, user: 'volleynerd', time: '15:07', text: 'Ace pazzesco' },
-  { id: 7, user: 'giank', time: '15:08', text: 'Set combattutissimo' },
-  { id: 8, user: 'beachfan_88', time: '15:09', text: 'Forza ragazzi!!' },
-];
-
 const UPCOMING = [
-  { id: 'u1', date: '28 Jun · 18:00', teams: 'Mol / Sørum vs Ranghieri / Carambula', circuit: 'BPT' },
+  { id: 'u1', date: '28 Jun · 18:00', teams: 'Mol / Sørum vs Ranghieri / Carambula', circuit: 'AIBVC' },
   { id: 'u2', date: '29 Jun · 20:30', teams: 'Gori / Cattaneo vs Benede / Ramos', circuit: 'AIBVC' },
-  { id: 'u3', date: '01 Jul · 17:15', teams: 'Nicolai / Cottafava vs Åhman / Hellvig', circuit: 'FIPAV' },
-];
-
-const STATS = [
-  { a: '3', label: 'ACE', b: '1' },
-  { a: '5', label: 'ERRORI', b: '7' },
-  { a: '62%', label: 'ATT', b: '58%' },
-  { a: '2', label: 'MURI', b: '3' },
-];
-
-// Stats della sidebar (etichette estese).
-const SIDEBAR_STATS = [
-  { a: '3', label: 'Ace', b: '1' },
-  { a: '5', label: 'Errori', b: '7' },
-  { a: '62%', label: 'Attacco%', b: '58%' },
-  { a: '2', label: 'Muri', b: '3' },
-];
-
-// Quote mock (non reali). Gioco riservato ai maggiorenni — vedi disclaimer.
-const ODDS = [
-  { k: '1', v: '1.85' },
-  { k: 'X', v: '12.00' },
-  { k: '2', v: '2.10' },
+  { id: 'u3', date: '01 Jul · 17:15', teams: 'Nicolai / Cottafava vs Rossi / Carambula', circuit: 'FIPAV' },
 ];
 
 export default function LivePlayerPage({ params }: { params: { locale: string; id: string } }) {
   const t = useTranslations('Player');
-  const tc = useTranslations('Common');
 
   // Dati live: da mock-content (type live) o fallback.
   const event = mockContent.find((c) => c.type === 'live' && c.id === params.id);
   const data = event
     ? { title: event.title, teams: event.teams ?? '', circuit: event.circuit }
-    : { title: 'BPT Elite — Finale', teams: 'Mol / Sørum vs Plavins / Tocs', circuit: 'BPT' };
+    : { title: 'Finale — AIBVC Tour', teams: 'Lupo / Cottafava vs Ranghieri / Caminati', circuit: 'AIBVC' };
 
   const otherLive = mockContent.filter((c) => c.type === 'live' && c.id !== params.id).slice(0, 3);
 
@@ -62,19 +26,9 @@ export default function LivePlayerPage({ params }: { params: { locale: string; i
   const photoIndex = (Array.from(params.id).reduce((s, ch) => s + ch.charCodeAt(0), 0) % 6) + 1;
   const blurPhoto = `/athletes/${photoIndex}.png`;
 
-  const [tab, setTab] = useState<'chat' | 'stats' | 'upcoming'>('chat');
   const [playing, setPlaying] = useState(true);
   const [cast, setCast] = useState(false);
   const [reminder, setReminder] = useState(false);
-  const [chat, setChat] = useState<ChatMessage[]>(SEED_CHAT);
-  const [input, setInput] = useState('');
-
-  const sendMessage = () => {
-    const text = input.trim();
-    if (!text) return;
-    setChat((prev) => [...prev, { id: prev.length + 1, user: 'tu', time: '15:10', text }]);
-    setInput('');
-  };
 
   const goFullscreen = () => {
     document.documentElement.requestFullscreen?.().catch(() => {});
@@ -187,145 +141,24 @@ export default function LivePlayerPage({ params }: { params: { locale: string; i
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="mt-4">
-            <div className="flex gap-6 border-b border-white/10">
-              {(['chat', 'stats', 'upcoming'] as const).map((tb) => (
-                <button
-                  key={tb}
-                  type="button"
-                  onClick={() => setTab(tb)}
-                  className={`-mb-px border-b-2 py-3 font-condensed text-sm font-bold uppercase tracking-wide transition-colors ${
-                    tab === tb ? 'border-sandr-orange text-white' : 'border-transparent text-sandr-muted hover:text-white'
-                  }`}
-                >
-                  {t(`tabs.${tb}`)}
-                </button>
+          {/* Prossimi eventi */}
+          <div className="mt-6">
+            <h2 className="font-condensed text-sm font-bold uppercase tracking-wide text-[#888888]">{t('upcoming')}</h2>
+            <div className="mt-3 space-y-3">
+              {UPCOMING.map((u) => (
+                <div key={u.id} className="rounded-lg border border-white/[0.06] bg-[#141414] p-4">
+                  <span className="text-[11px] font-bold uppercase text-sandr-orange">{u.date}</span>
+                  <p className="mt-1 font-condensed text-[15px] font-bold uppercase tracking-wide text-white">{u.teams}</p>
+                  <p className="text-[12px] text-[#888888]">{u.circuit}</p>
+                </div>
               ))}
-            </div>
-
-            <div className="py-4">
-              {tab === 'chat' ? (
-                <div>
-                  <div className="no-scrollbar h-[200px] space-y-2 overflow-y-auto">
-                    {chat.map((m) => (
-                      <p key={m.id} className="text-sm">
-                        <span className="font-semibold text-sandr-orange">{m.user}</span>{' '}
-                        <span className="text-[10px] text-[#555555]">{m.time}</span>{' '}
-                        <span className="text-[#C0BDB8]">{m.text}</span>
-                      </p>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex gap-2">
-                    <input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') sendMessage();
-                      }}
-                      placeholder={t('chatPlaceholder')}
-                      className="flex-1 rounded border border-white/[0.08] bg-[#242424] px-3 py-2 text-sm text-sandr-text placeholder:text-sandr-muted focus:border-sandr-orange focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={sendMessage}
-                      className="rounded bg-sandr-orange px-4 py-2 font-condensed text-sm font-bold uppercase text-black"
-                    >
-                      {t('send')}
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              {tab === 'stats' ? (
-                <div className="overflow-hidden rounded-lg border border-white/10">
-                  {STATS.map((s) => (
-                    <div key={s.label} className="grid grid-cols-3 items-center px-4 py-2 font-condensed">
-                      <span className="text-left text-base font-bold text-white">{s.a}</span>
-                      <span className="text-center text-xs uppercase tracking-wide text-sandr-muted">{s.label}</span>
-                      <span className="text-right text-base font-bold text-white">{s.b}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-
-              {tab === 'upcoming' ? (
-                <div className="space-y-3">
-                  {UPCOMING.map((u) => (
-                    <div key={u.id} className="rounded-lg border border-white/[0.06] bg-[#141414] p-4">
-                      <span className="text-[11px] font-bold uppercase text-sandr-orange">{u.date}</span>
-                      <p className="mt-1 font-condensed text-[15px] font-bold uppercase tracking-wide text-white">{u.teams}</p>
-                      <p className="text-[12px] text-[#888888]">{u.circuit}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
             </div>
           </div>
         </div>
 
         {/* ===== RIGHT COLUMN ===== */}
         <aside className="hidden w-[320px] shrink-0 lg:block">
-          {/* SEZIONE 1 — Statistiche live */}
-          <h2 className="font-condensed text-[11px] font-bold uppercase text-[#888888]" style={{ letterSpacing: '2px' }}>
-            {t('statsTitle')}
-          </h2>
-          <div className="mt-3 flex items-center">
-            <span className="flex-1 text-right font-condensed text-[13px] font-bold text-white">Lupo / Nicolai</span>
-            <span className="px-4 text-center font-condensed text-[28px] font-black text-sandr-orange">1 — 0</span>
-            <span className="flex-1 text-left font-condensed text-[13px] font-bold text-white">Ranghieri / Carambula</span>
-          </div>
-          <p className="mt-2 text-center text-[11px] text-[#888888]">{t('set1')}</p>
-          <p className="text-center text-[11px] text-[#888888]">{t('set2')}</p>
-
-          <div className="mt-3 rounded-lg bg-[#1C1C1C] p-3">
-            {SIDEBAR_STATS.map((s) => (
-              <div key={s.label} className="grid grid-cols-3 items-center py-0.5 font-condensed text-[12px] font-bold">
-                <span className="text-left text-sandr-orange">{s.a}</span>
-                <span className="text-center text-[#888888]">{s.label}</span>
-                <span className="text-right text-white">{s.b}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="my-4 h-px bg-white/10" />
-
-          {/* SEZIONE 2 — Widget betting bet365 (AREA CRITICA, vedi CLAUDE.md:
-              compliance, link affiliati e disclaimer richiedono review umana) */}
-          <div className="mb-3 rounded-[10px] border border-[#1a3a1a] bg-[#0d1f0d] p-3">
-            <div className="flex items-center justify-between">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/partners/bet365-logo.png" alt="bet365" style={{ height: 20 }} />
-              <span className="text-[11px] text-[#888888]">{t('quoteLive')}</span>
-            </div>
-            <p className="mt-3 font-condensed text-[12px] font-bold text-white">Lupo/Nicolai vs Ranghieri/Carambula</p>
-            <p className="text-[10px] text-[#888888]">{t('bettingTime')}</p>
-
-            {/* Quote offuscate dietro gate di accesso (nessuna quota reale mostrata) */}
-            <div className="relative mt-2">
-              <div className="flex gap-2">
-                {ODDS.map((o) => (
-                  <div
-                    key={o.k}
-                    className="flex-1 rounded-md border border-[#2a3a2a] bg-[#1a2a1a] p-2 text-center transition-colors hover:border-[#4CAF50] hover:bg-[#4CAF50]/10"
-                  >
-                    <p className="text-[10px] text-[#888888]">{o.k}</p>
-                    <p className="font-condensed text-base font-extrabold text-white">{o.v}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-md bg-[#0d1f0d]/30 backdrop-blur-[6px]">
-                <p className="font-condensed text-[13px] font-bold text-white">{t('oddsGate')}</p>
-                <Link href="/login" className="mt-2 rounded bg-sandr-orange px-3 py-1 text-[11px] font-bold uppercase text-black">
-                  {tc('signIn')}
-                </Link>
-              </div>
-            </div>
-
-            <p className="mt-2 text-center text-[9px] text-[#555555]">{t('bettingDisclaimer')}</p>
-          </div>
-
-          {/* SEZIONE 3 — Banner pubblicitario */}
+          {/* Banner pubblicitario */}
           <p className="mb-1 text-center text-[9px] uppercase text-[#444444]" style={{ letterSpacing: '1px' }}>
             {t('adLabel')}
           </p>
@@ -337,7 +170,7 @@ export default function LivePlayerPage({ params }: { params: { locale: string; i
             <p className="text-[11px] text-sandr-orange">advertising@sandr.tv</p>
           </div>
 
-          {/* SEZIONE 4 — Altri live + prossimi eventi */}
+          {/* Altri live */}
           <h2 className="font-condensed text-sm font-bold uppercase text-[#888888]" style={{ letterSpacing: '2px' }}>
             {t('liveNow')}
           </h2>

@@ -3,8 +3,9 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 
-// Footer minimale. L'age gate 18+ NON va mai rimosso (CLAUDE.md): resta un
-// piccolo indicatore accanto al copyright.
+// Footer minimale. Il badge "18+" è stato rimosso (le scommesse non ci sono più
+// e il volto Open include tornei Under 18); la policy età è in attesa di
+// decisione (vedi CLAUDE.md, regola #5).
 export function Footer() {
   const tc = useTranslations('Common');
   const tf = useTranslations('Footer');
@@ -56,10 +57,9 @@ export function Footer() {
             </Link>
           </div>
 
-          {/* Copyright + age gate 18+ (minimo, non rimuovibile) */}
+          {/* Copyright */}
           <p className="flex items-center gap-2 text-[11px] text-[#888888]">
             <span>© 2026 SANDR. {tf('rights')}</span>
-            <span className="rounded border border-white/15 px-1 text-[10px]">18+</span>
           </p>
         </div>
       </div>

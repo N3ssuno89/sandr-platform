@@ -44,7 +44,11 @@ Dominio: sandr.tv | Founder: Emanuele Giartosio (zioema)
 2. Ogni feature = branch separato (naming: feature/nome-feature)
 3. MAI deploy automatico in produzione
 4. MAI modificare schema Supabase senza migration file
-5. MAI togliere age gate 18+ o disclaimer betting
+5. Age-gate / betting: le scommesse sono state RIMOSSE dal prodotto (PR #73),
+   quindi il disclaimer betting non è più richiesto. NON introdurre un blocco
+   18+ che escluda i minori: il volto "Open" include tornei Under 18. L'age-gate
+   attuale (badge "18+" nel footer + età minima nei testi legali) resta finché
+   non si decide la nuova policy età; ogni modifica ai testi legali = review legale.
 6. YAGNI: non aggiungere features non richieste
 7. KISS: soluzione più semplice che funziona
 8. Nessuna astrazione prematura
@@ -55,7 +59,8 @@ Dominio: sandr.tv | Founder: Emanuele Giartosio (zioema)
 - Tutto ciò che tocca Stripe (pagamenti, abbonamenti, PPV)
 - Tutto ciò che tocca Supabase Auth (login, sessioni, ruoli)
 - Supabase Realtime (punteggio live, WebSocket)
-- Widget betting Bet365 (compliance, link affiliati, disclaimer)
+- (Rimosso) Widget betting Bet365: feature eliminata dal prodotto (PR #73).
+  Nessuna sezione scommesse nel sito.
 - Cloudflare Stream (stream key, RTMP, HLS player)
 
 ## Circuiti gestiti

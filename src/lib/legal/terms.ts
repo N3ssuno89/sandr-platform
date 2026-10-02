@@ -13,7 +13,6 @@ export const termsContent: LocalizedDoc = {
         heading: 'Oggetto del servizio',
         blocks: [
           'SANDR offre un servizio di streaming di contenuti sportivi (dirette, replay, highlights, interviste e contenuti correlati), con contenuti gratuiti, in abbonamento (premium) e ad acquisto singolo (pay-per-view).',
-          'Alcuni contenuti possono includere widget informativi di scommesse sportive forniti da terze parti, riservati a un pubblico adulto.',
         ],
       },
       {
@@ -61,7 +60,7 @@ export const termsContent: LocalizedDoc = {
       {
         heading: 'Contenuti di terzi',
         blocks: [
-          'La Piattaforma può includere contenuti, link o widget di terze parti (es. federazioni, organizzatori, partner di scommesse). SANDR non è responsabile dei contenuti e dei servizi di terzi, soggetti ai relativi termini.',
+          'La Piattaforma può includere contenuti, link o widget di terze parti (es. federazioni, organizzatori). SANDR non è responsabile dei contenuti e dei servizi di terzi, soggetti ai relativi termini.',
         ],
       },
       {
@@ -101,7 +100,6 @@ export const termsContent: LocalizedDoc = {
         heading: 'Service',
         blocks: [
           'SANDR provides a streaming service for sports content (live, replays, highlights, interviews and related content), with free, subscription (premium) and single-purchase (pay-per-view) content.',
-          'Some content may include third-party sports betting information widgets, reserved for an adult audience.',
         ],
       },
       {
@@ -149,7 +147,7 @@ export const termsContent: LocalizedDoc = {
       {
         heading: 'Third-party content',
         blocks: [
-          'The Platform may include third-party content, links or widgets (e.g. federations, organisers, betting partners). SANDR is not responsible for third-party content and services, which are subject to their own terms.',
+          'The Platform may include third-party content, links or widgets (e.g. federations, organisers). SANDR is not responsible for third-party content and services, which are subject to their own terms.',
         ],
       },
       {

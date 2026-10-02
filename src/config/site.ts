@@ -10,6 +10,14 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sandr.tv',
 } as const;
 
+// Prezzi del sito. SEGNAPOSTO: i valori definitivi verranno impostati qui prima
+// del lancio. Offerta pubblica = abbonamento ANNUALE + PASS evento singolo
+// (nessun piano mensile, nessuna logica Stripe cablata — AREA CRITICA).
+export const pricing = {
+  annualPrice: 'In arrivo',
+  eventPassPrice: 'In arrivo',
+} as const;
+
 // Rotte che richiedono autenticazione (vedi src/middleware.ts).
 // Per ora /live, /vod e /interviews sono pubbliche: solo i pannelli
 // admin/broadcaster restano protetti.
