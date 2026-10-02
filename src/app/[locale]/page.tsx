@@ -3,19 +3,15 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { LivePreviewSection } from '@/components/sections/LivePreviewSection';
 import { LandingPricing } from '@/components/sections/LandingPricing';
-import { FeatureShowcase } from '@/components/sections/FeatureShowcase';
 import { LandingFeaturedAthletes } from '@/components/sections/LandingFeaturedAthletes';
 
-// Nomi propri dei circuiti (non tradotti). "Tutti" arriva da i18n.
+// Nomi propri dei circuiti SANDR (non tradotti). "Tutti" arriva da i18n.
+// Nota: i circuiti internazionali FIVB (Beach Pro Tour, AVP, CEV, Mondiali) NON
+// sono contenuti SANDR e non vengono elencati qui.
 const circuitNames = [
-  'BPT Futures',
-  'BPT Challenge',
-  'BPT Elite',
   'AIBVC Tour',
   'FIPAV',
   'Campionato Italiano',
-  'AVP',
-  'Beach Pro Tour',
   'King & Queen',
   'Marathon',
   'Beach Tennis',
@@ -172,15 +168,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       {/* ===== SECTION 6 — Pricing (client) ===== */}
       <LandingPricing />
 
-      {/* La BettingPartnerSection standalone è stata rimossa dalla landing per
-          non far dominare il betting nel messaging: ora è una sola feature card
-          nella sezione "Perché SANDR". Il componente resta usato nella home
-          autenticata (/dashboard/home). */}
-
-      {/* ===== SECTION 7 — Showcase tabs (client) ===== */}
-      <FeatureShowcase />
-
-      {/* ===== SECTION 8 — Final CTA ===== */}
+      {/* ===== SECTION 7 — Final CTA ===== */}
       <section className="bg-sandr-orange px-4 py-20 text-center">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-condensed text-[48px] font-black uppercase leading-[0.95] tracking-[-2px] text-black md:text-[72px]">

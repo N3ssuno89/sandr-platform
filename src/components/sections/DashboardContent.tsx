@@ -64,8 +64,6 @@ export function DashboardContent({
   const highlightsRow: Row = { id: 'highlights', title: t('highlights'), kind: 'vod', cardWidth: 240, href: '/vod', items: typeRow('highlights') };
   const fipavRow: Row = { id: 'fipav', title: 'FIPAV — Campionato Italiano', kind: 'vod', cardWidth: 280, href: '/vod', items: circuitRow('FIPAV') };
   const aibvcRow: Row = { id: 'aibvc', title: 'AIBVC Tour', kind: 'vod', cardWidth: 240, href: '/vod', items: circuitRow('AIBVC') };
-  const avpRow: Row = { id: 'avp', title: 'AVP America', kind: 'vod', cardWidth: 300, href: '/vod', items: circuitRow('AVP') };
-  const bptRow: Row = { id: 'bpt', title: 'Beach Pro Tour — FIVB', kind: 'vod', cardWidth: 260, href: '/vod', items: circuitRow('BPT') };
   const interviewRow: Row = { id: 'interview', title: t('interviews'), kind: 'vod', cardWidth: 360, href: '/vod', items: typeRow('interview') };
   const btsRow: Row = { id: 'bts', title: t('behindScenes'), kind: 'vod', cardWidth: 220, href: '/vod', items: typeRow('behind-the-scenes') };
 
@@ -166,8 +164,6 @@ export function DashboardContent({
       {/* 5 — Righe per circuito + tipo */}
       {renderVideoRow(fipavRow)}
       {renderVideoRow(aibvcRow)}
-      {renderVideoRow(avpRow)}
-      {renderVideoRow(bptRow)}
       {renderVideoRow(interviewRow)}
       {renderVideoRow(btsRow)}
     </div>

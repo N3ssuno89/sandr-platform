@@ -87,19 +87,6 @@
       "seasonPoints": "Punti Stagione"
     }
   },
-  "Betting": {
-    "label": "SANDR × Partner",
-    "heading": "Le quote in tempo reale, mentre guardi la partita.",
-    "subline": "Presto su SANDR potrai seguire le quote aggiornate in diretta, integrate nell'esperienza di streaming. Tutto in un posto.",
-    "badgeLive": "Quote Live",
-    "badgeInplay": "In-play",
-    "badgeSoon": "Prossimamente",
-    "disclaimer": "Il servizio sarà disponibile nelle giurisdizioni autorizzate. 18+",
-    "widgetTitle": "Quote Live",
-    "draw": "Pareggio",
-    "setStatus": "Set 1: 21-18 — In corso",
-    "comingSoon": "Disponibile prossimamente"
-  },
   "Federation": {
     "indexTitle": "I circuiti",
     "explore": "Esplora",
@@ -122,9 +109,6 @@
     }
   },
   "Player": {
-    "tabs": { "chat": "Chat", "stats": "Stats", "upcoming": "Prossimi eventi" },
-    "send": "Invia",
-    "chatPlaceholder": "Scrivi un messaggio...",
     "startedAt": "Iniziata alle 15:00",
     "reminder": "Imposta Reminder",
     "reminderSet": "Reminder impostato",
@@ -132,15 +116,8 @@
     "liveNow": "In diretta ora",
     "upcoming": "Prossimi eventi",
     "cast": "Disponibile su Smart TV e Chromecast",
-    "statsTitle": "Statistiche live",
-    "quoteLive": "Quote Live",
-    "oddsGate": "Accedi per vedere le quote",
-    "bettingDisclaimer": "Il gioco è vietato ai minori. Gioca responsabilmente. 18+",
     "adLabel": "Pubblicità",
-    "adSpace": "Il tuo spazio pubblicitario",
-    "bettingTime": "In corso — Set 2",
-    "set1": "Set 1: 21-18",
-    "set2": "Set 2: in corso"
+    "adSpace": "Il tuo spazio pubblicitario"
   },
   "Landing": {
     "circuitsAll": "Tutti",
@@ -152,15 +129,14 @@
       "subline": "Beach volley. Beach tennis. Sand sports. Tutto in un posto, in streaming premium.",
       "ctaPrimary": "Abbonati ora",
       "ctaSecondary": "Accedi",
-      "priceNote": "A partire da €9.99/mese · Disdici quando vuoi"
+      "priceNote": "Abbonamento annuale o pass per il singolo evento"
     },
     "coverage": {
       "label": "Il nostro palinsesto",
-      "heading": "Sport da tutto il mondo.",
-      "subline": "Copriamo i migliori circuiti internazionali di beach volley e sand sports, dalle finali mondiali ai campionati nazionali.",
+      "heading": "Il meglio del sand sports italiano.",
+      "subline": "Copriamo i circuiti italiani di beach volley e sand sports, dai tornei di club ai campionati nazionali.",
       "cards": [
         { "tag": "IT", "title": "Italia", "items": ["FIPAV Campionato Italiano", "AIBVC Tour", "King & Queen", "Marathon Tour"], "desc": "Il meglio del beach volley italiano", "sport": "#beachvolley" },
-        { "tag": "World", "title": "Internazionale", "items": ["Beach Pro Tour (FIVB)", "AVP America", "CEV Europeans", "World Championships"], "desc": "I circuiti che contano a livello mondiale", "sport": "#worldtour" },
         { "tag": "+", "title": "Sand Sports +", "items": ["Beach Tennis", "Padel", "Freestyle Volley", "Snow Volley"], "desc": "Non solo beach volley", "sport": "#sandsports" }
       ]
     },
@@ -177,75 +153,41 @@
       "heading": "Tutto lo sport in un posto solo.",
       "subline": "SANDR non è solo streaming. È l'ecosistema completo attorno a ogni evento sportivo.",
       "features": [
-        { "title": "Statistiche Live", "desc": "Punteggio, set e statistiche aggiornate in tempo reale, punto per punto." },
         { "title": "Tornei e Bracket", "desc": "Segui ogni torneo con bracket completi, risultati e calendari aggiornati." },
-        { "title": "Streaming Interattivo", "desc": "Multi-view, chat live, sondaggi e voto MVP durante ogni match." },
-        { "title": "Profili Atleti", "desc": "Statistiche, storico match e ranking per ogni atleta." },
-        { "title": "Betting Integration", "desc": "Quote e informazioni betting tramite partner ufficiali autorizzati, dove disponibile.", "disclaimer": "Dove consentito dalle normative locali. 18+" }
+        { "title": "Profili Atleti", "desc": "Storico match e ranking per ogni atleta." },
+        { "title": "SANDR Replay", "desc": "Tutti i match on-demand dopo la diretta: cerca per atleta, torneo o data." }
       ]
     },
     "pricing": {
-      "label": "Scegli il tuo piano",
-      "heading": "Inizia a guardare. Disdici quando vuoi.",
-      "monthly": "Mensile",
-      "annual": "Annuale",
-      "annualSave": "Risparmia 20%",
-      "perMonth": "/mese",
+      "label": "Scegli come guardare",
+      "heading": "Abbonati per la stagione, o guarda il singolo evento.",
+      "perYear": "/anno",
       "perEvent": "/evento",
       "plans": {
-        "free": {
-          "name": "Free",
-          "badge": "Inizia qui",
-          "price": "0",
+        "annual": {
+          "name": "Abbonamento annuale",
+          "badge": "Stagione intera",
           "features": [
-            { "ok": true, "text": "1 match gratuito a settimana" },
-            { "ok": true, "text": "Highlights post-match" },
-            { "ok": true, "text": "Accesso alla community" },
-            { "ok": false, "text": "Live streaming completo" },
-            { "ok": false, "text": "SANDR Replay" },
-            { "ok": false, "text": "Stats in tempo reale" }
+            "Tutti i live della stagione",
+            "SANDR Replay completo",
+            "Interviste esclusive",
+            "Multi-dispositivo",
+            "Italiano e inglese"
           ],
-          "cta": "Registrati gratis"
+          "cta": "Abbonati"
         },
-        "premium": {
-          "name": "Premium",
-          "badge": "Più scelto",
-          "priceMonthly": "9.99",
-          "priceAnnual": "7.99",
-          "features": [
-            { "ok": true, "text": "Tutti i live in diretta" },
-            { "ok": true, "text": "SANDR Replay completo" },
-            { "ok": true, "text": "Stats in tempo reale" },
-            { "ok": true, "text": "Interviste esclusive" },
-            { "ok": true, "text": "Multi-device (3 schermi)" },
-            { "ok": true, "text": "Italiano & Inglese" },
-            { "ok": true, "text": "Copertura FIPAV + AIBVC + BPT + AVP" }
-          ],
-          "cta": "Abbonati ora"
-        },
-        "ppv": {
-          "name": "PPV — Evento singolo",
+        "eventPass": {
+          "name": "Pass evento singolo",
           "badge": "Nessun impegno",
-          "price": "2.99",
           "features": [
-            { "ok": true, "text": "Accesso singolo evento" },
-            { "ok": true, "text": "Qualità HD" },
-            { "ok": true, "text": "Valido 48h dalla data evento" },
-            { "ok": true, "text": "Include replay post-match" },
-            { "ok": false, "text": "Accesso agli altri contenuti" }
+            "Accesso a un singolo evento",
+            "Qualità HD",
+            "Valido 48h dalla data evento",
+            "Include il replay post-evento"
           ],
           "cta": "Scegli l'evento"
         }
       }
-    },
-    "showcase": {
-      "heading": "Tutto quello di cui un fan ha bisogno.",
-      "tabs": [
-        { "key": "multiview", "label": "Multi-view", "title": "Guarda più match contemporaneamente", "desc": "Segui tutti i campi in contemporanea. Componi la tua visuale e non perdere un punto." },
-        { "key": "replay", "label": "SANDR Replay", "title": "Rivivi ogni momento", "desc": "Tutti i match on-demand dopo la diretta. Cerca per atleta, torneo o data." },
-        { "key": "stats", "label": "Stats Live", "title": "Statistiche in tempo reale", "desc": "Ace, errori, efficienza in attacco e difesa. Ogni dato aggiornato punto per punto." },
-        { "key": "community", "label": "Community", "title": "La community del sand sports", "desc": "Discuti ogni match con altri appassionati. Rankings, pronostici, highlights condivisi." }
-      ]
     },
     "finalCta": {
       "heading": "Entra nell'arena.",
@@ -307,57 +249,6 @@
     "consentProfiling": "Acconsento alla profilazione per ricevere contenuti personalizzati e suggerimenti",
     "consentThirdParty": "Acconsento alla condivisione dei miei dati con partner selezionati"
   },
-  "Home": {
-    "hero": {
-      "eyebrow": "Sand sports network",
-      "title": "Live on SANDR",
-      "subtitle": "Beach volley e sand sports in streaming premium. Ogni punto, ogni torneo, ogni circuito.",
-      "ctaPrimary": "Guarda il live",
-      "ctaSecondary": "Scopri i piani"
-    },
-    "liveNow": {
-      "title": "Live ora",
-      "subtitle": "Match in diretta in questo momento.",
-      "watching": "spettatori"
-    },
-    "replays": {
-      "title": "SANDR Replay",
-      "subtitle": "Rivivi i match più recenti.",
-      "viewAll": "Vedi tutti i replay"
-    },
-    "sports": {
-      "title": "I circuiti",
-      "subtitle": "Tutti i tour che trasmettiamo."
-    },
-    "features": {
-      "title": "Costruito per l'arena",
-      "subtitle": "Tecnologia premium pensata per lo sport, non per la spiaggia.",
-      "items": {
-        "streaming": {
-          "title": "Streaming HLS",
-          "desc": "Diretta in alta qualità, dal campo al tuo schermo."
-        },
-        "stats": {
-          "title": "Statistiche live",
-          "desc": "Punteggio e dati in tempo reale per ogni match."
-        },
-        "multilang": {
-          "title": "Italiano e inglese",
-          "desc": "Esperienza completamente bilingue."
-        }
-      }
-    },
-    "pricing": {
-      "title": "Scegli come seguire SANDR",
-      "subtitle": "Free, Premium o singolo evento in PPV.",
-      "cta": "Vedi i piani"
-    },
-    "join": {
-      "title": "Entra nell'arena",
-      "subtitle": "Crea il tuo account e non perdere nessun match.",
-      "cta": "Inizia ora"
-    }
-  },
   "Pricing": {
     "title": "Abbonamenti",
     "subtitle": "Scegli come seguire SANDR.",
@@ -367,69 +258,49 @@
     "page": {
       "heroTitle": "Scegli il tuo piano",
       "heroSubtitle": "Guarda il meglio del beach volley e dei sand sports, come vuoi tu.",
-      "monthly": "Mensile",
-      "annual": "Annuale",
-      "annualBadge": "2 mesi gratis",
-      "perMonth": "/mese",
       "perYear": "/anno",
       "perEvent": "/evento",
       "mostChosen": "Più scelto",
-      "save": "Risparmi il 17%",
-      "ctaFree": "Inizia gratis",
-      "ctaPremium": "Abbonati",
-      "ctaPpv": "Acquista evento",
+      "ctaAnnual": "Abbonati",
+      "ctaEvent": "Scegli l'evento",
       "plans": {
-        "free": {
-          "name": "Free",
-          "price": "0",
+        "annual": {
+          "name": "Abbonamento annuale",
           "features": [
-            "Highlights dei match",
-            "1 match gratis a settimana",
-            "Qualità SD",
-            "Nessuna registrazione richiesta"
-          ]
-        },
-        "premium": {
-          "name": "Premium",
-          "priceMonthly": "9,99",
-          "priceAnnual": "99,99",
-          "features": [
-            "Tutti i live",
-            "Tutti i replay",
+            "Tutti i live della stagione",
+            "SANDR Replay completo",
             "Qualità HD",
             "Multi-dispositivo",
-            "Download offline",
-            "Supporto prioritario"
+            "Interviste esclusive"
           ]
         },
-        "ppv": {
-          "name": "PPV",
-          "price": "2,99",
+        "eventPass": {
+          "name": "Pass evento singolo",
           "features": [
-            "Accesso al singolo evento",
+            "Accesso a un singolo evento",
             "Qualità HD",
             "Senza abbonamento",
-            "Valido 48 ore"
+            "Valido 48 ore dalla data evento"
           ]
         }
       },
       "faqTitle": "Domande frequenti",
       "faq": [
         {
-          "q": "Posso disdire quando voglio?",
-          "a": "Sì. L'abbonamento Premium è senza vincoli e puoi disdire in qualsiasi momento dalle impostazioni del tuo account."
+          "q": "Come funziona l'abbonamento annuale?",
+          "a": "Con un unico pagamento annuale accedi a tutti i live della stagione e all'intero SANDR Replay, su più dispositivi."
+        },
+        {
+          "q": "Cosa include il pass evento singolo?",
+          "a": "Il pass dà accesso a un singolo evento in qualità HD, senza abbonamento. L'accesso resta valido per 48 ore dalla data dell'evento."
         },
         {
           "q": "Su quanti dispositivi posso guardare?",
-          "a": "Con Premium puoi seguire SANDR su più dispositivi: smart TV, computer, tablet e smartphone."
+          "a": "Puoi seguire SANDR su più dispositivi: smart TV, computer, tablet e smartphone."
         },
         {
-          "q": "Cosa include il pay-per-view?",
-          "a": "Il PPV dà accesso a un singolo evento in qualità HD, senza abbonamento. L'accesso resta valido per 48 ore."
-        },
-        {
-          "q": "Qual è la differenza tra Free e Premium?",
-          "a": "Il piano Free offre highlights e un match gratis a settimana in SD. Premium sblocca tutti i live e i replay in HD, con download offline e supporto prioritario."
+          "q": "Qual è la differenza tra abbonamento e pass evento?",
+          "a": "L'abbonamento annuale sblocca tutti i live e i replay della stagione. Il pass evento è pensato per chi vuole guardare un singolo evento senza impegno."
         }
       ]
     }
