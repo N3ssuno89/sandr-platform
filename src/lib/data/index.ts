@@ -200,3 +200,113 @@ export async function getSpeakerConsole(matchId: string): Promise<SpeakerConsole
       : null,
   };
 }
+
+// =====================================================================
+// View-model: Tornei (catalogo) e Profilo atleta
+// =====================================================================
+
+export interface TournamentEditionVM {
+  id: string;
+  name: string;
+  dates: string; // "YYYY-MM-DD – YYYY-MM-DD"
+  location: string;
+  face: 'pro' | 'open';
+  resultsOnly: boolean;
+}
+
+export interface TournamentGroupVM {
+  circuitId: string;
+  circuitName: string;
+  federation: string;
+  editions: TournamentEditionVM[];
+}
+
+// Tornei raggruppati per circuito (federazione → circuito → serie → edizione).
+// Nota interim: le edizioni importate senza serie (seriesId null) non hanno un
+// circuito e non compaiono qui finché il modello non sarà collegato nel backend.
+export async function getTournaments(): Promise<TournamentGroupVM[]> {
+  const [feds, circuits, series, editions] = await Promise.all([
+    getFederations(),
+    getCircuits(),
+    getSeries(),
+    getEditions(),
+  ]);
+  const fedShort = new Map(feds.map((f) => [f.id, f.shortName]));
+  const seriesById = new Map(series.map((s) => [s.id, s]));
+
+  return circuits
+    .map((c) => ({
+      circuitId: c.id,
+      circuitName: c.name,
+      federation: fedShort.get(c.federationId) ?? '',
+      editions: editions
+        .filter((e) => {
+          const s = e.seriesId ? seriesById.get(e.seriesId) : null;
+          return s?.circuitId === c.id;
+        })
+        .map((e) => ({
+          id: e.id,
+          name: e.name,
+          dates: `${e.startDate} – ${e.endDate}`,
+          location: e.location,
+          face: e.face,
+          resultsOnly: e.rights.resultsOnly,
+        })),
+    }))
+    .filter((g) => g.editions.length > 0);
+}
+
+export interface AthleteMatchVM {
+  id: string;
+  opponent: string;
+  editionName: string;
+  date: string;
+  status: string;
+  score: string;
+  won: boolean | null; // null se non conclusa
+}
+
+export interface AthleteProfileVM {
+  athlete: Athlete;
+  currentPairName: string | null;
+  matches: AthleteMatchVM[];
+}
+
+// Profilo atleta: anagrafica + coppia attuale + match recenti (risolti da coppie/
+// edizioni). I match compaiono quando atleta e coppie sono nella stessa sorgente
+// dati (oggi: mock/demo); per gli atleti reali senza coppie collegate la lista
+// resta vuota finché il modello non sarà unificato.
+export async function getAthleteProfile(id: string): Promise<AthleteProfileVM | null> {
+  const athlete = await getAthleteById(id);
+  if (!athlete) return null;
+
+  const [pairs, matches, editions] = await Promise.all([getPairs(), getMatches(), getEditions()]);
+  const myPairs = pairs.filter((p) => p.athlete1Id === id || p.athlete2Id === id);
+  const myPairIds = new Set(myPairs.map((p) => p.id));
+  const current = myPairs.find((p) => p.validTo === null) ?? myPairs[0] ?? null;
+
+  const edName = new Map(editions.map((e) => [e.id, e.name]));
+  const pairName = new Map(pairs.map((p) => [p.id, p.name]));
+
+  const vms: AthleteMatchVM[] = matches
+    .filter((m) => myPairIds.has(m.pairAId) || myPairIds.has(m.pairBId))
+    .map((m) => {
+      const mineIsA = myPairIds.has(m.pairAId);
+      const oppId = mineIsA ? m.pairBId : m.pairAId;
+      const setsA = m.sets.filter((s) => s.a > s.b).length;
+      const setsB = m.sets.filter((s) => s.b > s.a).length;
+      const won =
+        m.status === 'completed' ? (mineIsA ? setsA > setsB : setsB > setsA) : null;
+      return {
+        id: m.id,
+        opponent: pairName.get(oppId) ?? '—',
+        editionName: edName.get(m.editionId) ?? '',
+        date: m.scheduledAt.slice(0, 10),
+        status: m.status,
+        score: m.sets.map((s) => `${s.a}-${s.b}`).join('  '),
+        won,
+      };
+    });
+
+  return { athlete, currentPairName: current?.name ?? null, matches: vms };
+}
