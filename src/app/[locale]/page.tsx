@@ -19,7 +19,7 @@ const circuitNames = [
 ];
 
 type CoverageCard = { tag: string; title: string; items: string[]; desc: string; sport: string };
-type WhyFeature = { title: string; desc: string; disclaimer?: string };
+type WhyFeature = { title: string; desc: string };
 
 export default function HomePage({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
@@ -145,8 +145,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
           </h2>
           <p className="mt-3 max-w-2xl text-base text-[#C0BDB8]">{t('why.subline')}</p>
 
-          {/* Tutte le card hanno lo stesso stile: betting è una feature tra le
-              altre, non enfatizzata (CLAUDE.md: niente emoji). */}
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.06] bg-[#242424] p-6">
@@ -155,10 +153,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
                   {f.title}
                 </h3>
                 <p className="mt-2 text-sm text-sandr-muted">{f.desc}</p>
-                {/* Disclaimer solo sulla card betting (compliance, CLAUDE.md). */}
-                {f.disclaimer ? (
-                  <p className="mt-3 text-[9px] text-[#555555]">{f.disclaimer}</p>
-                ) : null}
               </div>
             ))}
           </div>

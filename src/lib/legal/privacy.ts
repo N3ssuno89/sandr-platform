@@ -135,7 +135,7 @@ export const privacyContent: LocalizedDoc = {
       {
         heading: 'Minori e età minima',
         blocks: [
-          'La Piattaforma può includere contenuti riservati a un pubblico adulto (es. widget di scommesse sportive). L’età minima per la registrazione è 18 anni. Non raccogliamo consapevolmente dati di minori di 18 anni; qualora venissimo a conoscenza di tale trattamento, provvederemo alla cancellazione.',
+          'L’età minima per la registrazione è 18 anni. Non raccogliamo consapevolmente dati di minori di 18 anni; qualora venissimo a conoscenza di tale trattamento, provvederemo alla cancellazione.',
         ],
       },
       {
@@ -284,7 +284,7 @@ export const privacyContent: LocalizedDoc = {
       {
         heading: 'Minors and minimum age',
         blocks: [
-          'The Platform may include content reserved for an adult audience (e.g. sports betting widgets). The minimum age for registration is 18. We do not knowingly collect data from persons under 18; should we become aware of such processing, we will delete the data.',
+          'The minimum age for registration is 18. We do not knowingly collect data from persons under 18; should we become aware of such processing, we will delete the data.',
         ],
       },
       {
