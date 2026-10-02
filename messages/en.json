@@ -228,6 +228,12 @@
     "notAvailable": "Content not available",
     "signInToWatch": "Sign in to watch"
   },
+  "OpenProfile": {
+    "title": "Your Open profile",
+    "email": "Email",
+    "signedOut": "You are not signed in",
+    "signIn": "Sign in"
+  },
   "Login": {
     "headline": "Welcome back.",
     "subline": "Sign in to watch all beach volleyball live.",
