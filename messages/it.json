@@ -209,6 +209,25 @@
     "highlights": "Highlights",
     "newest": "Novità"
   },
+  "Homes": {
+    "proTitle": "La tua home",
+    "openTitle": "SANDR Open",
+    "openSubtitle": "Tornei di club e Open — anche Under 18",
+    "liveNow": "In diretta ora",
+    "interviews": "Interviste",
+    "noLive": "Nessuna diretta in questo momento",
+    "noInterviews": "Nessuna intervista al momento",
+    "nextEvent": "Prossimo evento",
+    "demoData": "Dati dimostrativi",
+    "liveBadge": "In diretta",
+    "audioCommentary": "Commento live",
+    "audioField": "Audio campo",
+    "freeLive": "LIVE · GRATIS",
+    "demoLiveGeneric": "Diretta dimostrativa",
+    "interviewGeneric": "Intervista dimostrativa",
+    "notAvailable": "Contenuto non disponibile",
+    "signInToWatch": "Accedi per guardare"
+  },
   "Login": {
     "headline": "Bentornato.",
     "subline": "Accedi per guardare tutto il beach volley in diretta.",

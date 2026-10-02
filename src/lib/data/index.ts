@@ -25,6 +25,9 @@ import type {
 import { dataSourceConfig } from './config';
 import { athleteFromRow, editionFromEventRow, federationFromRow } from './adapters';
 
+// View-model e letture per le home PRO/OPEN (dirette, interviste, prossimo evento).
+export * from './home';
+
 const FED_COLS = 'id,name,short_name,slug,sport_id,nation,color,logo_url,description';
 const ATHLETE_COLS =
   'id,full_name,nation,nation_code,photo_url,sport_id,federation_id,bio,ranking,season_points,is_featured,birth_date';

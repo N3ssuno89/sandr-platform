@@ -209,6 +209,25 @@
     "highlights": "Highlights",
     "newest": "Newest"
   },
+  "Homes": {
+    "proTitle": "Your home",
+    "openTitle": "SANDR Open",
+    "openSubtitle": "Club and Open tournaments — Under 18 too",
+    "liveNow": "Live now",
+    "interviews": "Interviews",
+    "noLive": "No live right now",
+    "noInterviews": "No interviews right now",
+    "nextEvent": "Next event",
+    "demoData": "Demo data",
+    "liveBadge": "Live",
+    "audioCommentary": "Live commentary",
+    "audioField": "Court audio",
+    "freeLive": "LIVE · FREE",
+    "demoLiveGeneric": "Demo live",
+    "interviewGeneric": "Demo interview",
+    "notAvailable": "Content not available",
+    "signInToWatch": "Sign in to watch"
+  },
   "Login": {
     "headline": "Welcome back.",
     "subline": "Sign in to watch all beach volleyball live.",
