@@ -265,6 +265,10 @@
     "signedOut": "Non hai effettuato l'accesso",
     "signIn": "Accedi"
   },
+  "OpenPlaceholder": {
+    "soon": "Prossimamente",
+    "soonDesc": "Questa sezione del volto Open sarà disponibile presto."
+  },
   "Tournaments": {
     "title": "Tornei",
     "empty": "Nessun torneo disponibile al momento.",
