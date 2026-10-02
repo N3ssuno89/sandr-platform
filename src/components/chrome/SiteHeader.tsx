@@ -84,10 +84,11 @@ export function SiteHeader({ face }: { face: Face }) {
           ...(features.fantabeach ? [{ href: '/fantabeach', label: t('fantabeach') }] : []),
         ]
       : [
-          { href: '/tornei', label: t('tornei') },
-          { href: '/open', label: t('near') },
+          // Il menu OPEN resta dentro il volto OPEN: solo rotte /open/*.
+          { href: '/open/tornei', label: t('tornei') },
+          { href: '/open/vicino', label: t('near') },
           { href: '/open/profilo', label: t('myMatches') },
-          { href: '/broadcast', label: t('organize') },
+          { href: '/open/organizza', label: t('organize') },
         ];
 
   // Header: PRO su sfondo pagina, OPEN su superficie bianca.
