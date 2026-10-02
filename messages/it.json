@@ -79,6 +79,10 @@
     "noVideos": "Nessun video disponibile per questo atleta",
     "notFound": "Atleta non trovato",
     "filterAll": "Tutti",
+    "currentPair": "Coppia attuale",
+    "noMatches": "Nessun match disponibile",
+    "won": "Vinto",
+    "lost": "Perso",
     "stats": {
       "matches": "Partite",
       "wins": "Vittorie",
@@ -233,6 +237,13 @@
     "email": "Email",
     "signedOut": "Non hai effettuato l'accesso",
     "signIn": "Accedi"
+  },
+  "Tournaments": {
+    "title": "Tornei",
+    "empty": "Nessun torneo disponibile al momento.",
+    "resultsOnly": "Solo risultati",
+    "facePro": "Pro",
+    "faceOpen": "Open"
   },
   "Login": {
     "headline": "Bentornato.",

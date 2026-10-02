@@ -79,6 +79,10 @@
     "noVideos": "No videos available for this athlete",
     "notFound": "Athlete not found",
     "filterAll": "All",
+    "currentPair": "Current pair",
+    "noMatches": "No matches available",
+    "won": "Won",
+    "lost": "Lost",
     "stats": {
       "matches": "Matches",
       "wins": "Wins",
@@ -233,6 +237,13 @@
     "email": "Email",
     "signedOut": "You are not signed in",
     "signIn": "Sign in"
+  },
+  "Tournaments": {
+    "title": "Tournaments",
+    "empty": "No tournaments available right now.",
+    "resultsOnly": "Results only",
+    "facePro": "Pro",
+    "faceOpen": "Open"
   },
   "Login": {
     "headline": "Welcome back.",
