@@ -94,6 +94,9 @@
     "noMatches": "No matches available",
     "won": "Won",
     "lost": "Lost",
+    "club": "Club",
+    "statsTitle": "Statistics",
+    "statsLosses": "Losses",
     "stats": {
       "matches": "Matches",
       "wins": "Wins",
@@ -270,6 +273,18 @@
     "soonDesc": "This section of the Open face will be available soon."
   },
   "Tournaments": {
+    "liveNow": "Live",
+    "liveShort": "live",
+    "scheduledShort": "scheduled",
+    "viewDetail": "View detail",
+    "regClub": "Teams",
+    "registrationLabel": "Registration",
+    "regClubFull": "Teams / club",
+    "regIndividualFull": "Individual",
+    "detailLive": "Live now",
+    "detailScheduled": "Scheduled",
+    "detailResults": "Results",
+    "noMatchesDetail": "No matches available for this tournament.",
     "title": "Tournaments",
     "empty": "No tournaments available right now.",
     "resultsOnly": "Results only",

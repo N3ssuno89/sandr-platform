@@ -94,6 +94,9 @@
     "noMatches": "Nessun match disponibile",
     "won": "Vinto",
     "lost": "Perso",
+    "club": "Club",
+    "statsTitle": "Statistiche",
+    "statsLosses": "Sconfitte",
     "stats": {
       "matches": "Partite",
       "wins": "Vittorie",
@@ -274,7 +277,19 @@
     "empty": "Nessun torneo disponibile al momento.",
     "resultsOnly": "Solo risultati",
     "facePro": "Pro",
-    "faceOpen": "Open"
+    "faceOpen": "Open",
+    "liveNow": "In diretta",
+    "liveShort": "in diretta",
+    "scheduledShort": "in programma",
+    "viewDetail": "Vedi dettaglio",
+    "regClub": "A squadre",
+    "registrationLabel": "Iscrizione",
+    "regClubFull": "A squadre / club",
+    "regIndividualFull": "Individuale",
+    "detailLive": "In diretta ora",
+    "detailScheduled": "In programma",
+    "detailResults": "Risultati",
+    "noMatchesDetail": "Nessuna partita disponibile per questo torneo."
   },
   "Login": {
     "headline": "Bentornato.",

@@ -30,6 +30,7 @@ export function athleteFromRow(row: AthleteFull): Athlete {
     nationCode: row.nation_code,
     photoUrl: row.photo_url,
     ranking: row.ranking,
+    clubId: null, // lo schema reale non ha ancora il club di tesseramento
     source: 'sandr',
     externalId: null,
   };
@@ -51,6 +52,7 @@ export function editionFromEventRow(row: EventRow): Edition {
     face: 'open',
     qualityProfile: 'medium',
     rights: { defaultAccess: 'free', visibility: 'public', geoblock: null, resultsOnly: false },
+    registration: 'individual', // default conservativo: lo schema reale non lo ha
     source: 'sandr',
     externalId: null,
   };

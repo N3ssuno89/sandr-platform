@@ -70,6 +70,9 @@ export interface EditionRights {
   resultsOnly: boolean;
 }
 
+// Modalità di iscrizione a un'edizione: individuale (coppie) o per club/squadra.
+export type RegistrationType = 'individual' | 'club';
+
 // ----- Edizione = singola occorrenza di una serie --------------------
 export interface Edition extends ExternalOrigin {
   id: string;
@@ -85,6 +88,9 @@ export interface Edition extends ExternalOrigin {
   face: EditionFace;
   qualityProfile: QualityProfile;
   rights: EditionRights;
+  // Come ci si iscrive: individuale o per club. Alcuni Open sono a iscrizione
+  // per club/squadra.
+  registration: RegistrationType;
 }
 
 // ----- Campo di gioco dell'edizione ----------------------------------
@@ -92,6 +98,14 @@ export interface Court {
   id: string;
   editionId: string;
   name: string; // es. "Campo Centrale"
+}
+
+// ----- Club = società/club sportivo (tesseramento atleti, iscrizioni) -
+export interface Club {
+  id: string;
+  name: string; // es. "Beach Volley Roma"
+  city: string;
+  nation: string;
 }
 
 // ----- Atleta --------------------------------------------------------
@@ -102,6 +116,8 @@ export interface Athlete extends ExternalOrigin {
   nationCode: string | null; // codice testuale (no emoji, CLAUDE.md)
   photoUrl: string | null;
   ranking: number | null;
+  // Club di tesseramento (null se non tesserato/ignoto).
+  clubId: string | null;
 }
 
 // ----- Coppia (le coppie cambiano nel tempo) -------------------------
@@ -204,6 +220,7 @@ export interface HierarchyData {
   series: Series[];
   editions: Edition[];
   courts: Court[];
+  clubs: Club[];
   athletes: Athlete[];
   pairs: Pair[];
   matches: Match[];

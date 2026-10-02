@@ -12,6 +12,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/1.png',
     circuit: 'FIPAV',
     sport: 'Beach Volley',
+    club: 'Beach Volley Roma',
     bio: 'Argento olimpico e bandiera del beach volley italiano, gioca un beach volley fatto di muro e potenza.',
     stats: {
       matchesPlayed: 42,
@@ -42,6 +43,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/2.png',
     circuit: 'AIBVC',
     sport: 'Beach Volley',
+    club: 'Lignano Beach Team',
     bio: 'Inventore dello "skyball", unisce fantasia e tecnica con un servizio che ha cambiato il gioco.',
     stats: {
       matchesPlayed: 38,
@@ -72,6 +74,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/3.png',
     circuit: 'AVP',
     sport: 'Beach Volley',
+    club: 'AVP Hermosa Club',
     bio: 'Difensore tra i migliori al mondo, anima del circuito AVP con riflessi e lettura di gioco fuori categoria.',
     stats: {
       matchesPlayed: 45,
@@ -102,6 +105,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/4.png',
     circuit: 'BPT',
     sport: 'Beach Volley',
+    club: 'Strandklubb Oslo',
     bio: 'Campione olimpico e dominatore del Beach Pro Tour, "The Hammer" è il muro più temuto del circuito.',
     stats: {
       matchesPlayed: 48,
@@ -132,6 +136,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/5.png',
     circuit: 'Beach Pro Tour',
     sport: 'Beach Tennis',
+    club: 'Beach Tennis Cervia',
     bio: 'Tra i migliori interpreti italiani del beach tennis, gioco aggressivo a rete e gran senso tattico.',
     stats: {
       matchesPlayed: 36,
@@ -162,6 +167,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/6.png',
     circuit: 'Beach Pro Tour',
     sport: 'Beach Tennis',
+    club: 'Rio Beach Tennis Club',
     bio: 'Talento brasiliano del beach tennis, potenza e ritmo nello scambio lo rendono imprevedibile.',
     stats: {
       matchesPlayed: 40,
@@ -192,6 +198,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/1.png',
     circuit: 'Premier Padel',
     sport: 'Padel',
+    club: 'Padel Catamarca',
     bio: '"El Mozart de Catamarca": estro, anticipo e mani educate. Tra i numeri uno del padel mondiale.',
     stats: {
       matchesPlayed: 50,
@@ -222,6 +229,7 @@ export const mockAthletes: Athlete[] = [
     photo: '/athletes/2.png',
     circuit: 'Premier Padel',
     sport: 'Padel',
+    club: 'Madrid Padel Club',
     bio: 'Potenza pura e dritto devastante: lo spagnolo è una delle colonne del circuito Premier Padel.',
     stats: {
       matchesPlayed: 49,
