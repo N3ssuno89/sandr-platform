@@ -12,6 +12,7 @@ import type {
   Assignment,
   Athlete,
   Circuit,
+  Club,
   Court,
   Edition,
   Federation,
@@ -106,6 +107,12 @@ export async function getSpeakers(): Promise<Speaker[]> {
 }
 export async function getLiveStreams(): Promise<LiveStream[]> {
   return mockHierarchy.liveStreams;
+}
+export async function getClubs(): Promise<Club[]> {
+  return mockHierarchy.clubs;
+}
+export async function getClubById(id: string): Promise<Club | null> {
+  return (await getClubs()).find((c) => c.id === id) ?? null;
 }
 
 // =====================================================================
@@ -212,6 +219,9 @@ export interface TournamentEditionVM {
   location: string;
   face: 'pro' | 'open';
   resultsOnly: boolean;
+  registration: 'individual' | 'club';
+  liveCount: number; // partite in diretta ora
+  scheduledCount: number; // partite in programma
 }
 
 export interface TournamentGroupVM {
@@ -225,14 +235,22 @@ export interface TournamentGroupVM {
 // Nota interim: le edizioni importate senza serie (seriesId null) non hanno un
 // circuito e non compaiono qui finché il modello non sarà collegato nel backend.
 export async function getTournaments(): Promise<TournamentGroupVM[]> {
-  const [feds, circuits, series, editions] = await Promise.all([
+  const [feds, circuits, series, editions, matches] = await Promise.all([
     getFederations(),
     getCircuits(),
     getSeries(),
     getEditions(),
+    getMatches(),
   ]);
   const fedShort = new Map(feds.map((f) => [f.id, f.shortName]));
   const seriesById = new Map(series.map((s) => [s.id, s]));
+  // Conteggi partite (live/in programma) per edizione.
+  const liveByEd = new Map<string, number>();
+  const schedByEd = new Map<string, number>();
+  for (const m of matches) {
+    if (m.status === 'live') liveByEd.set(m.editionId, (liveByEd.get(m.editionId) ?? 0) + 1);
+    if (m.status === 'scheduled') schedByEd.set(m.editionId, (schedByEd.get(m.editionId) ?? 0) + 1);
+  }
 
   return circuits
     .map((c) => ({
@@ -251,9 +269,87 @@ export async function getTournaments(): Promise<TournamentGroupVM[]> {
           location: e.location,
           face: e.face,
           resultsOnly: e.rights.resultsOnly,
+          registration: e.registration,
+          liveCount: liveByEd.get(e.id) ?? 0,
+          scheduledCount: schedByEd.get(e.id) ?? 0,
         })),
     }))
     .filter((g) => g.editions.length > 0);
+}
+
+// =====================================================================
+// View-model: Dettaglio torneo (edizione) con partite raggruppate
+// =====================================================================
+export interface TournamentMatchVM {
+  id: string;
+  title: string; // "Coppia A vs Coppia B"
+  courtName: string;
+  time: string; // orario (HH:MM) o data
+  score: string; // "21-18  19-21" o ''
+  hasLiveStream: boolean;
+}
+
+export interface TournamentDetailVM {
+  id: string;
+  name: string;
+  circuitName: string;
+  federation: string;
+  dates: string;
+  location: string;
+  face: 'pro' | 'open';
+  registration: 'individual' | 'club';
+  resultsOnly: boolean;
+  live: TournamentMatchVM[];
+  scheduled: TournamentMatchVM[];
+  results: TournamentMatchVM[];
+}
+
+// Dettaglio di un'edizione: anagrafica + partite raggruppate per stato
+// (in diretta / in programma / risultati). Dati SOLO da @/lib/data.
+export async function getTournamentDetail(editionId: string): Promise<TournamentDetailVM | null> {
+  const [editions, circuits, series, feds, matches, pairs, courts, liveStreams] = await Promise.all([
+    getEditions(),
+    getCircuits(),
+    getSeries(),
+    getFederations(),
+    getMatchesByEdition(editionId),
+    getPairs(),
+    getCourtsByEdition(editionId),
+    getLiveStreams(),
+  ]);
+  const ed = editions.find((e) => e.id === editionId);
+  if (!ed) return null;
+
+  const s = ed.seriesId ? series.find((x) => x.id === ed.seriesId) ?? null : null;
+  const circuit = s ? circuits.find((c) => c.id === s.circuitId) ?? null : null;
+  const fedShort = circuit ? feds.find((f) => f.id === circuit.federationId)?.shortName ?? '' : '';
+  const pairName = new Map(pairs.map((p) => [p.id, p.name]));
+  const courtName = new Map(courts.map((c) => [c.id, c.name]));
+  const liveMatchIds = new Set(liveStreams.map((l) => l.matchId).filter(Boolean) as string[]);
+
+  const toVM = (m: Match): TournamentMatchVM => ({
+    id: m.id,
+    title: `${pairName.get(m.pairAId) ?? '—'} vs ${pairName.get(m.pairBId) ?? '—'}`,
+    courtName: courtName.get(m.courtId) ?? '',
+    time: m.scheduledAt.length >= 16 ? m.scheduledAt.slice(11, 16) : m.scheduledAt.slice(0, 10),
+    score: m.sets.map((x) => `${x.a}-${x.b}`).join('  '),
+    hasLiveStream: liveMatchIds.has(m.id),
+  });
+
+  return {
+    id: ed.id,
+    name: ed.name,
+    circuitName: circuit?.name ?? '',
+    federation: fedShort,
+    dates: `${ed.startDate} – ${ed.endDate}`,
+    location: ed.location,
+    face: ed.face,
+    registration: ed.registration,
+    resultsOnly: ed.rights.resultsOnly,
+    live: matches.filter((m) => m.status === 'live').map(toVM),
+    scheduled: matches.filter((m) => m.status === 'scheduled').map(toVM),
+    results: matches.filter((m) => m.status === 'completed').map(toVM),
+  };
 }
 
 export interface AthleteMatchVM {

@@ -20,6 +20,14 @@ import type { ContentItem } from '@/types/tags';
 // + i video in cui è taggato, in righe per tipo come la home. REAL da Supabase;
 // MOCK FALLBACK solo se Supabase non è configurato (dev mode).
 
+type AthleteStatsVM = {
+  matchesPlayed: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  seasonPoints: number;
+};
+
 type AthleteVM = {
   id: string;
   name: string;
@@ -31,6 +39,9 @@ type AthleteVM = {
   bio: string;
   ranking?: number;
   age: number | null;
+  club?: string;
+  stats?: AthleteStatsVM;
+  recent: { id: string; title: string; result: 'W' | 'L'; date: string }[];
   videos: ContentItem[];
   others: Athlete[];
 };
@@ -108,11 +119,57 @@ export default async function AthletePage({ params }: { params: { locale: string
                   {vm.circuit}
                 </span>
               ) : null}
+              {vm.club ? (
+                <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#C0BDB8]">
+                  {t('club')}: {vm.club}
+                </span>
+              ) : null}
             </div>
 
             {vm.bio ? <p className="mt-4 max-w-2xl text-[15px] text-[#C0BDB8]">{vm.bio}</p> : null}
           </div>
         </section>
+
+        {/* ===== Statistiche ===== */}
+        {vm.stats ? (
+          <section className="mt-12">
+            <h2 className="mb-4 font-condensed text-2xl font-bold uppercase tracking-wide text-white">{t('statsTitle')}</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              <StatBox label={t('stats.matches')} value={String(vm.stats.matchesPlayed)} />
+              <StatBox label={t('stats.wins')} value={String(vm.stats.wins)} />
+              <StatBox label={t('statsLosses')} value={String(vm.stats.losses)} />
+              <StatBox label={t('stats.winRate')} value={`${vm.stats.winRate}%`} />
+              <StatBox label={t('stats.seasonPoints')} value={vm.stats.seasonPoints.toLocaleString('it-IT')} />
+            </div>
+          </section>
+        ) : null}
+
+        {/* ===== Match recenti ===== */}
+        {vm.recent.length > 0 ? (
+          <section className="mt-12">
+            <h2 className="mb-4 font-condensed text-2xl font-bold uppercase tracking-wide text-white">{t('recent')}</h2>
+            <div className="overflow-hidden rounded-xl border border-white/10">
+              {vm.recent.map((m) => (
+                <div
+                  key={m.id ?? m.title}
+                  className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 last:border-0"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-condensed text-sm font-bold uppercase tracking-wide text-white">{m.title}</p>
+                    <p className="text-xs text-sandr-muted">{m.date}</p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                      m.result === 'W' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-white/10 text-sandr-muted'
+                    }`}
+                  >
+                    {m.result === 'W' ? t('won') : t('lost')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {/* ===== Video taggati (righe per tipo, come la home) ===== */}
         <section className="mt-14">
@@ -154,6 +211,15 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
       bio: a.bio,
       ranking: a.stats.ranking,
       age: null,
+      club: a.club,
+      stats: {
+        matchesPlayed: a.stats.matchesPlayed,
+        wins: a.stats.wins,
+        losses: a.stats.losses,
+        winRate: a.stats.winRate,
+        seasonPoints: a.stats.seasonPoints,
+      },
+      recent: a.recentMatches,
       videos: [],
       others: mockAthletes.filter((x) => x.id !== a.id).slice(0, 4),
     };
@@ -184,7 +250,19 @@ async function buildVM(id: string): Promise<AthleteVM | null> {
     bio: athlete.bio ?? '',
     ranking: athlete.ranking ?? undefined,
     age: calcAge(athlete.birth_date),
+    // Club/statistiche/match recenti non presenti nello schema reale minimale.
+    recent: [],
     videos,
     others: otherRows.map((o) => toAthleteCard(o, sportName(o.sport_id), fedShort(o.federation_id))),
   };
+}
+
+// Riquadro statistica (valore + etichetta), tema scuro del volto PRO.
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#1C1C1C] p-4 text-center">
+      <p className="font-condensed text-2xl font-black text-white">{value}</p>
+      <p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-sandr-muted">{label}</p>
+    </div>
+  );
 }

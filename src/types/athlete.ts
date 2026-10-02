@@ -28,6 +28,8 @@ export interface Athlete {
   photo: string;
   circuit: string;
   sport: string;
+  // Club/società di tesseramento (opzionale).
+  club?: string;
   stats: AthleteStats;
   upcomingEvents: UpcomingEvent[];
   recentMatches: { id: string; title: string; result: 'W' | 'L'; date: string }[];
