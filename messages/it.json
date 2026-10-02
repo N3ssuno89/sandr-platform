@@ -248,6 +248,12 @@
     "mic": "Microfono",
     "notes": "Note"
   },
+  "OpenProfile": {
+    "title": "Il tuo profilo Open",
+    "email": "Email",
+    "signedOut": "Non hai effettuato l'accesso",
+    "signIn": "Accedi"
+  },
   "Tournaments": {
     "title": "Tornei",
     "empty": "Nessun torneo disponibile al momento.",
