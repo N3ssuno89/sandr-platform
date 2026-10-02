@@ -31,7 +31,7 @@ export function LandingContent() {
   return (
     <>
       {/* ===== SECTION 1 — Hero ===== */}
-      <section className="relative -mt-20 flex min-h-screen items-center overflow-hidden bg-[#141414]">
+      <section className="relative flex min-h-[calc(100vh-72px)] items-center overflow-hidden bg-[#141414]">
         {/* Atleti ritagliati, ancorati in basso a destra (nascosti su mobile) */}
         <div className="pointer-events-none absolute inset-0 hidden md:block">
           {/* eslint-disable-next-line @next/next/no-img-element */}

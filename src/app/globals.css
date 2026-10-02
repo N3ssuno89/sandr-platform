@@ -7,7 +7,7 @@
   :root {
     color-scheme: dark;
     /* Accento del "volto" attivo (PRO/OPEN). Default = arancione SANDR;
-       sovrascritto a runtime dal FaceShell via --face-accent. */
+       sovrascritto a runtime da SiteChrome via le variabili --face-*. */
     --face-accent: #f04e00;
   }
 

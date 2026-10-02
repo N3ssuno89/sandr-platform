@@ -22,8 +22,11 @@ const config: Config = {
         'sandr-muted': '#888888',
       },
       fontFamily: {
-        // Headlines: Archivo Black / Barlow Condensed — body: DM Sans
+        // Titoli grandi: Archivo Black. Titoli di sezione: Archivo Narrow 700.
+        // Testo: Barlow. Condensed/body restano per la UI esistente.
         display: ['var(--font-archivo-black)', 'sans-serif'],
+        narrow: ['var(--font-archivo-narrow)', 'sans-serif'],
+        barlow: ['var(--font-barlow)', 'sans-serif'],
         condensed: ['var(--font-barlow-condensed)', 'sans-serif'],
         body: ['var(--font-dm-sans)', 'sans-serif'],
       },

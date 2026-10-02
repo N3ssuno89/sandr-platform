@@ -2,20 +2,30 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { Archivo_Black, Barlow_Condensed, DM_Sans } from 'next/font/google';
+import { Archivo_Black, Archivo_Narrow, Barlow, Barlow_Condensed, DM_Sans } from 'next/font/google';
 import { routing, type Locale } from '@/i18n/routing';
 import { siteConfig } from '@/config/site';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
+import { SiteChrome } from '@/components/chrome/SiteChrome';
 import { CookieBanner } from '@/components/legal/CookieBanner';
 import '../globals.css';
 
-// Font SANDR (vedi CLAUDE.md): Archivo Black / Barlow Condensed per le headline,
-// DM Sans per il body. MAI Inter, Roboto o Arial.
+// Font SANDR. Titoli grandi: Archivo Black (MAIUSCOLO). Titoli di sezione:
+// Archivo Narrow 700 (MAIUSCOLO). Testo: Barlow 400/600/700. Barlow Condensed e
+// DM Sans restano disponibili per la UI esistente. MAI Inter, Roboto o Arial.
 const archivoBlack = Archivo_Black({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-archivo-black',
+});
+const archivoNarrow = Archivo_Narrow({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-archivo-narrow',
+});
+const barlow = Barlow({
+  weight: ['400', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-barlow',
 });
 const barlowCondensed = Barlow_Condensed({
   weight: ['400', '600', '700', '800', '900'],
@@ -67,15 +77,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${archivoBlack.variable} ${barlowCondensed.variable} ${dmSans.variable}`}
+        className={`${archivoBlack.variable} ${archivoNarrow.variable} ${barlow.variable} ${barlowCondensed.variable} ${dmSans.variable}`}
       >
         <NextIntlClientProvider messages={messages}>
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            {/* pt-20 compensa l'altezza della navbar fissa (h-20) */}
-            <main className="flex-1 pt-20">{children}</main>
-            <Footer />
-          </div>
+          {/* Chrome a due volti (PRO/OPEN): header + footer scelti dal pathname. */}
+          <SiteChrome>{children}</SiteChrome>
           <CookieBanner />
         </NextIntlClientProvider>
       </body>
