@@ -14,11 +14,19 @@
 
 # I deploy in produzione richiedono approvazione del founder:
 # il deploy automatico su "production" è disabilitato di proposito.
+# Contenuti dimostrativi (dirette/interviste di prova): ACCESI in preview e
+# branch-deploy, SPENTI in produzione.
 [context.production]
   # Configurare manualmente da dashboard Netlify al momento del rilascio.
+  [context.production.environment]
+    NEXT_PUBLIC_DEMO_CONTENT = "false"
 
 [context.deploy-preview]
   command = "npm run build"
+  [context.deploy-preview.environment]
+    NEXT_PUBLIC_DEMO_CONTENT = "true"
 
 [context.branch-deploy]
   command = "npm run build"
+  [context.branch-deploy.environment]
+    NEXT_PUBLIC_DEMO_CONTENT = "true"

@@ -6,6 +6,9 @@
 @layer base {
   :root {
     color-scheme: dark;
+    /* Accento del "volto" attivo (PRO/OPEN). Default = arancione SANDR;
+       sovrascritto a runtime dal FaceShell via --face-accent. */
+    --face-accent: #f04e00;
   }
 
   body {
