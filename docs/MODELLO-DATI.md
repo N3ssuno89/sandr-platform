@@ -7,6 +7,41 @@
 
 ---
 
+## Decisioni
+
+> Risposte del founder alle domande §5 (2026-10-02). Queste decisioni guidano le
+> future migrazioni e sostituiscono le relative domande aperte.
+
+1. **Tassonomia circuiti** — i circuiti stanno sotto la federazione madre:
+   - **FIVB → Beach Pro Tour** (categorie: *Elite16*, *Challenge*, *Futures*)
+   - **FIPAV → Campionato Italiano Assoluto**
+   - **AIBVC → Pro Tour, Winter Tour, Club Series**
+   - **King & Queen** e **Marathon**: *DA VERIFICARE* — per ora lasciati come sono.
+2. **Serie / Edizione** — `events` diventa **Edizione**; la **Serie** sta sopra ma è
+   **facoltativa** (esistono edizioni singole senza serie → `seriesId` nullable).
+3. **Diritti** — i diritti/visibilità sull'**Edizione** sono il **default**;
+   `videos.access_level` può **solo restringere** l'accesso, mai allargarlo.
+4. **Volto** — enum sull'**Edizione** (`pro` | `open`); la **Partita lo eredita**
+   dall'edizione (nessun volto a livello di partita).
+5. **Coppia** — entità **temporale** (`validFrom`/`validTo`). Per lo **storico** si
+   tiene il **nome squadra testuale** sulla partita e si collega la coppia dopo.
+6. **Dirette** — vivono in un **backend separato** (non in Supabase). **Nessuna
+   chiave di trasmissione nel DB catalogo, mai.** (coerente con la rimozione di
+   `streamKey` dai tipi/mock frontend).
+7. **Backend futuro** — **APERTO** (possibile Laravel + MySQL): per ora
+   **investimento minimo in RLS**, niente policy complesse premature.
+8. **Import esterni** — ogni entità importabile porta `source` + `external_system`
+   (valori: `fivbeach` / `fivb_vis`); gli **id esterni** sono **testo**.
+9. **Pulizia tabelle** — **nessuna tabella da cancellare ora**; le tabelle
+   `fantasy_*` **restano**.
+10. **Partita / punteggio** — la **Partita** viene ridisegnata su **campi + coppie**;
+    **`score_events` resta** come registro punti, con l'aggiunta di un **campo per
+    il tempo del video** (timestamp del punto nel video).
+11. **Tipi DB** — si passa a **`supabase gen types`** per `src/types/database.ts`,
+    su un **branch dedicato partito da `main`** (elimina il drift manuale).
+
+---
+
 ## 1. Cosa c'è oggi
 
 ### 1.1 Tabelle (scopo · colonne · FK · RLS · chi la usa)
