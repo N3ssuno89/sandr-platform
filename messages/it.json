@@ -232,6 +232,12 @@
     "notAvailable": "Contenuto non disponibile",
     "signInToWatch": "Accedi per guardare"
   },
+  "OpenProfile": {
+    "title": "Il tuo profilo Open",
+    "email": "Email",
+    "signedOut": "Non hai effettuato l'accesso",
+    "signIn": "Accedi"
+  },
   "Tournaments": {
     "title": "Tornei",
     "empty": "Nessun torneo disponibile al momento.",
