@@ -35,7 +35,18 @@
     "live": "Live",
     "replay": "Replay",
     "sports": "Sports",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "dirette": "Live",
+    "tornei": "Tournaments",
+    "atleti": "Athletes",
+    "fantabeach": "FantaBeach",
+    "near": "Near you",
+    "myMatches": "My matches",
+    "organize": "Organize",
+    "goToPro": "Go to SANDR Pro",
+    "search": "Search",
+    "menu": "Menu",
+    "close": "Close"
   },
   "Footer": {
     "exploreTitle": "Explore",

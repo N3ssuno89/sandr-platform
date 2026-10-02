@@ -12,14 +12,14 @@ export async function ProHome() {
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-12 px-4 py-10 text-sandr-text">
-      <h1 className="font-condensed text-3xl font-extrabold uppercase tracking-wide">{t('proTitle')}</h1>
+    <div className="mx-auto max-w-[1360px] space-y-12 px-4 py-10 md:px-10">
+      <h1 className="font-display text-4xl uppercase tracking-tight">{t('proTitle')}</h1>
 
       {live.length > 0 ? (
         <LiveRow title={t('liveNow')} items={live} />
       ) : (
         <section>
-          <h2 className="mb-4 font-condensed text-xl font-bold uppercase tracking-wide">{t('liveNow')}</h2>
+          <h2 className="mb-4 font-narrow text-[26px] font-bold uppercase tracking-wide">{t('liveNow')}</h2>
           <EmptyLive nextEvent={nextEvent} />
         </section>
       )}
@@ -28,8 +28,8 @@ export async function ProHome() {
         <InterviewRow title={t('interviews')} items={interviews} />
       ) : (
         <section>
-          <h2 className="mb-4 font-condensed text-xl font-bold uppercase tracking-wide">{t('interviews')}</h2>
-          <div className="rounded-xl border border-white/10 p-8 text-center text-white/60">{t('noInterviews')}</div>
+          <h2 className="mb-4 font-narrow text-[26px] font-bold uppercase tracking-wide">{t('interviews')}</h2>
+          <div className="rounded-xl border border-[color:var(--face-border)] p-8 text-center text-[color:var(--face-muted)]">{t('noInterviews')}</div>
         </section>
       )}
     </div>
