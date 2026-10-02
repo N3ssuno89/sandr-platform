@@ -269,6 +269,53 @@
     "soon": "Prossimamente",
     "soonDesc": "Questa sezione del volto Open sarà disponibile presto."
   },
+  "Live": {
+    "free": "Gratis",
+    "premium": "Premium",
+    "ppv": "Pay per view",
+    "scorePanel": "Punteggio live",
+    "set": "Set",
+    "scoreSoon": "Il punteggio in tempo reale arriverà con il backend dirette.",
+    "chat": "Chat",
+    "chatSoon": "La chat in diretta arriverà con il backend dirette.",
+    "otherLive": "Altre dirette",
+    "liveGeneric": "Diretta"
+  },
+  "Search": {
+    "title": "Cerca",
+    "placeholder": "Cerca video, atleti, tornei…",
+    "cta": "Cerca",
+    "hint": "Scrivi almeno 2 caratteri per cercare.",
+    "noResults": "Nessun risultato per \"{q}\".",
+    "videos": "Video",
+    "athletes": "Atleti",
+    "tournaments": "Tornei"
+  },
+  "OpenNear": {
+    "title": "Vicino a te",
+    "subtitle": "Tornei Open e di club per località.",
+    "all": "Tutte",
+    "empty": "Nessun torneo per questa località al momento.",
+    "geoNote": "La ricerca per posizione in tempo reale arriverà con il backend. Per ora il filtro è per località dal catalogo."
+  },
+  "OpenOrganize": {
+    "title": "Organizza",
+    "intro": "Porta il tuo torneo di club o Open su SANDR: iscrizioni, calendario e visibilità in un unico posto.",
+    "steps": [
+      { "title": "Raccontaci il torneo", "desc": "Nome, località e date della tua tappa." },
+      { "title": "Prepariamo tutto", "desc": "Configuriamo pagina, iscrizioni e calendario." },
+      { "title": "Si gioca", "desc": "Pubblichiamo risultati e, dove possibile, le dirette." }
+    ],
+    "formTitle": "Proponi un torneo",
+    "fieldName": "Nome del torneo",
+    "fieldCity": "Città",
+    "fieldDate": "Data",
+    "fieldEmail": "Email di contatto",
+    "demoNote": "Demo: la richiesta non viene ancora inviata a un server. Nessun dato lascia il tuo browser.",
+    "submit": "Invia richiesta",
+    "thanksTitle": "Richiesta registrata (demo)",
+    "thanksDesc": "Grazie! Appena il backend sarà collegato, le richieste verranno gestite dallo staff SANDR."
+  },
   "Tournaments": {
     "title": "Tornei",
     "empty": "Nessun torneo disponibile al momento.",

@@ -269,6 +269,53 @@
     "soon": "Coming soon",
     "soonDesc": "This section of the Open face will be available soon."
   },
+  "Live": {
+    "free": "Free",
+    "premium": "Premium",
+    "ppv": "Pay per view",
+    "scorePanel": "Live score",
+    "set": "Set",
+    "scoreSoon": "Real-time score will arrive with the live backend.",
+    "chat": "Chat",
+    "chatSoon": "Live chat will arrive with the live backend.",
+    "otherLive": "Other live",
+    "liveGeneric": "Live"
+  },
+  "Search": {
+    "title": "Search",
+    "placeholder": "Search videos, athletes, tournaments…",
+    "cta": "Search",
+    "hint": "Type at least 2 characters to search.",
+    "noResults": "No results for \"{q}\".",
+    "videos": "Videos",
+    "athletes": "Athletes",
+    "tournaments": "Tournaments"
+  },
+  "OpenNear": {
+    "title": "Near you",
+    "subtitle": "Open and club tournaments by location.",
+    "all": "All",
+    "empty": "No tournaments for this location right now.",
+    "geoNote": "Real-time location search will arrive with the backend. For now the filter is by catalog location."
+  },
+  "OpenOrganize": {
+    "title": "Organize",
+    "intro": "Bring your club or Open tournament to SANDR: registrations, schedule and visibility in one place.",
+    "steps": [
+      { "title": "Tell us about it", "desc": "Name, location and dates of your stop." },
+      { "title": "We set it up", "desc": "We configure the page, registrations and schedule." },
+      { "title": "Game on", "desc": "We publish results and, where possible, the live streams." }
+    ],
+    "formTitle": "Propose a tournament",
+    "fieldName": "Tournament name",
+    "fieldCity": "City",
+    "fieldDate": "Date",
+    "fieldEmail": "Contact email",
+    "demoNote": "Demo: the request is not sent to a server yet. No data leaves your browser.",
+    "submit": "Send request",
+    "thanksTitle": "Request recorded (demo)",
+    "thanksDesc": "Thanks! Once the backend is connected, requests will be handled by the SANDR staff."
+  },
   "Tournaments": {
     "title": "Tournaments",
     "empty": "No tournaments available right now.",
