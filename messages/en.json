@@ -265,6 +265,10 @@
     "signedOut": "You are not signed in",
     "signIn": "Sign in"
   },
+  "OpenPlaceholder": {
+    "soon": "Coming soon",
+    "soonDesc": "This section of the Open face will be available soon."
+  },
   "Tournaments": {
     "title": "Tournaments",
     "empty": "No tournaments available right now.",
