@@ -2,9 +2,10 @@
 // include Under 18). Questo file è l'UNICA fonte di verità per i due volti:
 // label, home, tagline e TEMA. Nessuna pagina qui — solo struttura.
 //
-// Tema: per ora i valori usano SOLO colori già nella palette SANDR (CLAUDE.md:
-// "Non modificare la palette colori"). L'accento resta l'arancione SANDR per
-// entrambi; l'eventuale accento distinto del volto OPEN va validato dal founder.
+// Tema: l'ACCENTO è lo stesso arancione SANDR (#F04E00) per entrambi i volti.
+// Tra PRO e OPEN cambiano SOLO sfondi e superfici:
+//   - PRO  = scuro  (sfondo #141414, superfici scure, testo chiaro)
+//   - OPEN = chiaro (sfondo #F8F6F3, superfici bianche, testo scuro)
 
 export type Face = 'pro' | 'open';
 
@@ -16,9 +17,13 @@ export interface FaceMeta {
   tagline: string;
   // Home del volto (senza prefisso locale: lo aggiunge il Link di next-intl).
   home: string;
-  // Tema — solo valori già in palette (sandr-black / sandr-surface / sandr-orange).
-  bg: string;
-  accent: string;
+  // true se il volto usa un tema CHIARO (testo scuro su sfondo chiaro).
+  light: boolean;
+  // Tema.
+  bg: string; // sfondo pagina
+  surface: string; // superfici (card/header)
+  fg: string; // testo principale
+  accent: string; // accento — SEMPRE arancione SANDR
 }
 
 export const faceMeta: Record<Face, FaceMeta> = {
@@ -27,16 +32,22 @@ export const faceMeta: Record<Face, FaceMeta> = {
     label: 'PRO',
     tagline: 'Il grande beach volley',
     home: '/',
-    bg: '#0C0C0C', // sandr-black
-    accent: '#F04E00', // sandr-orange
+    light: false,
+    bg: '#141414',
+    surface: '#1C1C1C',
+    fg: '#F7F5F2',
+    accent: '#F04E00',
   },
   open: {
     key: 'open',
     label: 'OPEN',
     tagline: 'Tornei di club e Open',
     home: '/open',
-    bg: '#1A1A1A', // sandr-surface (tono distinto, stessa palette)
-    accent: '#F04E00', // segnaposto: accento OPEN da validare col founder
+    light: true,
+    bg: '#F8F6F3',
+    surface: '#FFFFFF',
+    fg: '#141414',
+    accent: '#F04E00',
   },
 };
 

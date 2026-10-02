@@ -22,14 +22,20 @@ export function FaceShell({ face, children }: { face: Face; children: ReactNode 
     { href: '/pricing', label: t('pricing') },
   ];
 
+  // Classi dipendenti dal tema (chiaro per OPEN, scuro per PRO).
+  const borderCls = meta.light ? 'border-black/10' : 'border-white/10';
+  const mutedCls = meta.light
+    ? 'text-black/60 hover:text-black'
+    : 'text-sandr-muted hover:text-white';
+
   return (
     <div
       data-face={face}
-      style={{ backgroundColor: meta.bg, ['--face-accent']: meta.accent } as React.CSSProperties}
+      style={{ backgroundColor: meta.bg, color: meta.fg, ['--face-accent']: meta.accent } as React.CSSProperties}
       className="min-h-screen"
     >
-      <header className="flex items-center gap-4 border-b border-white/[0.08] px-4 py-3">
-        <Link href={meta.home} className="font-condensed text-lg font-black uppercase tracking-wide text-white">
+      <header className={`flex items-center gap-4 border-b px-4 py-3 ${borderCls}`}>
+        <Link href={meta.home} className="font-condensed text-lg font-black uppercase tracking-wide text-current">
           SANDR
         </Link>
         {face === 'open' ? <OpenBadge /> : null}
@@ -39,7 +45,7 @@ export function FaceShell({ face, children }: { face: Face; children: ReactNode 
             <Link
               key={`${n.href}-${n.label}`}
               href={n.href}
-              className="font-condensed text-sm font-bold uppercase tracking-wide text-sandr-muted hover:text-white"
+              className={`font-condensed text-sm font-bold uppercase tracking-wide ${mutedCls}`}
             >
               {n.label}
             </Link>
