@@ -1,38 +1,18 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
-import { getCurrentUserRole } from '@/lib/supabase/guard';
-import { isSupabaseConfiguredServer } from '@/lib/supabase/admin';
+import { requireStaffPage } from '@/lib/supabase/guard';
 import { getSpeakerConsole } from '@/lib/data';
 
 // Console speaker: /speaker/[matchId]. AREA CRITICA (CLAUDE.md): riservata a
-// staff/admin. Gating ruolo SERVER-SIDE. In demo (Supabase non configurato) la
-// pagina è visibile per l'anteprima; in produzione richiede ruolo admin/broadcaster
-// (il gating definitivo arriverà con Supabase Auth + RLS).
+// staff/admin. Guard ruolo SERVER-SIDE minimale (requireStaffPage): senza una
+// sessione con ruolo admin/staff → redirect al login.
 export default async function SpeakerConsolePage({
   params,
 }: {
   params: { locale: string; matchId: string };
 }) {
   setRequestLocale(params.locale);
+  await requireStaffPage(params.locale);
   const t = await getTranslations('Speaker');
-
-  const configured = isSupabaseConfiguredServer();
-  const role = configured ? await getCurrentUserRole() : null;
-  const allowed = !configured || role === 'admin' || role === 'broadcaster';
-
-  if (!allowed) {
-    return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center text-sandr-text">
-        <p className="font-condensed text-lg font-bold uppercase tracking-wide">{t('reserved')}</p>
-        <Link
-          href="/login"
-          className="mt-4 inline-block rounded-lg bg-sandr-orange px-6 py-3 font-condensed font-bold uppercase tracking-wide text-black"
-        >
-          {t('signIn')}
-        </Link>
-      </div>
-    );
-  }
 
   const data = await getSpeakerConsole(params.matchId);
   if (!data) {

@@ -21,7 +21,7 @@ export const pricing = {
 // Rotte che richiedono autenticazione (vedi src/middleware.ts).
 // Per ora /live, /vod e /interviews sono pubbliche: solo i pannelli
 // admin/broadcaster restano protetti.
-export const protectedRoutes = ['/dashboard', '/broadcast'] as const;
+export const protectedRoutes = ['/dashboard', '/broadcast', '/speaker'] as const;
 
 // Rotte riservate per ruolo (controllo applicato anche via RLS lato DB).
 export const roleRestrictedRoutes = {

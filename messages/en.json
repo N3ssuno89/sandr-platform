@@ -321,7 +321,8 @@
     "demoNote": "Demo: the request is not sent to a server yet. No data leaves your browser.",
     "submit": "Send request",
     "thanksTitle": "Request recorded (demo)",
-    "thanksDesc": "Thanks! Once the backend is connected, requests will be handled by the SANDR staff."
+    "thanksDesc": "Thanks! Once the backend is connected, requests will be handled by the SANDR staff.",
+    "closedNote": "Applications to organize a tournament will open soon. In the meantime write to us at info@sandr.tv."
   },
   "Tournaments": {
     "liveNow": "Live",
