@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { OrganizeForm } from '@/components/open/OrganizeForm';
+import { DEMO_CONTENT } from '@/config/features';
 
 // "Organizza" (volto OPEN): come proporre un torneo di club/Open su SANDR.
 // Pagina informativa + form dimostrativo (vedi OrganizeForm: nessun invio).
@@ -28,10 +29,21 @@ export default async function OpenOrganizzaPage({ params }: { params: { locale: 
         ))}
       </section>
 
-      {/* Richiesta */}
+      {/* Richiesta: il modulo è DIMOSTRATIVO (nessun invio reale), quindi è
+          mostrato solo con i contenuti demo attivi. A flag spento mostriamo una
+          nota "prossimamente" invece del form finto. */}
       <section className="mt-10 max-w-2xl">
         <h2 className="mb-4 font-narrow text-[26px] font-bold uppercase tracking-wide">{t('formTitle')}</h2>
-        <OrganizeForm />
+        {DEMO_CONTENT ? (
+          <OrganizeForm />
+        ) : (
+          <div
+            className="rounded-2xl border p-6"
+            style={{ backgroundColor: 'var(--face-surface)', borderColor: 'var(--face-border)' }}
+          >
+            <p className="font-barlow text-[color:var(--face-muted)]">{t('closedNote')}</p>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -321,7 +321,8 @@
     "demoNote": "Demo: la richiesta non viene ancora inviata a un server. Nessun dato lascia il tuo browser.",
     "submit": "Invia richiesta",
     "thanksTitle": "Richiesta registrata (demo)",
-    "thanksDesc": "Grazie! Appena il backend sarà collegato, le richieste verranno gestite dallo staff SANDR."
+    "thanksDesc": "Grazie! Appena il backend sarà collegato, le richieste verranno gestite dallo staff SANDR.",
+    "closedNote": "Le candidature per organizzare un torneo apriranno presto. Nel frattempo scrivici a info@sandr.tv."
   },
   "Tournaments": {
     "title": "Tornei",

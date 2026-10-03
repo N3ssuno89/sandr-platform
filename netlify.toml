@@ -30,3 +30,10 @@
   command = "npm run build"
   [context.branch-deploy.environment]
     NEXT_PUBLIC_DEMO_CONTENT = "true"
+
+# Branch "preview-prod": anteprima con contenuti demo SPENTI, per vedere cosa
+# andrebbe davvero su sandr.tv (stesso comportamento del context production).
+[context."preview-prod"]
+  command = "npm run build"
+  [context."preview-prod".environment]
+    NEXT_PUBLIC_DEMO_CONTENT = "false"
