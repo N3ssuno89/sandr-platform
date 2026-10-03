@@ -4,6 +4,7 @@ import { getLivePlayable, getRelatedLive } from '@/lib/data';
 import { StreamPlayer } from '@/components/player/StreamPlayer';
 import { Thumb } from '@/components/ui/Thumb';
 import { LiveBadge } from '@/components/ui/Badges';
+import { DEMO_CONTENT } from '@/config/features';
 
 // Pagina diretta completa: /live/[matchId] (id = video reale del catalogo).
 // Il gating è applicato SERVER-SIDE in getLivePlayable (l'uid arriva al client
@@ -45,7 +46,7 @@ export default async function LivePlayerPage({
 
   return (
     <div className="mx-auto max-w-[1360px] px-4 py-8 md:px-10">
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className={`grid gap-6 ${DEMO_CONTENT ? 'lg:grid-cols-[1fr_340px]' : ''}`}>
         {/* Colonna principale: player + info partita */}
         <div>
           {/* Badge */}
@@ -103,7 +104,10 @@ export default async function LivePlayerPage({
           </div>
         </div>
 
-        {/* Sidebar: punteggio + chat (placeholder realtime) */}
+        {/* Sidebar: punteggio + chat. Sono SEGNAPOSTO (realtime non collegato):
+            mostrati solo con contenuti dimostrativi attivi (NEXT_PUBLIC_DEMO_CONTENT).
+            A flag spento la pagina mostra solo il player (niente finti pannelli). */}
+        {DEMO_CONTENT ? (
         <aside className="space-y-4">
           <section className="rounded-2xl border border-[color:var(--face-border)] p-5">
             <h2 className="font-narrow text-lg font-bold uppercase tracking-wide">{tl('scorePanel')}</h2>
@@ -129,6 +133,7 @@ export default async function LivePlayerPage({
             <p className="mt-2 font-barlow text-xs text-[color:var(--face-muted)]">{tl('chatSoon')}</p>
           </section>
         </aside>
+        ) : null}
       </div>
 
       {/* Altre dirette */}

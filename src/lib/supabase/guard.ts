@@ -17,14 +17,26 @@ export async function getCurrentUserRole(): Promise<string | null> {
   return data?.role ?? null;
 }
 
-// Gating pagine admin: redirect a /dashboard/home se non admin.
-// AREA CRITICA (CLAUDE.md): Supabase Auth + ruolo admin.
-// In demo (Supabase non configurato) non blocca (le rotte /dashboard sono
-// comunque protette dal middleware quando l'auth è attiva).
-export async function requireAdminPage(locale: string): Promise<void> {
-  if (!isSupabaseConfiguredServer()) return;
+// Guard minimale per ruolo (usa-e-getta, in attesa del nuovo backend).
+// Fail-closed: se non c'è un utente loggato con un ruolo ammesso → redirect al
+// login. Quando Supabase non è configurato getCurrentUserRole() torna null,
+// quindi la pagina resta comunque bloccata (nessun accesso senza auth).
+// AREA CRITICA (CLAUDE.md): Supabase Auth + ruoli.
+export async function requireRolePage(locale: string, allowed: readonly string[]): Promise<void> {
   const role = await getCurrentUserRole();
-  if (role !== 'admin') redirect(`/${locale}/dashboard/home`);
+  if (!role || !allowed.includes(role)) {
+    redirect(`/${locale}/login?redirect=/${locale}`);
+  }
+}
+
+// /dashboard/admin/* → solo ruolo admin.
+export async function requireAdminPage(locale: string): Promise<void> {
+  await requireRolePage(locale, ['admin']);
+}
+
+// /speaker/* → ruolo admin o staff (broadcaster incluso per retro-compatibilità).
+export async function requireStaffPage(locale: string): Promise<void> {
+  await requireRolePage(locale, ['admin', 'staff', 'broadcaster']);
 }
 
 // Contesto admin per le scritture. AREA CRITICA (CLAUDE.md): verifica che il
